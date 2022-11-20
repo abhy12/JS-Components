@@ -1,0 +1,19 @@
+{
+  "name": "js-components",
+  "version": "1.0.0",
+  "description": "js components ",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abhishek-Yesankar/JS-Components.git"
+  },
+  "author": "Abhishek Yesankar",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/Abhishek-Yesankar/JS-Components/issues"
+  },
+  "homepage": "https://github.com/Abhishek-Yesankar/JS-Components#readme"
+}
