@@ -1,27 +1,34 @@
-const accordionCon = document.querySelectorAll('[data-jsc-accCon]') as NodeListOf<HTMLElement>;
-
+///you can change prefix if you want to
+const PREFIX = 'jsc', 
+      accordionCon = document.querySelectorAll(`[data-${PREFIX}-accCon='true']`) as NodeListOf<HTMLElement>;
 /**
  * TO DO
  * add A11y
  * create function or class to create new accordion
  */
 accordionCon.forEach( item => {
-   const accAnimationTime = +window.getComputedStyle( item ).getPropertyValue('transition-duration').replace( /[s]/, '' ) * 1000;
+   const accAnimationTime = +window.getComputedStyle( item ).getPropertyValue('transition-duration').replace( /s/, '' ) * 1000;
    // console.log( accAnimationTime );
 
-   ///initailze container
-   if( item.dataset.collapse === 'true' )  {
+   ///if initial state not provided of the accrodion container
+	if( item.dataset.collapse === undefined )  item.setAttribute( `data-collapse`, 'false' );
+
+   ///check to see is container collapse
+	const isCollapse = item.dataset.collapse === 'true' ? true : false;
+
+   ///initialize container
+   if( isCollapse )  {
       item.style.height = '0';
       item.style.display = 'none';
-   } else if( item.dataset.collapse === 'false' ) {
+   } else if( !isCollapse ) {
       item.style.height = item.offsetHeight + 'px';
    }
 
    ///get the triggerers 
-   const triggerBtns = item.dataset?.target?.split( ',' );
+   const triggerBtns = item.dataset.targetbtn?.split( ',' );
 
    ///check if any triggerers found
-   if( triggerBtns && triggerBtns.length > 1 )  {
+   if( triggerBtns && triggerBtns.length > 0 )  {
 
       ///add event listner to triggerer
       /**
@@ -29,15 +36,28 @@ accordionCon.forEach( item => {
        * might use bubbling for this for performance
        */
       triggerBtns.map( btn => {
-         document.querySelector( btn )?.addEventListener( 'click', function( e:Event )  {
+			const btnEl = document.querySelector( btn ) as HTMLButtonElement;
+			if( !btnEl ) return;
+			
+			///expend and collapse text
+			const collapseText = btnEl.dataset?.acccollapsetext;
+			const expendText = btnEl.dataset?.accexpendtext;
+
+			///change the expend or collapse text
+			if( isCollapse && expendText )  {
+				btnEl.textContent = expendText;
+			} else if( !isCollapse && collapseText )  {
+				btnEl.textContent = collapseText;
+			}
+
+         btnEl.addEventListener( 'click', function( e:Event )  {
             e.preventDefault();
             const btn = e.target as HTMLButtonElement;
 
-            ///expend and collapse text
-            const collapseText = btn.dataset?.acccollapsetext;
-            const expendText = btn.dataset?.accexpendtext;
+            ///check to see is container collapse
+				const isCollapse = item.dataset.collapse === 'true' ? true : false;
 
-            if( item.dataset.collapse === 'false' )  {
+            if( !isCollapse )  {
                item.style.height = '0';
 
                setTimeout( () => {
@@ -47,19 +67,17 @@ accordionCon.forEach( item => {
                item.dataset.collapse = 'true';
 
                //add collapse text
-               if( collapseText ) {
-                  btn.textContent = collapseText;
-               }
+               if( expendText ) btn.textContent = expendText;
 
-            } else if( item.dataset.collapse === 'true' )  {
+            } else if( isCollapse )  {
                //it will change the whatever display the element has before
                item.style.display = '';
 
                ///to get the full height of the element
-               item.style.height = 'auto';
+               // item.style.height = 'auto';
 
                ///not using this method for now might be using this in future
-               // item.setAttribute('style', 'height:inline !important');
+               item.setAttribute('style', 'height:auto !important');
 
                ///save the height of futher use
                const acHeight = item.offsetHeight;
@@ -75,9 +93,8 @@ accordionCon.forEach( item => {
                item.dataset.collapse = 'false';
 
                //add collapse text
-               if( expendText ) {
-                  btn.textContent = expendText;
-               }
+               if( collapseText ) btn.textContent = collapseText;
+
             }
          });
       });
@@ -86,5 +103,12 @@ accordionCon.forEach( item => {
 
 ///TODO add event bubbling if it's not too complicated
 // document.body.addEventListener( 'click', function( e )  {
-//    console.log( e );
+// 	const target = e.target as HTMLElement;
+   
+// 	if( target.id !== '' )  {
+//       console.log( target.id.split( ' ' ) );
+// 		target.id.split( ' ' ).map( att => {
+// 			console.log( document.querySelector(`[data-targetBtn*='#${att}']`) );
+// 		})
+// 	}
 // });
