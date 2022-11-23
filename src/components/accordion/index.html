@@ -16,18 +16,22 @@
 
     <div>
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias, consequatur. Voluptatem, sed.</p>
-        <a href="#">read more</a>
+        <a id="a" href="#">read more</a>
     </div>
     <h3>Set Default Collapsed</h3>
-    <p class="accordion" data-jsc-accCon="true" data-collapse="true" data-targetBtn="#eg-1,a">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quae sit quam, ab blanditiis itaque aliquid. Fuga sint
-        eos expedita odit ullam repudiandae corrupti sed deleniti?</p>
-    <button id="eg-1 eg-3" data-accExpendText="Expend" data-accCollapseText="Collapse">Collapse</button>
+    <p class="accordion" data-jsc-accCon="true" data-collapse="true" data-targetBtn="#eg-1,#a">Lorem ipsum dolor, sit
+        amet consectetur adipisicing elit. Quae sit quam, ab blanditiis itaque aliquid. Fuga sint
+        eos expedita odit ullam repudiandae corrupti sed deleniti?
+       <button data-accClose="">Close</button>
+    </p>
+    <button id="eg-1" class="red" data-accExpendText="Expend" data-accCollapseText="Collapse">Collapse</button>
     <hr>
     <h3>If initial state not set default Expended state will be use</h3>
-    <p class="accordion" data-jsc-accCon="true" data-targetBtn="#eg-2">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quae sit quam, ab blanditiis itaque aliquid. Fuga sint
+    <p class="accordion" data-jsc-accCon="true" data-targetBtn="#eg-2" style="height: auto!important;">Lorem ipsum
+        dolor, sit amet consectetur adipisicing elit. Quae sit quam, ab blanditiis itaque aliquid. Fuga sint
         eos expedita odit ullam repudiandae corrupti sed deleniti?</p>
     <button data-targetCon="" id="eg-2" data-accExpendText="Expend" data-accCollapseText="Collapse">Collapse</button>
-   <script src="./accordion.js"></script>
+    <script src="./accordion.js"></script>
 </body>
 
 </html>
