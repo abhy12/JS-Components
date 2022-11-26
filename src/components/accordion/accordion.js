@@ -29,6 +29,10 @@ accordionCon.forEach(item => {
         const el = document.getElementById(id.replace(/^#/, ''));
         if (!el)
             return;
+        let text = undefined;
+        isCollapse && (text = el.dataset.acccollapsetext);
+        !isCollapse && (text = el.dataset.accexpendtext);
+        text !== undefined && (el.innerText = text);
         if (isCollapse)
             el.classList.add('collapsed');
     });

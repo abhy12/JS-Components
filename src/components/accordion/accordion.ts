@@ -31,6 +31,13 @@ accordionCon.forEach( item => {
 
       if( !el )  return;
 
+      let text: undefined | string = undefined;
+
+      isCollapse && ( text = el.dataset.acccollapsetext );
+      !isCollapse && ( text = el.dataset.accexpendtext );
+
+      text !== undefined && ( el.innerText = text );
+
       if( isCollapse ) el.classList.add( 'collapsed' );
    });
 
