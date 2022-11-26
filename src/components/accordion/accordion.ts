@@ -19,10 +19,9 @@ accordionCon.forEach( item => {
    if( isCollapse )  {
       item.style.height = '0';
       item.style.display = 'none';
-      item.classList.add( 'hidden' );
+      // item.classList.add( 'hidden' );
    } else if( !isCollapse ) {
       item.style.height = item.offsetHeight + 'px';
-      item.classList.remove( 'hidden' );
    }
 
    ///adding collapse class to all the triggerer
@@ -33,8 +32,8 @@ accordionCon.forEach( item => {
 
       let text: undefined | string = undefined;
 
-      isCollapse && ( text = el.dataset.acccollapsetext );
-      !isCollapse && ( text = el.dataset.accexpendtext );
+      isCollapse && ( text = el.dataset.acccollapsetext ) && ( el.setAttribute( 'aria-expanded', 'false' ) );
+      !isCollapse && ( text = el.dataset.accexpendtext ) && ( el.setAttribute( 'aria-expanded', 'true' ) );
 
       text !== undefined && ( el.innerText = text );
 
@@ -84,7 +83,7 @@ document.body.addEventListener( 'click', function( e )  {
      }, 0);
 
      accordion.dataset.collapse = 'false';
-     accordion.classList.remove( 'hidden' );
+
    } else if( !isCollapse )  {
 
       accordion.style.height = '0';
@@ -94,7 +93,6 @@ document.body.addEventListener( 'click', function( e )  {
       }, accAnimationTime );
 
       accordion.dataset.collapse = 'true';
-      accordion.classList.add( 'hidden' );      
    };
 
    //change collapse text of all triggerer if they have one
@@ -104,8 +102,14 @@ document.body.addEventListener( 'click', function( e )  {
 
       let text: undefined | string = undefined;
 
-      if( isCollapse && ( text = el.dataset.accexpendtext ) )  el.classList.remove( 'collapsed' );
-      if( !isCollapse && ( text = el.dataset.acccollapsetext ) ) el.classList.add( 'collapsed' );
+      if( isCollapse && ( text = el.dataset.accexpendtext ) )  {
+         el.setAttribute( 'aria-expanded', 'true');
+         el.classList.remove( 'collapsed' );
+      } 
+      if( !isCollapse && ( text = el.dataset.acccollapsetext ) ) {
+         el.setAttribute( 'aria-expanded', 'false');
+         el.classList.add( 'collapsed' );
+      }
 
       text !== undefined && ( el.innerText = text );
    });

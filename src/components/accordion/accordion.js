@@ -18,11 +18,10 @@ accordionCon.forEach(item => {
     if (isCollapse) {
         item.style.height = '0';
         item.style.display = 'none';
-        item.classList.add('hidden');
+        // item.classList.add( 'hidden' );
     }
     else if (!isCollapse) {
         item.style.height = item.offsetHeight + 'px';
-        item.classList.remove('hidden');
     }
     ///adding collapse class to all the triggerer
     (_a = item.dataset.targetbtn) === null || _a === void 0 ? void 0 : _a.split(',').map(id => {
@@ -30,8 +29,8 @@ accordionCon.forEach(item => {
         if (!el)
             return;
         let text = undefined;
-        isCollapse && (text = el.dataset.acccollapsetext);
-        !isCollapse && (text = el.dataset.accexpendtext);
+        isCollapse && (text = el.dataset.acccollapsetext) && (el.setAttribute('aria-expanded', 'false'));
+        !isCollapse && (text = el.dataset.accexpendtext) && (el.setAttribute('aria-expanded', 'true'));
         text !== undefined && (el.innerText = text);
         if (isCollapse)
             el.classList.add('collapsed');
@@ -71,7 +70,6 @@ document.body.addEventListener('click', function (e) {
             accordion.style.height = acHeight + 'px';
         }, 0);
         accordion.dataset.collapse = 'false';
-        accordion.classList.remove('hidden');
     }
     else if (!isCollapse) {
         accordion.style.height = '0';
@@ -79,7 +77,6 @@ document.body.addEventListener('click', function (e) {
             accordion.style.display = 'none';
         }, accAnimationTime);
         accordion.dataset.collapse = 'true';
-        accordion.classList.add('hidden');
     }
     ;
     //change collapse text of all triggerer if they have one
@@ -88,10 +85,14 @@ document.body.addEventListener('click', function (e) {
         if (!el)
             return;
         let text = undefined;
-        if (isCollapse && (text = el.dataset.accexpendtext))
+        if (isCollapse && (text = el.dataset.accexpendtext)) {
+            el.setAttribute('aria-expanded', 'true');
             el.classList.remove('collapsed');
-        if (!isCollapse && (text = el.dataset.acccollapsetext))
+        }
+        if (!isCollapse && (text = el.dataset.acccollapsetext)) {
+            el.setAttribute('aria-expanded', 'false');
             el.classList.add('collapsed');
+        }
         text !== undefined && (el.innerText = text);
     });
 });

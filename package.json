@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Abhishek-Yesankar/JS-Components/issues"
   },
-  "homepage": "https://github.com/Abhishek-Yesankar/JS-Components#readme"
+  "homepage": "https://github.com/Abhishek-Yesankar/JS-Components#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.2.4"
+  }
 }
