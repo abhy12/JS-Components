@@ -4,7 +4,7 @@
   "description": "js components ",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "concurrently --kill-others \"tsc -watch\" \"npx tailwindcss -i ./src/style.css -o ./src/components/style.css --watch\""
   },
   "repository": {
     "type": "git",
@@ -18,5 +18,8 @@
   "homepage": "https://github.com/Abhishek-Yesankar/JS-Components#readme",
   "devDependencies": {
     "tailwindcss": "^3.2.4"
+  },
+  "dependencies": {
+    "concurrently": "^7.6.0"
   }
 }

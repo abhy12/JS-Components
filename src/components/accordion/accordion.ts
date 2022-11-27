@@ -1,6 +1,6 @@
 ///you can change prefix if you want to
 const PREFIX = 'jsc',
-      ACCORDIONSELECTOR = `[data-${PREFIX}-accCon='true']`,
+      ACCORDIONSELECTOR = `[data-${PREFIX}-accCon='']:not([data-${PREFIX}-accCon='false'])`,
       accordionCon = document.querySelectorAll(ACCORDIONSELECTOR) as NodeListOf<HTMLElement>;
 /**
  * TO DO

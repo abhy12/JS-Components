@@ -1,6 +1,6 @@
 "use strict";
 ///you can change prefix if you want to
-const PREFIX = 'jsc', ACCORDIONSELECTOR = `[data-${PREFIX}-accCon='true']`, accordionCon = document.querySelectorAll(ACCORDIONSELECTOR);
+const PREFIX = 'jsc', ACCORDIONSELECTOR = `[data-${PREFIX}-accCon='']:not([data-${PREFIX}-accCon='false'])`, accordionCon = document.querySelectorAll(ACCORDIONSELECTOR);
 /**
  * TO DO
  * add A11y

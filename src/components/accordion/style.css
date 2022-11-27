@@ -12,3 +12,12 @@ body{
   transition: all 300ms ease-in-out;
   margin: 0;
 }
+
+button{
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #eee;
+  background: #38bdf8;
+  color: #fff;
+  font-weight: 500;
+}
