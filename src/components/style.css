@@ -551,6 +551,10 @@ video {
   visibility: collapse;
 }
 
+.inline {
+  display: inline;
+}
+
 .hidden {
   display: none;
 }
