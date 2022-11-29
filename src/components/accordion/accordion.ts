@@ -9,12 +9,18 @@ const PREFIX = 'jsc',
  * think about if multiple target can be allowed
  */
 accordionCon.forEach( item => {
-   ///if initial state not provided of the accrodion container
-	if( item.dataset.collapse === undefined || item.dataset.collapse === '' ) item.setAttribute( `data-collapse`, 'true' );
+   const id = item.id;
 
-   ///check to see if default accrodion collapse data is false or otherwise 
+   ///if initial state not provided of the accordion
+	if( item.dataset.collapse === undefined || 
+      ( item.dataset.collapse !== 'false' && item.dataset.collapse !== 'true' ) ) item.setAttribute( `data-collapse`, 'true' );
+   
+   ///not returning because it can be 
+   if( id !== '' )  document.querySelector( `[data-${PREFIX}-target="${id}"]` )?.setAttribute( 'aria-controls', id );
+
+   ///check to see if default accordion collapse data is false or otherwise 
    ///collapse default data value can be anything
-   ///if it's false then the accrodion is expended otherwise collapsed
+   ///if it's false then the accordion is expended otherwise collapsed
 	const isCollapse = item.dataset.collapse === 'false' ? false : true;
    const accAnimationTime = +window.getComputedStyle( item ).getPropertyValue('transition-duration').replace( /s/, '' ) * 1000;
 
@@ -53,6 +59,7 @@ document.body.addEventListener( 'click', function( e )  {
       ///is container collapsed
       const isCollapse = accordion.dataset.collapse === 'true' ? true : false;
       const accAnimationTime = +window.getComputedStyle( accordion ).getPropertyValue('transition-duration').replace( /s/, '' ) * 1000;
+      let acHeight = accordion.offsetHeight;
 
       if( isCollapse )  {
          //it will change the whatever display the element has before
@@ -65,7 +72,7 @@ document.body.addEventListener( 'click', function( e )  {
          // accordion.setAttribute('style', 'height:auto !important');
     
          ///save the height of futher use
-         const acHeight = accordion.offsetHeight;
+         acHeight = accordion.offsetHeight;
     
          ///immediately change the element height to 0
          accordion.style.height = '0';
@@ -83,8 +90,6 @@ document.body.addEventListener( 'click', function( e )  {
          accordion.dataset.collapse = 'false';
     
       } else if( !isCollapse )  {
-         ///save the height of futher use
-         const acHeight = accordion.offsetHeight;
 
          accordion.style.height = acHeight + 'px';
 
@@ -94,6 +99,7 @@ document.body.addEventListener( 'click', function( e )  {
 
          setTimeout( () => {
             accordion.style.display = 'none';
+            accordion.style.height = '';
          }, accAnimationTime );
 
          accordion.dataset.collapse = 'true';

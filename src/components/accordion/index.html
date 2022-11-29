@@ -14,33 +14,33 @@
 </head>
 
 <body>
-
     <div>
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias, consequatur. Voluptatem, sed.</p>
         <a id="a" href="#" role="button">read more</a>
     </div>
     <h3>Set Default Collapsed</h3>
-    <p id="acc-1" class="accordion" data-jsc-accCon="" data-collapse="">Lorem ipsum dolor, sit
+    <p id="eg-1" class="accordion" data-jsc-accCon="">Lorem ipsum dolor, sit
         amet consectetur adipisicing elit. Quae sit quam, ab blanditiis itaque aliquid. Fuga sint
         eos expedita odit ullam repudiandae corrupti sed deleniti?
        <button data-accClose="">Close</button>
     </p>
-    <button id="eg-1" data-accExpendText="Expend" data-accCollapseText="Collapse" data-jsc-target="acc-1">Collapse</button>
+    <button data-accExpendText="Expend" data-accCollapseText="Collapse" data-jsc-target="eg-1">Collapse</button>
     <hr>
     <h3>If initial state not set default Expended state will be use</h3>
-    <p class="accordion" data-jsc-accCon="true" data-targetBtn="#eg-2">Lorem ipsum
+    <p id="eg-2" class="accordion" data-jsc-accCon="">Lorem ipsum
         dolor, sit amet consectetur adipisicing elit. Quae sit quam, ab blanditiis itaque aliquid. Fuga sint
         eos expedita odit ullam repudiandae corrupti sed deleniti?</p>
-    <button data-targetCon="" id="eg-2" data-accExpendText="Expend" data-accCollapseText="Collapse">Collapse</button>
+    <button data-jsc-target="eg-2" data-accExpendText="Expend" data-accCollapseText="Collapse">Collapse</button>
     <hr>
     <h3>Two Method to collapse with inside button</h3>
-    <p class="accordion" data-jsc-accCon="true" data-targetBtn="#eg-3,#eg-4">Lorem ipsum dolor, sit
+    <p id="eg-3" class="accordion" data-jsc-accCon="true" data-targetBtn="#eg-3,#eg-4">Lorem ipsum dolor, sit
         amet consectetur adipisicing elit. Quae sit quam, ab blanditiis itaque aliquid. Fuga sint
         eos expedita odit ullam repudiandae corrupti sed deleniti?
        <button data-accClose="">Close</button>
-       <button id="eg-4" data-accExpendText="Expend" data-accCollapseText="Collapse">Close</button>
+       <!-- the others triggerer text won't update if you click this if they have one -->
+       <button data-jsc-target="eg-3" data-accExpendText="Expend" data-accCollapseText="Collapse">Close</button>
     </p>
-    <button id="eg-3" data-accExpendText="Expend" data-accCollapseText="Collapse">Collapse</button>
+    <button data-jsc-target="eg-3" data-accExpendText="Expend" data-accCollapseText="Collapse">Collapse</button>
     <script src="./accordion.js"></script>
 </body>
 

@@ -8,20 +8,25 @@ const PREFIX = 'jsc', ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]:not([data-${P
  * think about if multiple target can be allowed
  */
 accordionCon.forEach(item => {
-    var _a;
-    ///if initial state not provided of the accrodion container
-    if (item.dataset.collapse === undefined || item.dataset.collapse === '')
+    var _a, _b;
+    const id = item.id;
+    ///if initial state not provided of the accordion
+    if (item.dataset.collapse === undefined ||
+        (item.dataset.collapse !== 'false' && item.dataset.collapse !== 'true'))
         item.setAttribute(`data-collapse`, 'true');
-    ///check to see if default accrodion collapse data is false or otherwise 
+    ///not returning because it can be 
+    if (id !== '')
+        (_a = document.querySelector(`[data-${PREFIX}-target="${id}"]`)) === null || _a === void 0 ? void 0 : _a.setAttribute('aria-controls', id);
+    ///check to see if default accordion collapse data is false or otherwise 
     ///collapse default data value can be anything
-    ///if it's false then the accrodion is expended otherwise collapsed
+    ///if it's false then the accordion is expended otherwise collapsed
     const isCollapse = item.dataset.collapse === 'false' ? false : true;
     const accAnimationTime = +window.getComputedStyle(item).getPropertyValue('transition-duration').replace(/s/, '') * 1000;
     ///initialize container
     if (isCollapse)
         item.style.display = 'none';
     ///adding collapse class to all the triggerer
-    (_a = item.id) === null || _a === void 0 ? void 0 : _a.split(' ').map(id => {
+    (_b = item.id) === null || _b === void 0 ? void 0 : _b.split(' ').map(id => {
         if (id === '')
             return;
         const el = document.querySelector(`[data-${PREFIX}-target="${id}"]`);
@@ -46,6 +51,7 @@ document.body.addEventListener('click', function (e) {
         ///is container collapsed
         const isCollapse = accordion.dataset.collapse === 'true' ? true : false;
         const accAnimationTime = +window.getComputedStyle(accordion).getPropertyValue('transition-duration').replace(/s/, '') * 1000;
+        let acHeight = accordion.offsetHeight;
         if (isCollapse) {
             //it will change the whatever display the element has before
             accordion.style.display = '';
@@ -54,7 +60,7 @@ document.body.addEventListener('click', function (e) {
             ///not using this method for now might be using this in future
             // accordion.setAttribute('style', 'height:auto !important');
             ///save the height of futher use
-            const acHeight = accordion.offsetHeight;
+            acHeight = accordion.offsetHeight;
             ///immediately change the element height to 0
             accordion.style.height = '0';
             ///wait just a little bit for animation to work properly
@@ -68,14 +74,13 @@ document.body.addEventListener('click', function (e) {
             accordion.dataset.collapse = 'false';
         }
         else if (!isCollapse) {
-            ///save the height of futher use
-            const acHeight = accordion.offsetHeight;
             accordion.style.height = acHeight + 'px';
             setTimeout(() => {
                 accordion.style.height = '0';
             }, 0);
             setTimeout(() => {
                 accordion.style.display = 'none';
+                accordion.style.height = '';
             }, accAnimationTime);
             accordion.dataset.collapse = 'true';
         }

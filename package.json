@@ -4,7 +4,7 @@
   "description": "js components ",
   "main": "index.html",
   "scripts": {
-    "start": "concurrently --kill-others \"tsc -watch\" \"npx tailwindcss -i ./src/style.css -o ./src/components/style.css --watch\""
+    "start": "concurrently --kill-others \"tsc -watch\" \"npx tailwindcss -i ./src/style.css -o ./src/components/style.css --watch --minify\""
   },
   "repository": {
     "type": "git",
