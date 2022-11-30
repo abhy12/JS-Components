@@ -4,9 +4,7 @@ const PREFIX = 'jsc',
       accordionCon = document.querySelectorAll(ACCORDIONSELECTOR) as NodeListOf<HTMLElement>;
 /**
  * TO DO
- * add A11y
  * create function or class to create new accordion
- * think about if multiple target can be allowed
  */
 accordionCon.forEach( item => {
    const id = item.id;
@@ -22,18 +20,14 @@ accordionCon.forEach( item => {
    ///collapse default data value can be anything
    ///if it's false then the accordion is expended otherwise collapsed
 	const isCollapse = item.dataset.collapse === 'false' ? false : true;
-   const accAnimationTime = +window.getComputedStyle( item ).getPropertyValue('transition-duration').replace( /s/, '' ) * 1000;
 
    ///initialize container
    if( isCollapse ) item.style.display = 'none';
 
    ///adding collapse class to all the triggerer
-   item.id?.split( ' ' ).map( id => {
-      if( id === '' ) return;
+   const triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${item.id}"]` ) as NodeListOf<HTMLElement>;
 
-      const el = document.querySelector( `[data-${PREFIX}-target="${id}"]` ) as HTMLElement;
-
-      if( !el )  return;
+   triggerer.forEach( ( el: HTMLElement ) => {
 
       let text: undefined | string = undefined;
 
@@ -42,7 +36,15 @@ accordionCon.forEach( item => {
 
       text !== undefined && ( el.innerText = text );
 
-      if( isCollapse ) el.classList.add( 'collapsed' );
+      if( isCollapse && ( text = el.dataset.acccollapsetext ) ) {
+         el.setAttribute( 'aria-expanded', 'false' );
+         el.classList.add( 'collapsed' );
+      }
+
+      if( !isCollapse && ( text = el.dataset.accexpendtext ) )  {
+         el.setAttribute( 'aria-expanded', 'true' );
+         el.classList.remove( 'collapsed' );
+      }
    });
 });
 
@@ -57,7 +59,7 @@ document.body.addEventListener( 'click', function( e )  {
       if( !accordion ) return;
 
       ///is container collapsed
-      const isCollapse = accordion.dataset.collapse === 'true' ? true : false;
+      let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
       const accAnimationTime = +window.getComputedStyle( accordion ).getPropertyValue('transition-duration').replace( /s/, '' ) * 1000;
       let acHeight = accordion.offsetHeight;
 
@@ -89,6 +91,8 @@ document.body.addEventListener( 'click', function( e )  {
     
          accordion.dataset.collapse = 'false';
     
+         isCollapse = false;
+
       } else if( !isCollapse )  {
 
          accordion.style.height = acHeight + 'px';
@@ -103,20 +107,27 @@ document.body.addEventListener( 'click', function( e )  {
          }, accAnimationTime );
 
          accordion.dataset.collapse = 'true';
+
+         isCollapse = true;
       };
 
-      let text: undefined | string = undefined;
+      const triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${accordion.id}"]` ) as NodeListOf<HTMLElement>;
 
-      if( isCollapse && ( text = target.dataset.accexpendtext ) )  {
-         target.setAttribute( 'aria-expanded', 'true');
-         target.classList.remove( 'collapsed' );
-      }
+      triggerer.forEach( ( el: HTMLElement ) => {
+   
+         let text: undefined | string = undefined;
+   
+         if( isCollapse && ( text = el.dataset.acccollapsetext ) ) {
+         el.setAttribute( 'aria-expanded', 'false' );
+         el.classList.add( 'collapsed' );
+         }
 
-      if( !isCollapse && ( text = target.dataset.acccollapsetext ) ) {
-         target.setAttribute( 'aria-expanded', 'false');
-         target.classList.add( 'collapsed' );
-      }
+         if( !isCollapse && ( text = el.dataset.accexpendtext ) )  {
+         el.setAttribute( 'aria-expanded', 'true' );
+         el.classList.remove( 'collapsed' );
+         }
 
-      text !== undefined && ( target.innerText = text );
+         text !== undefined && ( el.innerText = text );
+      });
    }
 });
