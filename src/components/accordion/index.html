@@ -15,13 +15,12 @@
 
 <body>
     <h3>Default is Collapsed</h3>
+    <button data-accExpendText="Expend" data-accCollapseText="Collapse" data-jsc-target="eg-1">Expend</button>
     <p id="eg-1" class="accordion" data-jsc-accCon="">Lorem ipsum dolor, sit
         amet consectetur adipisicing elit. Quae sit quam, ab blanditiis itaque aliquid. Fuga sint
         eos expedita odit ullam repudiandae corrupti sed deleniti?
     </p>
     <button data-accExpendText="Expend" data-accCollapseText="Collapse" data-jsc-target="eg-1">Expend</button>
-    <button data-accExpendText="Expend" data-accCollapseText="Collapse" data-jsc-target="eg-1">Expend</button>
-
     <hr>
     <h3>If initial state not set default Expended state will be use</h3>
     <p id="eg-2" class="accordion" data-jsc-accCon="">Lorem ipsum
@@ -35,6 +34,21 @@
         eos expedita odit ullam repudiandae corrupti sed deleniti?
     </p>
     <button data-jsc-target="eg-3" data-accExpendText="Expend" data-accCollapseText="Collapse">Collapse</button>
+    <hr>
+    <h3>Background</h3>
+    <h1>Lorem ipsum dolor sit amet.</h1>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus architecto cupiditate magnam sed. Nihil, ipsam laudantium? At atque vel sint ea rerum nesciunt ut similique.</p>
+    <div id="eg-4" class="accordion flex gap-3 text-white bg-white" data-jsc-accCon="">
+       <div class="w-6/12 bg-red-600 p-6">
+          <h4>Lorem ipsum dolor sit amet consectetur adipisicing.</h4>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta incidunt odit iusto voluptatem doloribus quo.</p>
+       </div>
+       <div class="w-6/12 bg-red-600 p-6">
+        <h4>Lorem ipsum dolor sit amet consectetur adipisicing.</h4>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta incidunt odit iusto voluptatem doloribus quo.</p>
+     </div>
+    </div>
+    <button data-jsc-target="eg-4" data-accExpendText="Show Less" data-accCollapseText="Learn More">Learn More</button>
     <script src="./accordion.js"></script>
 </body>
 
