@@ -128,3 +128,55 @@ document.body.addEventListener( 'click', function( e )  {
       });
    }
 });
+
+
+interface AccordionArgs {
+   container: string,
+   button: string | [],
+   collapse?: boolean, 
+}
+
+class Accordion {
+   container: null | string = null;
+   collapsed: boolean = true;
+   button: null | undefined | string | [];
+
+   constructor( args: AccordionArgs )  {
+     this.container = args.container;
+
+     if( args.collapse !== undefined ) this.collapsed = args.collapse;
+     
+     if( args.button ) this.button = args.button;
+
+     this.#init();
+   }
+
+   #init()  {
+      if( !this.container ) return;
+
+      const container = ( document.querySelector( this.container ) as HTMLElement );
+
+      if( !container ) return;
+ 
+      ///if initial state not provided of the accordion
+      container.setAttribute( `data-${PREFIX}-accCon`, 'true' );
+      ///only expended if the value is falsey default is collapsed
+      container.setAttribute( 'data-collapse', `${!this.collapsed ? 'false' : 'true'}` );
+     
+      if( this.collapsed ) container.style.display = 'none';
+
+      if( !this.button || typeof this.button !== 'string' )  return;
+
+      const trigger = document.querySelector( this.button );
+
+      if( !trigger ) return;
+
+      trigger.setAttribute( `data-${PREFIX}-target`, container.id );
+      trigger.setAttribute( 'aria-expanded', `${!container.dataset.collapse}` );
+   }
+}
+
+const newAccordion = new Accordion({ 
+   container: '#cl-eg-1',
+   button: '#cl-eg-1-btn',
+});

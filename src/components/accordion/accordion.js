@@ -1,4 +1,10 @@
 "use strict";
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var _Accordion_instances, _Accordion_init;
 ///you can change prefix if you want to
 const PREFIX = 'jsc', ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]:not([data-${PREFIX}-accCon='false'])`, accordionCon = document.querySelectorAll(ACCORDIONSELECTOR);
 /**
@@ -98,5 +104,42 @@ document.body.addEventListener('click', function (e) {
             text !== undefined && (el.innerText = text);
         });
     }
+});
+class Accordion {
+    constructor(args) {
+        _Accordion_instances.add(this);
+        this.container = null;
+        this.collapsed = true;
+        this.container = args.container;
+        if (args.collapse !== undefined)
+            this.collapsed = args.collapse;
+        if (args.button)
+            this.button = args.button;
+        __classPrivateFieldGet(this, _Accordion_instances, "m", _Accordion_init).call(this);
+    }
+}
+_Accordion_instances = new WeakSet(), _Accordion_init = function _Accordion_init() {
+    if (!this.container)
+        return;
+    const container = document.querySelector(this.container);
+    if (!container)
+        return;
+    ///if initial state not provided of the accordion
+    container.setAttribute(`data-${PREFIX}-accCon`, 'true');
+    ///only expended if the value is falsey default is collapsed
+    container.setAttribute('data-collapse', `${!this.collapsed ? 'false' : 'true'}`);
+    if (this.collapsed)
+        container.style.display = 'none';
+    if (!this.button || typeof this.button !== 'string')
+        return;
+    const trigger = document.querySelector(this.button);
+    if (!trigger)
+        return;
+    trigger.setAttribute(`data-${PREFIX}-target`, container.id);
+    trigger.setAttribute('aria-expanded', `${!container.dataset.collapse}`);
+};
+const newAccordion = new Accordion({
+    container: '#cl-eg-1',
+    button: '#cl-eg-1-btn',
 });
 //# sourceMappingURL=accordion.js.map
