@@ -31,11 +31,6 @@ accordionCon.forEach( item => {
 
       let text: undefined | string = undefined;
 
-      isCollapse && ( text = el.dataset.acccollapsetext ) && ( el.setAttribute( 'aria-expanded', 'false' ) );
-      !isCollapse && ( text = el.dataset.accexpendtext ) && ( el.setAttribute( 'aria-expanded', 'true' ) );
-
-      text !== undefined && ( el.innerText = text );
-
       if( isCollapse && ( text = el.dataset.acccollapsetext ) ) {
          el.setAttribute( 'aria-expanded', 'false' );
          el.classList.add( 'collapsed' );
@@ -45,6 +40,8 @@ accordionCon.forEach( item => {
          el.setAttribute( 'aria-expanded', 'true' );
          el.classList.remove( 'collapsed' );
       }
+
+      text !== undefined && ( el.innerText = text );
    });
 });
 
