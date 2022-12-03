@@ -123,11 +123,17 @@ class Accordion {
     }
 }
 _Accordion_instances = new WeakSet(), _Accordion_init = function _Accordion_init() {
-    if (!this.container)
+    if (!this.container && typeof this.container !== 'string')
         return;
     const container = document.querySelector(this.container);
     if (!container)
         return;
+    let notId = this.container.match(/^[^#]*/);
+    if (notId && notId[0]) {
+        let randmoId = Math.floor((Math.random() * 9999) + 1);
+        this.container = `${PREFIX}${randmoId}`;
+        container.id = this.container;
+    }
     ///if initial state not provided of the accordion
     container.setAttribute(`data-${PREFIX}-accCon`, 'true');
     ///only expended if the value is falsey default is collapsed
@@ -146,5 +152,9 @@ _Accordion_instances = new WeakSet(), _Accordion_init = function _Accordion_init
 const newAccordion = new Accordion({
     container: '#cl-eg-1',
     button: '#cl-eg-1-btn',
+});
+const newAccordion2 = new Accordion({
+    container: '.cl-eg-2',
+    button: '#cl-eg-2-btn',
 });
 //# sourceMappingURL=accordion.js.map
