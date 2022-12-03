@@ -31,12 +31,14 @@ accordionCon.forEach( item => {
 
       let text: undefined | string = undefined;
 
-      if( isCollapse && ( text = el.dataset.acccollapsetext ) ) {
+      if( isCollapse )  {
+         text = el.dataset.acccollapsetext
          el.setAttribute( 'aria-expanded', 'false' );
          el.classList.add( 'collapsed' );
       }
 
-      if( !isCollapse && ( text = el.dataset.accexpendtext ) )  {
+      if( !isCollapse )  {
+         text = el.dataset.accexpendtext
          el.setAttribute( 'aria-expanded', 'true' );
          el.classList.remove( 'collapsed' );
       }
@@ -114,14 +116,16 @@ document.body.addEventListener( 'click', function( e )  {
    
          let text: undefined | string = undefined;
    
-         if( isCollapse && ( text = el.dataset.acccollapsetext ) ) {
-         el.setAttribute( 'aria-expanded', 'false' );
-         el.classList.add( 'collapsed' );
+         if( isCollapse ) {
+            text = el.dataset.acccollapsetext
+            el.setAttribute( 'aria-expanded', 'false' );
+            el.classList.add( 'collapsed' );
          }
 
-         if( !isCollapse && ( text = el.dataset.accexpendtext ) )  {
-         el.setAttribute( 'aria-expanded', 'true' );
-         el.classList.remove( 'collapsed' );
+         if( !isCollapse )  {
+            text = el.dataset.accexpendtext
+            el.setAttribute( 'aria-expanded', 'true' );
+            el.classList.remove( 'collapsed' );
          }
 
          text !== undefined && ( el.innerText = text );
@@ -173,6 +177,7 @@ class Accordion {
 
       trigger.setAttribute( `data-${PREFIX}-target`, container.id );
       trigger.setAttribute( 'aria-expanded', `${!container.dataset.collapse}` );
+      trigger.setAttribute( 'aria-controls', container.id.replace( /^#/, '' ) );
    }
 }
 

@@ -32,11 +32,13 @@ accordionCon.forEach(item => {
     const triggerer = document.querySelectorAll(`[data-${PREFIX}-target="${item.id}"]`);
     triggerer.forEach((el) => {
         let text = undefined;
-        if (isCollapse && (text = el.dataset.acccollapsetext)) {
+        if (isCollapse) {
+            text = el.dataset.acccollapsetext;
             el.setAttribute('aria-expanded', 'false');
             el.classList.add('collapsed');
         }
-        if (!isCollapse && (text = el.dataset.accexpendtext)) {
+        if (!isCollapse) {
+            text = el.dataset.accexpendtext;
             el.setAttribute('aria-expanded', 'true');
             el.classList.remove('collapsed');
         }
@@ -93,11 +95,13 @@ document.body.addEventListener('click', function (e) {
         const triggerer = document.querySelectorAll(`[data-${PREFIX}-target="${accordion.id}"]`);
         triggerer.forEach((el) => {
             let text = undefined;
-            if (isCollapse && (text = el.dataset.acccollapsetext)) {
+            if (isCollapse) {
+                text = el.dataset.acccollapsetext;
                 el.setAttribute('aria-expanded', 'false');
                 el.classList.add('collapsed');
             }
-            if (!isCollapse && (text = el.dataset.accexpendtext)) {
+            if (!isCollapse) {
+                text = el.dataset.accexpendtext;
                 el.setAttribute('aria-expanded', 'true');
                 el.classList.remove('collapsed');
             }
@@ -137,6 +141,7 @@ _Accordion_instances = new WeakSet(), _Accordion_init = function _Accordion_init
         return;
     trigger.setAttribute(`data-${PREFIX}-target`, container.id);
     trigger.setAttribute('aria-expanded', `${!container.dataset.collapse}`);
+    trigger.setAttribute('aria-controls', container.id.replace(/^#/, ''));
 };
 const newAccordion = new Accordion({
     container: '#cl-eg-1',
