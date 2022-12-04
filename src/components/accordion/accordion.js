@@ -1,10 +1,4 @@
 "use strict";
-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-};
-var _Accordion_instances, _Accordion_init;
 ///you can change prefix if you want to
 const PREFIX = 'jsc', ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]:not([data-${PREFIX}-accCon='false'])`, accordionCon = document.querySelectorAll(ACCORDIONSELECTOR);
 /**
@@ -14,11 +8,11 @@ const PREFIX = 'jsc', ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]:not([data-${P
 accordionCon.forEach(item => {
     var _a;
     const id = item.id;
+    console.log(item instanceof HTMLElement);
     ///if initial state not provided of the accordion
     if (item.dataset.collapse === undefined ||
         (item.dataset.collapse !== 'false' && item.dataset.collapse !== 'true'))
         item.setAttribute(`data-collapse`, 'true');
-    ///not returning because it can be 
     if (id !== '')
         (_a = document.querySelector(`[data-${PREFIX}-target="${id}"]`)) === null || _a === void 0 ? void 0 : _a.setAttribute('aria-controls', id);
     ///check to see if default accordion collapse data is false or otherwise 
@@ -111,44 +105,51 @@ document.body.addEventListener('click', function (e) {
 });
 class Accordion {
     constructor(args) {
-        _Accordion_instances.add(this);
-        this.container = null;
+        this.container = '';
         this.collapsed = true;
+        ///if container argument is empty return
+        if (!args.container)
+            return;
         this.container = args.container;
-        if (args.collapse !== undefined)
-            this.collapsed = args.collapse;
+        // @ts-ignore
+        if (args.collapse !== undefined && (args.collapse === false || args.collapse === 'false'))
+            this.collapsed = false;
         if (args.button)
             this.button = args.button;
-        __classPrivateFieldGet(this, _Accordion_instances, "m", _Accordion_init).call(this);
+        this._init();
+    }
+    _init() {
+        let container = null, noIdFound;
+        if (this.container instanceof HTMLElement) {
+            container = this.container;
+        }
+        else if (typeof this.container === 'string') {
+            container = document.querySelector(this.container);
+        }
+        if (!container)
+            return;
+        if (container.id === '')
+            noIdFound = true;
+        if (noIdFound) {
+            let randmoId = Math.floor((Math.random() * 1000) + 1);
+            container.id = `${PREFIX}${randmoId}`;
+        }
+        ///if initial state not provided of the accordion
+        container.setAttribute(`data-${PREFIX}-accCon`, 'true');
+        ///only expended if the value is falsey default is collapsed
+        container.setAttribute('data-collapse', `${!this.collapsed ? 'false' : 'true'}`);
+        if (this.collapsed)
+            container.style.display = 'none';
+        if (!this.button || typeof this.button !== 'string')
+            return;
+        const trigger = document.querySelector(this.button);
+        if (!trigger)
+            return;
+        trigger.setAttribute(`data-${PREFIX}-target`, container.id);
+        trigger.setAttribute('aria-expanded', `${!container.dataset.collapse}`);
+        trigger.setAttribute('aria-controls', container.id.replace(/^#/, ''));
     }
 }
-_Accordion_instances = new WeakSet(), _Accordion_init = function _Accordion_init() {
-    if (!this.container && typeof this.container !== 'string')
-        return;
-    const container = document.querySelector(this.container);
-    if (!container)
-        return;
-    let notId = this.container.match(/^[^#]*/);
-    if (notId && notId[0]) {
-        let randmoId = Math.floor((Math.random() * 9999) + 1);
-        this.container = `${PREFIX}${randmoId}`;
-        container.id = this.container;
-    }
-    ///if initial state not provided of the accordion
-    container.setAttribute(`data-${PREFIX}-accCon`, 'true');
-    ///only expended if the value is falsey default is collapsed
-    container.setAttribute('data-collapse', `${!this.collapsed ? 'false' : 'true'}`);
-    if (this.collapsed)
-        container.style.display = 'none';
-    if (!this.button || typeof this.button !== 'string')
-        return;
-    const trigger = document.querySelector(this.button);
-    if (!trigger)
-        return;
-    trigger.setAttribute(`data-${PREFIX}-target`, container.id);
-    trigger.setAttribute('aria-expanded', `${!container.dataset.collapse}`);
-    trigger.setAttribute('aria-controls', container.id.replace(/^#/, ''));
-};
 const newAccordion = new Accordion({
     container: '#cl-eg-1',
     button: '#cl-eg-1-btn',

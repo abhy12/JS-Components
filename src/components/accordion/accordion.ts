@@ -8,12 +8,11 @@ const PREFIX = 'jsc',
  */
 accordionCon.forEach( item => {
    const id = item.id;
-
+   console.log( item instanceof HTMLElement );
    ///if initial state not provided of the accordion
 	if( item.dataset.collapse === undefined || 
       ( item.dataset.collapse !== 'false' && item.dataset.collapse !== 'true' ) ) item.setAttribute( `data-collapse`, 'true' );
-   
-   ///not returning because it can be 
+
    if( id !== '' )  document.querySelector( `[data-${PREFIX}-target="${id}"]` )?.setAttribute( 'aria-controls', id );
 
    ///check to see if default accordion collapse data is false or otherwise 
@@ -133,47 +132,54 @@ document.body.addEventListener( 'click', function( e )  {
    }
 });
 
-
 interface AccordionArgs {
-   container: string,
-   button: string | [],
+   container: string | HTMLElement,
+   button: string | HTMLElement[] | HTMLElement | null | undefined,
    collapse?: boolean, 
 }
 
 class Accordion {
-   container: null | string = null;
+   container: AccordionArgs['container'] = '';
    collapsed: boolean = true;
-   button: null | undefined | string | [];
+   button: AccordionArgs['button'];
 
    constructor( args: AccordionArgs )  {
+     ///if container argument is empty return
+     if( !args.container ) return;
+
      this.container = args.container;
 
-     if( args.collapse !== undefined ) this.collapsed = args.collapse;
-     
+     // @ts-ignore
+     if( args.collapse !== undefined && ( args.collapse === false || args.collapse === 'false' ) ) this.collapsed = false;
+
      if( args.button ) this.button = args.button;
 
-     this.#init();
+     this._init();
    }
 
-   #init()  {
-      if( !this.container && typeof this.container !== 'string' ) return;
+   _init()  {
+      let container = null, noIdFound;
+      if( this.container instanceof HTMLElement )  {
+         container = this.container;
 
-      const container = ( document.querySelector( this.container ) as HTMLElement );
+      } else if( typeof this.container === 'string' )  {
+         container = ( document.querySelector( this.container ) as HTMLElement );
+      }
+
       if( !container ) return;
 
-      let notId: RegExpMatchArray | null = this.container.match( /^[^#]*/ );
+      if( container.id === '' ) noIdFound = true
 
-      if( notId && notId[0] )  {
-         let randmoId =  Math.floor(( Math.random() * 9999 ) + 1);
-         this.container = `${PREFIX}${randmoId}`;
-         container.id = this.container;
+      if( noIdFound )  {
+         let randmoId =  Math.floor(( Math.random() * 1000 ) + 1);
+         container.id = `${PREFIX}${randmoId}`;
       }
 
       ///if initial state not provided of the accordion
       container.setAttribute( `data-${PREFIX}-accCon`, 'true' );
       ///only expended if the value is falsey default is collapsed
       container.setAttribute( 'data-collapse', `${!this.collapsed ? 'false' : 'true'}` );
-     
+
       if( this.collapsed ) container.style.display = 'none';
 
       if( !this.button || typeof this.button !== 'string' )  return;
