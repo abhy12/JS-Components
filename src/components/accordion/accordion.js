@@ -8,7 +8,6 @@ const PREFIX = 'jsc', ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]:not([data-${P
 accordionCon.forEach(item => {
     var _a;
     const id = item.id;
-    console.log(item instanceof HTMLElement);
     ///if initial state not provided of the accordion
     if (item.dataset.collapse === undefined ||
         (item.dataset.collapse !== 'false' && item.dataset.collapse !== 'true'))
@@ -119,7 +118,8 @@ class Accordion {
         this._init();
     }
     _init() {
-        let container = null, noIdFound;
+        let container = null;
+        ///check if container value is htmlElement or some DOM query
         if (this.container instanceof HTMLElement) {
             container = this.container;
         }
@@ -128,26 +128,40 @@ class Accordion {
         }
         if (!container)
             return;
-        if (container.id === '')
-            noIdFound = true;
-        if (noIdFound) {
-            let randmoId = Math.floor((Math.random() * 1000) + 1);
+        ///i know it's weird but doing this because we can use container further
+        this.container = container;
+        ///set new id if the container don't have an ID
+        if (container.id === '') {
+            const randmoId = Math.floor((Math.random() * 1000) + 1);
             container.id = `${PREFIX}${randmoId}`;
         }
-        ///if initial state not provided of the accordion
-        container.setAttribute(`data-${PREFIX}-accCon`, 'true');
-        ///only expended if the value is falsey default is collapsed
-        container.setAttribute('data-collapse', `${!this.collapsed ? 'false' : 'true'}`);
+        ///set accordion data
+        if (container.getAttribute(`data-${PREFIX}-accCon`) === null || container.getAttribute(`data-${PREFIX}-accCon`) !== 'false') {
+            container.setAttribute(`data-${PREFIX}-accCon`, 'true');
+        }
+        // @ts-ignore
+        ///only false when collapsed explicitly has false value, default is true
+        this.collapsed = (this.collapsed !== false || this.collapsed !== 'false') ? true : false;
+        container.setAttribute('data-collapse', this.collapsed + '');
+        ///if the collapse value is true hide the element
         if (this.collapsed)
             container.style.display = 'none';
+        this._init_target();
+    }
+    _init_target() {
+        // @ts-ignore
+        const containerId = this.container.id;
+        let trigger = null;
+        // if( this.button instanceof HTMLElement )  {
+        // }
         if (!this.button || typeof this.button !== 'string')
             return;
-        const trigger = document.querySelector(this.button);
+        trigger = document.querySelector(this.button);
         if (!trigger)
             return;
-        trigger.setAttribute(`data-${PREFIX}-target`, container.id);
-        trigger.setAttribute('aria-expanded', `${!container.dataset.collapse}`);
-        trigger.setAttribute('aria-controls', container.id.replace(/^#/, ''));
+        trigger.setAttribute(`data-${PREFIX}-target`, containerId);
+        trigger.setAttribute('aria-expanded', `${!this.collapsed}`);
+        trigger.setAttribute('aria-controls', containerId);
     }
 }
 const newAccordion = new Accordion({
