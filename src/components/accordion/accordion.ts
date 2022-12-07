@@ -9,7 +9,7 @@ const PREFIX = 'jsc',
  * Work trigger event
  */
 
- interface AccordionArgs {
+interface AccordionArgs {
    container: string | HTMLElement,
    button?: string | Element | HTMLElement | HTMLCollectionOf<HTMLElement> | NodeListOf<HTMLElement> | HTMLElement[] | undefined | null,
    collapse?: boolean | undefined, 
