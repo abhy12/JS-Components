@@ -1,17 +1,15 @@
 ///you can change prefix if you want to
 const PREFIX = 'jsc',
       ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]:not([data-${PREFIX}-accCon='false'])`,
-      accordionCon = document.querySelectorAll(ACCORDIONSELECTOR) as NodeListOf<HTMLElement>;
+      allAccordion = document.querySelectorAll(ACCORDIONSELECTOR) as NodeListOf<HTMLElement>;
 /**
- * TO DO
- * Short the name of expend and collapse text dataset
- * Work on triggerer array
+ * TODO
  * Work trigger event
  */
 
 interface AccordionArgs {
    container: string | HTMLElement,
-   button?: string | Element | HTMLElement | HTMLCollectionOf<HTMLElement> | NodeListOf<HTMLElement> | HTMLElement[] | undefined | null,
+   button?: string | Element | HTMLElement | HTMLCollectionOf<HTMLElement> | NodeListOf<HTMLElement> | (HTMLElement| string)[] | undefined | null,
    collapse?: boolean | undefined, 
 }
 
@@ -85,11 +83,19 @@ class Accordion {
          return;
       };
 
-      if( this.button instanceof HTMLCollection || this.button instanceof NodeList )  {
+      if( this.button instanceof HTMLCollection || this.button instanceof NodeList || this.button instanceof Array )  {
+         //@ts-ignore
          const btns = Array.from( this.button );
-
+ 
          btns.forEach( ( el ) => {
-            const btn = el as HTMLElement;
+            if( el instanceof HTMLCollection || el instanceof NodeList ) return;
+
+            let btn: any = el;
+
+            if( typeof btn === 'string' )  {
+               btn = document.querySelector( btn );
+            }
+
             if( !btn ) return;
 
             this._finalizeTarget( btn );
@@ -108,18 +114,19 @@ class Accordion {
       let text: string | null;
 
       if( this.collapsed )  {
-         text = target.getAttribute( 'data-acccollapsetext' );
+         text = target.getAttribute( 'data-collapsetext' );
          target.classList.add( 'collapsed' );
       } else {
-         text = target.getAttribute( 'data-accexpendtext' );
+         text = target.getAttribute( 'data-expendtext' );
       }
 
       if( text !== null ) target.innerText = text;
    }
 }
 
-
-accordionCon.forEach( item => {
+///if the accordion exists in the dom tree 
+///assuming you have the controls of html 
+allAccordion.forEach( item => {
    const triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${item.id}"]` ) as NodeListOf<HTMLElement>;
 
    new Accordion({
@@ -141,6 +148,7 @@ document.body.addEventListener( 'click', function( e )  {
       ///is container collapsed
       let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
       const accAnimationTime = +window.getComputedStyle( accordion ).getPropertyValue('transition-duration').replace( /s/, '' ) * 1000;
+      ///save the height of futher use
       let acHeight = accordion.offsetHeight;
 
       if( isCollapse )  {
@@ -153,9 +161,13 @@ document.body.addEventListener( 'click', function( e )  {
          ///not using this method for now might be using this in future
          // accordion.setAttribute('style', 'height:auto !important');
     
-         ///save the height of futher use
+         /**
+          * update the height because if accordion is collapsed
+          * previous value has to be 0 and we need the current height 
+          * of the accordion for further use
+          */
          acHeight = accordion.offsetHeight;
-    
+
          ///immediately change the element height to 0
          accordion.style.height = '0';
     
@@ -198,13 +210,13 @@ document.body.addEventListener( 'click', function( e )  {
          let text: undefined | string = undefined;
    
          if( isCollapse ) {
-            text = el.dataset.acccollapsetext;
+            text = el.dataset.collapsetext;
             el.setAttribute( 'aria-expanded', 'false' );
             el.classList.add( 'collapsed' );
          }
 
          if( !isCollapse )  {
-            text = el.dataset.accexpendtext
+            text = el.dataset.expendtext
             el.setAttribute( 'aria-expanded', 'true' );
             el.classList.remove( 'collapsed' );
          }
@@ -219,7 +231,7 @@ const newAccordion = new Accordion({
    button: '#cl-eg-1-btn',
 });
 
-const secondbtn = document.getElementById( 'cl-eg-2-btn' );
+const secondbtn = ['#cl-eg-2-btn'];
 
 const newAccordion2 = new Accordion({
    container: '.cl-eg-2',

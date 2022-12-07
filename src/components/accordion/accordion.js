@@ -1,6 +1,6 @@
 "use strict";
 ///you can change prefix if you want to
-const PREFIX = 'jsc', ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]:not([data-${PREFIX}-accCon='false'])`, accordionCon = document.querySelectorAll(ACCORDIONSELECTOR);
+const PREFIX = 'jsc', ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]:not([data-${PREFIX}-accCon='false'])`, allAccordion = document.querySelectorAll(ACCORDIONSELECTOR);
 class Accordion {
     constructor(args) {
         this.container = '';
@@ -59,10 +59,16 @@ class Accordion {
             return;
         }
         ;
-        if (this.button instanceof HTMLCollection || this.button instanceof NodeList) {
+        if (this.button instanceof HTMLCollection || this.button instanceof NodeList || this.button instanceof Array) {
+            //@ts-ignore
             const btns = Array.from(this.button);
             btns.forEach((el) => {
-                const btn = el;
+                if (el instanceof HTMLCollection || el instanceof NodeList)
+                    return;
+                let btn = el;
+                if (typeof btn === 'string') {
+                    btn = document.querySelector(btn);
+                }
                 if (!btn)
                     return;
                 this._finalizeTarget(btn);
@@ -77,17 +83,19 @@ class Accordion {
         target.setAttribute('aria-controls', containerId);
         let text;
         if (this.collapsed) {
-            text = target.getAttribute('data-acccollapsetext');
+            text = target.getAttribute('data-collapsetext');
             target.classList.add('collapsed');
         }
         else {
-            text = target.getAttribute('data-accexpendtext');
+            text = target.getAttribute('data-expendtext');
         }
         if (text !== null)
             target.innerText = text;
     }
 }
-accordionCon.forEach(item => {
+///if the accordion exists in the dom tree 
+///assuming you have the controls of html 
+allAccordion.forEach(item => {
     const triggerer = document.querySelectorAll(`[data-${PREFIX}-target="${item.id}"]`);
     new Accordion({
         container: item,
@@ -105,6 +113,7 @@ document.body.addEventListener('click', function (e) {
         ///is container collapsed
         let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
         const accAnimationTime = +window.getComputedStyle(accordion).getPropertyValue('transition-duration').replace(/s/, '') * 1000;
+        ///save the height of futher use
         let acHeight = accordion.offsetHeight;
         if (isCollapse) {
             //it will change the whatever display the element has before
@@ -113,7 +122,11 @@ document.body.addEventListener('click', function (e) {
             accordion.style.height = 'auto';
             ///not using this method for now might be using this in future
             // accordion.setAttribute('style', 'height:auto !important');
-            ///save the height of futher use
+            /**
+             * update the height because if accordion is collapsed
+             * previous value has to be 0 and we need the current height
+             * of the accordion for further use
+             */
             acHeight = accordion.offsetHeight;
             ///immediately change the element height to 0
             accordion.style.height = '0';
@@ -145,12 +158,12 @@ document.body.addEventListener('click', function (e) {
         triggerer.forEach((el) => {
             let text = undefined;
             if (isCollapse) {
-                text = el.dataset.acccollapsetext;
+                text = el.dataset.collapsetext;
                 el.setAttribute('aria-expanded', 'false');
                 el.classList.add('collapsed');
             }
             if (!isCollapse) {
-                text = el.dataset.accexpendtext;
+                text = el.dataset.expendtext;
                 el.setAttribute('aria-expanded', 'true');
                 el.classList.remove('collapsed');
             }
@@ -162,7 +175,7 @@ const newAccordion = new Accordion({
     container: '#cl-eg-1',
     button: '#cl-eg-1-btn',
 });
-const secondbtn = document.getElementById('cl-eg-2-btn');
+const secondbtn = ['#cl-eg-2-btn'];
 const newAccordion2 = new Accordion({
     container: '.cl-eg-2',
     button: secondbtn,
