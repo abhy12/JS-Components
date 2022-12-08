@@ -4,19 +4,24 @@ const PREFIX = 'jsc',
       allAccordion = document.querySelectorAll(ACCORDIONSELECTOR) as NodeListOf<HTMLElement>;
 /**
  * TODO
- * Work trigger event
+ *
  */
 
 interface AccordionArgs {
    container: string | HTMLElement,
    button?: string | Element | HTMLElement | HTMLCollectionOf<HTMLElement> | NodeListOf<HTMLElement> | (HTMLElement| string)[] | undefined | null,
-   collapse?: boolean | undefined, 
+   collapse?: boolean | undefined,
+   collapseText?: string | undefined,
+   expendText?: string | undefined,
 }
 
 class Accordion {
    container: AccordionArgs['container'] = '';
    collapsed: boolean = true;
    button: AccordionArgs['button'];
+   collapseText: AccordionArgs['collapseText'];
+   expendText: AccordionArgs['expendText'];
+
 
    constructor( args: AccordionArgs )  {
      ///if container argument is empty return
@@ -112,12 +117,23 @@ class Accordion {
       target.setAttribute( 'aria-controls', containerId );
 
       let text: string | null;
-
+      
       if( this.collapsed )  {
-         text = target.getAttribute( 'data-collapsetext' );
+
+         if( this.collapseText !== undefined )  {
+            text = this.collapseText;
+         } else {
+            text = target.getAttribute( 'data-collapsetext' );
+         }
+
          target.classList.add( 'collapsed' );
       } else {
-         text = target.getAttribute( 'data-expendtext' );
+
+         if( this.expendText !== undefined )  {
+            text = this.expendText;
+         } else {
+            text = target.getAttribute( 'data-expendtext' );
+         }
       }
 
       if( text !== null ) target.innerText = text;
@@ -138,92 +154,92 @@ allAccordion.forEach( item => {
 ///Event Bubbling for Accordion triggerer
 document.body.addEventListener( 'click', function( e )  {
 	const target = e.target as HTMLElement;
-   let acID: any = undefined;
+   const acID: any = target.dataset[`${PREFIX}Target`];
 
-   if( acID = target.dataset[`${PREFIX}Target`] ) {
-      const accordion = ( document.querySelector( `${ACCORDIONSELECTOR}#${acID}` ) as HTMLElement );
+   if( acID === null ) return;
 
-      if( !accordion ) return;
+   const accordion = ( document.querySelector( `${ACCORDIONSELECTOR}#${acID}` ) as HTMLElement );
 
-      ///is container collapsed
-      let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
-      const accAnimationTime = +window.getComputedStyle( accordion ).getPropertyValue('transition-duration').replace( /s/, '' ) * 1000;
-      ///save the height of futher use
-      let acHeight = accordion.offsetHeight;
+   if( !accordion ) return;
 
-      if( isCollapse )  {
-         //it will change the whatever display the element has before
-         accordion.style.display = '';
-    
-         ///to get the full height of the element
-         accordion.style.height = 'auto';
-    
-         ///not using this method for now might be using this in future
-         // accordion.setAttribute('style', 'height:auto !important');
-    
-         /**
-          * update the height because if accordion is collapsed
-          * previous value has to be 0 and we need the current height 
-          * of the accordion for further use
-          */
-         acHeight = accordion.offsetHeight;
+   ///is container collapsed
+   let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
+   const accAnimationTime = +window.getComputedStyle( accordion ).getPropertyValue('transition-duration').replace( /s/, '' ) * 1000;
+   ///save the height of futher use
+   let acHeight = accordion.offsetHeight;
 
-         ///immediately change the element height to 0
-         accordion.style.height = '0';
-    
-         ///wait just a little bit for animation to work properly
-         setTimeout( () => {
-            accordion.style.height = acHeight + 'px';
-         }, 0 );
+   if( isCollapse )  {
+      //it will change the whatever display the element has before
+      accordion.style.display = '';
 
-         ///after animation change inline height to nothing
-         setTimeout( () => {
-            accordion.style.height = '';
-         }, accAnimationTime );
-    
-         accordion.dataset.collapse = 'false';
-    
-         isCollapse = false;
+      ///to get the full height of the element
+      accordion.style.height = 'auto';
+   
+      ///not using this method for now might be using this in future
+      // accordion.setAttribute('style', 'height:auto !important');
 
-      } else if( !isCollapse )  {
+      /**
+       * update the height because if accordion is collapsed
+       * previous value has to be 0 and we need the current height 
+       * of the accordion for further use
+       */
+      acHeight = accordion.offsetHeight;
 
+      ///immediately change the element height to 0
+      accordion.style.height = '0';
+   
+      ///wait just a little bit for animation to work properly
+      setTimeout( () => {
          accordion.style.height = acHeight + 'px';
+      }, 0 );
 
-         setTimeout( () => {
-            accordion.style.height = '0';
-         }, 0 );
+      ///after animation change inline height to nothing
+      setTimeout( () => {
+         accordion.style.height = '';
+      }, accAnimationTime );
 
-         setTimeout( () => {
-            accordion.style.display = 'none';
-            accordion.style.height = '';
-         }, accAnimationTime );
+      accordion.dataset.collapse = 'false';
 
-         accordion.dataset.collapse = 'true';
+      isCollapse = false;
 
-         isCollapse = true;
-      };
+   } else if( !isCollapse )  {
 
-      const triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${accordion.id}"]` ) as NodeListOf<HTMLElement>;
+      accordion.style.height = acHeight + 'px';
 
-      triggerer.forEach( ( el: HTMLElement ) => {
-   
-         let text: undefined | string = undefined;
-   
-         if( isCollapse ) {
-            text = el.dataset.collapsetext;
-            el.setAttribute( 'aria-expanded', 'false' );
-            el.classList.add( 'collapsed' );
-         }
+      setTimeout( () => {
+         accordion.style.height = '0';
+      }, 0 );
 
-         if( !isCollapse )  {
-            text = el.dataset.expendtext
-            el.setAttribute( 'aria-expanded', 'true' );
-            el.classList.remove( 'collapsed' );
-         }
+      setTimeout( () => {
+         accordion.style.display = 'none';
+         accordion.style.height = '';
+      }, accAnimationTime );
 
-         text !== undefined && ( el.innerText = text );
-      });
-   }
+      accordion.dataset.collapse = 'true';
+
+      isCollapse = true;
+   };
+
+   const triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${accordion.id}"]` ) as NodeListOf<HTMLElement>;
+
+   triggerer.forEach( ( el: HTMLElement ) => {
+
+      let text: undefined | string = undefined;
+
+      if( isCollapse ) {
+         text = el.dataset.collapsetext;
+         el.setAttribute( 'aria-expanded', 'false' );
+         el.classList.add( 'collapsed' );
+      }
+
+      if( !isCollapse )  {
+         text = el.dataset.expendtext
+         el.setAttribute( 'aria-expanded', 'true' );
+         el.classList.remove( 'collapsed' );
+      }
+
+      text !== undefined && ( el.innerText = text );
+   });
 });
 
 const newAccordion = new Accordion({ 

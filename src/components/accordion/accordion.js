@@ -83,11 +83,21 @@ class Accordion {
         target.setAttribute('aria-controls', containerId);
         let text;
         if (this.collapsed) {
-            text = target.getAttribute('data-collapsetext');
+            if (this.collapseText !== undefined) {
+                text = this.collapseText;
+            }
+            else {
+                text = target.getAttribute('data-collapsetext');
+            }
             target.classList.add('collapsed');
         }
         else {
-            text = target.getAttribute('data-expendtext');
+            if (this.expendText !== undefined) {
+                text = this.expendText;
+            }
+            else {
+                text = target.getAttribute('data-expendtext');
+            }
         }
         if (text !== null)
             target.innerText = text;
@@ -105,71 +115,71 @@ allAccordion.forEach(item => {
 ///Event Bubbling for Accordion triggerer
 document.body.addEventListener('click', function (e) {
     const target = e.target;
-    let acID = undefined;
-    if (acID = target.dataset[`${PREFIX}Target`]) {
-        const accordion = document.querySelector(`${ACCORDIONSELECTOR}#${acID}`);
-        if (!accordion)
-            return;
-        ///is container collapsed
-        let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
-        const accAnimationTime = +window.getComputedStyle(accordion).getPropertyValue('transition-duration').replace(/s/, '') * 1000;
-        ///save the height of futher use
-        let acHeight = accordion.offsetHeight;
-        if (isCollapse) {
-            //it will change the whatever display the element has before
-            accordion.style.display = '';
-            ///to get the full height of the element
-            accordion.style.height = 'auto';
-            ///not using this method for now might be using this in future
-            // accordion.setAttribute('style', 'height:auto !important');
-            /**
-             * update the height because if accordion is collapsed
-             * previous value has to be 0 and we need the current height
-             * of the accordion for further use
-             */
-            acHeight = accordion.offsetHeight;
-            ///immediately change the element height to 0
-            accordion.style.height = '0';
-            ///wait just a little bit for animation to work properly
-            setTimeout(() => {
-                accordion.style.height = acHeight + 'px';
-            }, 0);
-            ///after animation change inline height to nothing
-            setTimeout(() => {
-                accordion.style.height = '';
-            }, accAnimationTime);
-            accordion.dataset.collapse = 'false';
-            isCollapse = false;
-        }
-        else if (!isCollapse) {
+    const acID = target.dataset[`${PREFIX}Target`];
+    if (acID === null)
+        return;
+    const accordion = document.querySelector(`${ACCORDIONSELECTOR}#${acID}`);
+    if (!accordion)
+        return;
+    ///is container collapsed
+    let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
+    const accAnimationTime = +window.getComputedStyle(accordion).getPropertyValue('transition-duration').replace(/s/, '') * 1000;
+    ///save the height of futher use
+    let acHeight = accordion.offsetHeight;
+    if (isCollapse) {
+        //it will change the whatever display the element has before
+        accordion.style.display = '';
+        ///to get the full height of the element
+        accordion.style.height = 'auto';
+        ///not using this method for now might be using this in future
+        // accordion.setAttribute('style', 'height:auto !important');
+        /**
+         * update the height because if accordion is collapsed
+         * previous value has to be 0 and we need the current height
+         * of the accordion for further use
+         */
+        acHeight = accordion.offsetHeight;
+        ///immediately change the element height to 0
+        accordion.style.height = '0';
+        ///wait just a little bit for animation to work properly
+        setTimeout(() => {
             accordion.style.height = acHeight + 'px';
-            setTimeout(() => {
-                accordion.style.height = '0';
-            }, 0);
-            setTimeout(() => {
-                accordion.style.display = 'none';
-                accordion.style.height = '';
-            }, accAnimationTime);
-            accordion.dataset.collapse = 'true';
-            isCollapse = true;
-        }
-        ;
-        const triggerer = document.querySelectorAll(`[data-${PREFIX}-target="${accordion.id}"]`);
-        triggerer.forEach((el) => {
-            let text = undefined;
-            if (isCollapse) {
-                text = el.dataset.collapsetext;
-                el.setAttribute('aria-expanded', 'false');
-                el.classList.add('collapsed');
-            }
-            if (!isCollapse) {
-                text = el.dataset.expendtext;
-                el.setAttribute('aria-expanded', 'true');
-                el.classList.remove('collapsed');
-            }
-            text !== undefined && (el.innerText = text);
-        });
+        }, 0);
+        ///after animation change inline height to nothing
+        setTimeout(() => {
+            accordion.style.height = '';
+        }, accAnimationTime);
+        accordion.dataset.collapse = 'false';
+        isCollapse = false;
     }
+    else if (!isCollapse) {
+        accordion.style.height = acHeight + 'px';
+        setTimeout(() => {
+            accordion.style.height = '0';
+        }, 0);
+        setTimeout(() => {
+            accordion.style.display = 'none';
+            accordion.style.height = '';
+        }, accAnimationTime);
+        accordion.dataset.collapse = 'true';
+        isCollapse = true;
+    }
+    ;
+    const triggerer = document.querySelectorAll(`[data-${PREFIX}-target="${accordion.id}"]`);
+    triggerer.forEach((el) => {
+        let text = undefined;
+        if (isCollapse) {
+            text = el.dataset.collapsetext;
+            el.setAttribute('aria-expanded', 'false');
+            el.classList.add('collapsed');
+        }
+        if (!isCollapse) {
+            text = el.dataset.expendtext;
+            el.setAttribute('aria-expanded', 'true');
+            el.classList.remove('collapsed');
+        }
+        text !== undefined && (el.innerText = text);
+    });
 });
 const newAccordion = new Accordion({
     container: '#cl-eg-1',
