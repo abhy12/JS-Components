@@ -1,6 +1,21 @@
 "use strict";
 ///you can change prefix if you want to
 const PREFIX = 'jsc', ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]:not([data-${PREFIX}-accCon='false'])`, allAccordion = document.querySelectorAll(ACCORDIONSELECTOR);
+/**
+ * TODO
+ *
+ */
+///credit
+///https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+function randmoId(length = 8) {
+    let result = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
 class Accordion {
     constructor(args) {
         this.container = '';
@@ -28,8 +43,15 @@ class Accordion {
         this.container = container;
         ///set new id if the container don't have one
         if (container.id === '') {
-            const randmoId = Math.floor((Math.random() * 1000) + 1);
-            container.id = `${PREFIX}${randmoId}`;
+            let id = randmoId();
+            while (true) {
+                if (document.getElementById(id)) {
+                    id = randmoId();
+                    continue;
+                }
+                break;
+            }
+            container.id = `${PREFIX}${id}`;
         }
         ///set accordion data
         if (container.getAttribute(`data-${PREFIX}-accCon`) === null || container.getAttribute(`data-${PREFIX}-accCon`) !== 'false') {
