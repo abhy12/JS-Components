@@ -14,72 +14,30 @@
 </head>
 
 <body>
-    <h3>Default is Collapsed</h3>
-    <button data-expendText="Collapse" data-collapseText="Expend" data-jsc-target="eg-1">Collapse</button>
-    <p id="eg-1" class="accordion" data-jsc-accCon="">Lorem ipsum dolor, sit
-        amet consectetur adipisicing elit. Quae sit quam, ab blanditiis itaque aliquid. Fuga sint
-        eos expedita odit ullam repudiandae corrupti sed deleniti?
-    </p>
-    <button data-expendText="Collapse" data-collapseText="Expend" data-jsc-target="eg-1">Expend</button>
-    <hr>
-    <h3>If initial state not set default Expended state will be use</h3>
-    <p id="eg-2" class="accordion" data-jsc-accCon="">Lorem ipsum
-        dolor, sit amet consectetur adipisicing elit. Quae sit quam, ab blanditiis itaque aliquid. Fuga sint
-        eos expedita odit ullam repudiandae corrupti sed deleniti?</p>
-    <button data-jsc-target="eg-2" data-expendText="Collapse" data-collapseText="Expend">Expend</button>
-    <hr>
-    <h3>Two Method to collapse with inside button</h3>
-    <p id="eg-3" class="accordion" data-jsc-accCon="true" data-collapse="false">Lorem ipsum dolor, sit
-        amet consectetur adipisicing elit. Quae sit quam, ab blanditiis itaque aliquid. Fuga sint
-        eos expedita odit ullam repudiandae corrupti sed deleniti?
-    </p>
-    <button data-jsc-target="eg-3" data-expendText="Collapse" data-collapseText="Expend">Collapse</button>
-    <hr>
-    <h3>Background</h3>
-    <h1>Lorem ipsum dolor sit amet.</h1>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus architecto cupiditate magnam sed. Nihil,
-        ipsam laudantium? At atque vel sint ea rerum nesciunt ut similique.</p>
-    <div id="eg-4" class="accordion flex gap-3 text-white bg-white" data-jsc-accCon="">
-        <div class="w-6/12 bg-red-600 p-6">
-            <h4>Lorem ipsum dolor sit amet consectetur adipisicing.</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta incidunt odit iusto voluptatem doloribus
-                quo.</p>
-        </div>
-        <div class="w-6/12 bg-red-600 p-6">
-            <h4>Lorem ipsum dolor sit amet consectetur adipisicing.</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta incidunt odit iusto voluptatem doloribus
-                quo.</p>
+    <div class="accordion-container text-4xl bg-gray-300 text-black p-4 font-medium">
+        <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0" data-jsc-target="eg-1">Lorem ipsum dolor sit amet.</button></h1>
+        <div id="eg-1" class="accordion text-gray-600" data-jsc-accCon="">
+            <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
         </div>
     </div>
-    <button data-jsc-target="eg-4" data-expendText="Show less" data-collapseText="Show More">Learn More</button>
-    <hr>
-    <div id="cl-eg-1" class="accordion flex gap-3 text-white bg-white">
-        <div class="w-6/12 bg-red-600 p-6">
-            <h4>Lorem ipsum dolor sit amet consectetur adipisicing.</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta incidunt odit iusto voluptatem doloribus
-                quo.</p>
-        </div>
-        <div class="w-6/12 bg-red-600 p-6">
-            <h4>Lorem ipsum dolor sit amet consectetur adipisicing.</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta incidunt odit iusto voluptatem doloribus
-                quo.</p>
+    <div class="accordion-container text-4xl bg-green-300 text-black p-4 font-medium">
+        <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0" data-jsc-target="eg-2">Lorem ipsum dolor sit amet.</button></h1>
+        <div id="eg-2" class="accordion text-neutral-700" data-jsc-accCon="">
+            <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
         </div>
     </div>
-    <button id="cl-eg-1-btn">Learn More</button>
-    <hr>
-    <div class="cl-eg-2 accordion flex gap-3 text-white bg-white">
-        <div class="w-6/12 bg-red-600 p-6">
-            <h4>Lorem ipsum dolor sit amet consectetur adipisicing.</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta incidunt odit iusto voluptatem doloribus
-                quo.</p>
-        </div>
-        <div class="w-6/12 bg-red-600 p-6">
-            <h4>Lorem ipsum dolor sit amet consectetur adipisicing.</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta incidunt odit iusto voluptatem doloribus
-                quo.</p>
+    <div class="accordion-container text-4xl bg-[#000] text-white p-4 font-medium">
+        <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0" data-jsc-target="eg-3">Lorem ipsum dolor sit amet.</button></h1>
+        <div id="eg-3" class="accordion text-gray-300" data-jsc-accCon="">
+            <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
         </div>
     </div>
-    <button id="cl-eg-2-btn" class="eg-ll">Learn More</button>
+    <div class="accordion-container text-4xl bg-[#60b7e5] text-black p-4 font-medium">
+        <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0" data-jsc-target="eg-4">Lorem ipsum dolor sit amet.</button></h1>
+        <div id="eg-4" class="accordion text-gray-300" data-jsc-accCon="">
+            <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+        </div>
+    </div>
     <script src="./accordion.js"></script>
 </body>
 
