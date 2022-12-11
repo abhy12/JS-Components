@@ -3,10 +3,8 @@
 const PREFIX = 'jsc', ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]:not([data-${PREFIX}-accCon='false'])`, allAccordion = document.querySelectorAll(ACCORDIONSELECTOR);
 /**
  * TODO
- *
  */
-///credit
-///https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+///credit https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 function randmoId(length = 8) {
     let result = '';
     let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -178,7 +176,7 @@ document.body.addEventListener('click', function (e) {
         accordion.style.height = acHeight + 'px';
         setTimeout(() => {
             accordion.style.height = '0';
-        }, 0);
+        }, 5);
         setTimeout(() => {
             accordion.style.display = 'none';
             accordion.style.height = '';
