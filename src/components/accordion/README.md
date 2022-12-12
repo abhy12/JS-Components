@@ -37,7 +37,7 @@ const newAccordion = new Accordion({
    expendText: 'Expend',
 });
 ```
-one thing to note here that you can use any document query or any class as a container if that container don't have an existing ID then the accordion we generate an ID
+one thing to note here that you can use any document query or any class as a container if that container don't have an existing ID then the accordion will generate an ID
 
 ```
 <!-- Simple bootstrap like container -->

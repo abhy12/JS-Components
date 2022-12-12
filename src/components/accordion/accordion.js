@@ -3,7 +3,7 @@
 const PREFIX = 'jsc', ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]:not([data-${PREFIX}-accCon='false'])`, allAccordion = document.querySelectorAll(ACCORDIONSELECTOR);
 /**
  * TODO
- */
+*/
 ///credit https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 function randmoId(length = 8) {
     let result = '';
@@ -141,11 +141,15 @@ document.body.addEventListener('click', function (e) {
     const accordion = document.querySelector(`${ACCORDIONSELECTOR}#${acID}`);
     if (!accordion)
         return;
+    if (accordion.classList.contains('colexping'))
+        return;
     ///is container collapsed
     let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
     const accAnimationTime = +window.getComputedStyle(accordion).getPropertyValue('transition-duration').replace(/s/, '') * 1000;
     ///save the height of futher use
     let acHeight = accordion.offsetHeight;
+    ///add a class to accordion
+    accordion.classList.add('colexping');
     if (isCollapse) {
         //it will change the whatever display the element has before
         accordion.style.display = '';
@@ -168,6 +172,7 @@ document.body.addEventListener('click', function (e) {
         ///after animation change inline height to nothing
         setTimeout(() => {
             accordion.style.height = '';
+            accordion.classList.remove('colexping');
         }, accAnimationTime);
         accordion.dataset.collapse = 'false';
         isCollapse = false;
@@ -180,6 +185,7 @@ document.body.addEventListener('click', function (e) {
         setTimeout(() => {
             accordion.style.display = 'none';
             accordion.style.height = '';
+            accordion.classList.remove('colexping');
         }, accAnimationTime);
         accordion.dataset.collapse = 'true';
         isCollapse = true;
