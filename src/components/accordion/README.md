@@ -53,7 +53,7 @@ one thing to note here that you can use any document query or any class as a con
 </div>
 ```
 
-***You can add collapse and expend text on button***
+## You can add collapse and expend text on button***
 
 ***HTML Example***
 
