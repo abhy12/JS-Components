@@ -32,7 +32,6 @@ class Accordion {
    collapseText: AccordionArgs['collapseText'];
    expendText: AccordionArgs['expendText'];
 
-
    constructor( args: AccordionArgs )  {
      ///if container argument is empty return
      if( !args.container ) return;

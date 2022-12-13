@@ -1,12 +1,13 @@
 # Accordion
 
+## This is a very light weight and and simple Accordion
+
 ## Usage 
- If you have HTML control you can just add this to your accordion container
- `<.. data-jsc-accCon="true"><../>`
- 
-and an ID for trigger the accordion
+If you have control over HTML you can just add `<.. data-jsc-accCon=""><../>` this to your accordion container (if you add value of false the accordion will not work) 
+
+and add an ID for trigger the accordion
  `<.. id="eg-1" data-jsc-accCon="true"><../>`
- 
+
 for accordion to trigger just add this to your button (you can use any element you want but button is recommended)
 `<button data-jsc-target="eg-2">...</button>"`
 
@@ -33,12 +34,11 @@ const newAccordion = new Accordion({
    button: '#btn-2',
    ///the default is collapse true
    collapse: true,
-   collapseText: 'Collapse',
-   expendText: 'Expend',
 });
 ```
 one thing to note here that you can use any document query or any class as a container if that container don't have an existing ID then the accordion will generate an ID
 
+***Example***
 ```
 <!-- Simple bootstrap like container -->
 <div class="accordion-container text-4xl bg-gray-300 text-black p-4 font-medium">
@@ -51,4 +51,22 @@ one thing to note here that you can use any document query or any class as a con
      <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
    </div>
 </div>
+```
+
+***You can add collapse and expend text on button***
+
+***HTML Example***
+
+```
+  <h1>
+    <button class="..." data-collapsetext="collapse" data-expendtext="Expend">Collapse</button>
+  </h1>
+```
+
+***Class Example***
+```
+const newAccordion = new Accordion({	
+  collapseText: 'Collapse',
+  expendText: 'Expend',
+});
 ```
