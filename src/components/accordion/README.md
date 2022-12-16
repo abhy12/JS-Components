@@ -1,6 +1,6 @@
 # Accordion
 
-## This is a very light weight and and simple Accordion
+## Light weight and and simple Accordion
 
 ## Usage 
 If you have control over HTML you can just add `<.. data-jsc-accCon=""><../>` this to your accordion container (if you add value of false the accordion will not work) 
