@@ -1,60 +1,143 @@
 const sliderContainer = document.querySelector( '.jsc-slider-container' ) as HTMLElement;
+const sliderWrapper = sliderContainer?.querySelector( '.jsc-slider-wrapper' ) as HTMLElement;
 const slides = sliderContainer?.querySelectorAll( '.slide' ) as NodeListOf<HTMLElement>;
 
-let isDragging = false,
-    startPos = 0,
-    currentTranslate = 0,
-    animationID = 0,
-    currentIndex = 0,
-    prevTranslate = 0
+// let isDragging = false,
+//     startPos = 0,
+//     currentTranslate = 0,
+//     animationID = 0,
+//     currentIndex = 0,
+//     prevTranslate = 0
 
-slides?.forEach( ( slide, i ) => {
+// slides?.forEach( ( slide, i ) => {
 
-   slide.addEventListener( 'dragstart', ( e ) => {
-      e.preventDefault();
-   });
+//    slide.addEventListener( 'dragstart', ( e ) => {
+//       e.preventDefault();
+//    });
 
-   //desktop
-   slide.addEventListener( 'mousedown', dragStart.bind( null, i ) );
-   slide.addEventListener( 'mouseup', dragStop );
-   slide.addEventListener( 'mouseleave', dragStop );
-   slide.addEventListener( 'mousemove', dragMove );
+//    //desktop
+//    slide.addEventListener( 'mousedown', dragStart.bind( null, i ) );
+//    slide.addEventListener( 'mouseup', dragStop );
+//    slide.addEventListener( 'mouseleave', dragStop );
+//    slide.addEventListener( 'mousemove', dragMove );
 
-   //mobile
-   slide.addEventListener( 'touchstart',  dragStart.bind( null, i ) );
-   slide.addEventListener( 'touchend', dragStop );
-   slide.addEventListener( 'touchmove', dragMove );   
+//    //mobile
+//    slide.addEventListener( 'touchstart',  dragStart.bind( null, i ) );
+//    slide.addEventListener( 'touchend', dragStop );
+//    slide.addEventListener( 'touchmove', dragMove );   
+// });
+
+// function dragStart( i: any, e: MouseEvent | TouchEvent )  {
+//    isDragging = true;
+//    currentIndex = i;
+//    // console.log( e.type );
+
+//    const position = getPosition( e );
+//    console.log( position );
+//    startPos = position
+
+//    animationID = requestAnimationFrame( slideanimation );
+// };
+
+// function dragStop( e: Event )  {
+//    isDragging = false;
+//    cancelAnimationFrame( animationID );
+// };
+
+// function dragMove( e: MouseEvent | TouchEvent )  {
+//    if( !isDragging ) return;
+   
+//    const currentPosition = getPosition( e );
+//    currentTranslate = prevTranslate + currentPosition - startPos;
+//    console.log( currentPosition );
+// };
+
+// function slideanimation()  {
+//    sliderWrapper.style.transform = `translateX(${currentTranslate}px)`;
+//    if( isDragging ) requestAnimationFrame( slideanimation );
+// }
+const sliderEvents = {
+   'mousedown': clickDown,
+   'mouseup': clickLeave, 
+   // 'mouseleave':  clickLeave, 
+   'mousemove': clickMove, 
+   // 'touchstart',
+   // 'touchend', 
+   // 'touchmove'
+};
+
+///
+let startingPoint = 0,
+    isDragging = false,
+    currentIndex = 1,
+    slidesLength = slides.length;
+
+const sliderContainerWidth = sliderContainer.offsetWidth;
+console.log( sliderContainerWidth / 10 );
+
+sliderContainer.addEventListener( 'dragstart', ( e ) => {
+   const target = e.target as HTMLElement;
+   const currentTarget = e.currentTarget;
+
+   if( !target.closest( '.slide' )?.classList.contains( 'slide' ) ) return;
+
+   e.preventDefault();
 });
 
-function dragStart( i: any, e: MouseEvent | TouchEvent )  {
-   isDragging = true;
-   currentIndex = i;
-   // console.log( e.type );
+// slides.forEach( slide => slide.addEventListener( 'dragstart', ( e ) => e.preventDefault() ) )
 
-   const position = getPosition( e );
-   console.log( position );
-   startPos = position
-
-   animationID = requestAnimationFrame( slideanimation );
-};
-
-function dragStop( e: Event )  {
-   isDragging = false;
-   cancelAnimationFrame( animationID );
-};
-
-function dragMove( e: MouseEvent | TouchEvent )  {
-   if( !isDragging ) return;
-   
-   const currentPosition = getPosition( e );
-   currentTranslate = prevTranslate + currentPosition - startPos;
-   console.log( currentPosition );
-};
-
-function slideanimation()  {
-   sliderContainer.style.transform = `translateX(${currentTranslate}px)`;
-   if( isDragging ) requestAnimationFrame( slideanimation );
+function clickDown( e: MouseEvent | TouchEvent )  {
+   isDragging = true
+   startingPoint= getPosition( e );
+   // console.log(  );
 }
+
+function clickMove( e: MouseEvent | TouchEvent )  {
+   if( !isDragging ) return;
+  
+   const translate = getPosition( e ) - startingPoint;
+   ///if positive going to left otherwise right
+
+   ///if the drag distance is 10% of the container
+   if( Math.abs(translate) > ( sliderContainerWidth / 10 ) )  {
+      ///going to the right
+      if( translate < 0 )  {
+         console.log( 'less', sliderContainerWidth * currentIndex );
+         sliderWrapper.style.transitionDuration = '300ms';
+         sliderWrapper.style.transform = `translateX(-${sliderContainerWidth * currentIndex}px)`;
+         setTimeout( () => {
+            sliderWrapper.style.transitionDuration = '';
+         }, 300 );
+         currentIndex++;
+         startingPoint = 0;
+         // console.log( sliderContainer.removeEventListener( 'mousemove', clickMove, false ) );
+         return;
+      } else if( translate < 0 )  {
+         currentIndex--;
+      }
+   }
+   console.log( translate );
+   
+   sliderWrapper.style.transform = `translateX(${translate * currentIndex}px)`;
+
+   // if( Math.abs(translate) > ( sliderContainerWidth / 10 ) )  {
+   //    sliderWrapper.style.transform = `translateX(-${sliderContainerWidth}px)`;
+   // } else {
+   //    sliderWrapper.style.transform = `translateX(${translate}px)`;
+   // }
+
+   // console.log( translate );
+}
+
+function clickLeave()  {
+   isDragging = false;
+   startingPoint = 0;
+}
+
+Object.keys( sliderEvents ).map( event => {
+   //@ts-ignore
+   sliderContainer.addEventListener( event, sliderEvents[event] );
+})
 
 function getPosition( e: MouseEvent | TouchEvent )  {
    return ( e instanceof MouseEvent ) ? e.clientX : e.touches[0].clientX;
