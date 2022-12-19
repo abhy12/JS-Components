@@ -6,7 +6,7 @@
 }
 .jsc-slider-container .jsc-slider-wrapper{
    display: flex;
-   gap: 20px;
+   /* gap: 20px; */
    transition-property: transform;
 }
 .jsc-slider-container .slide{

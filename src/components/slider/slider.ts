@@ -2,79 +2,37 @@ const sliderContainer = document.querySelector( '.jsc-slider-container' ) as HTM
 const sliderWrapper = sliderContainer?.querySelector( '.jsc-slider-wrapper' ) as HTMLElement;
 const slides = sliderContainer?.querySelectorAll( '.slide' ) as NodeListOf<HTMLElement>;
 
-// let isDragging = false,
-//     startPos = 0,
-//     currentTranslate = 0,
-//     animationID = 0,
-//     currentIndex = 0,
-//     prevTranslate = 0
+/**
+ * TOOD
+ * Work on next and previous slide threshold timing
+ * Work on gap
+ * Mobile Support
+ * A11y
+ * Class Component
+ * Vertical Slider
+ */
 
-// slides?.forEach( ( slide, i ) => {
-
-//    slide.addEventListener( 'dragstart', ( e ) => {
-//       e.preventDefault();
-//    });
-
-//    //desktop
-//    slide.addEventListener( 'mousedown', dragStart.bind( null, i ) );
-//    slide.addEventListener( 'mouseup', dragStop );
-//    slide.addEventListener( 'mouseleave', dragStop );
-//    slide.addEventListener( 'mousemove', dragMove );
-
-//    //mobile
-//    slide.addEventListener( 'touchstart',  dragStart.bind( null, i ) );
-//    slide.addEventListener( 'touchend', dragStop );
-//    slide.addEventListener( 'touchmove', dragMove );   
-// });
-
-// function dragStart( i: any, e: MouseEvent | TouchEvent )  {
-//    isDragging = true;
-//    currentIndex = i;
-//    // console.log( e.type );
-
-//    const position = getPosition( e );
-//    console.log( position );
-//    startPos = position
-
-//    animationID = requestAnimationFrame( slideanimation );
-// };
-
-// function dragStop( e: Event )  {
-//    isDragging = false;
-//    cancelAnimationFrame( animationID );
-// };
-
-// function dragMove( e: MouseEvent | TouchEvent )  {
-//    if( !isDragging ) return;
-   
-//    const currentPosition = getPosition( e );
-//    currentTranslate = prevTranslate + currentPosition - startPos;
-//    console.log( currentPosition );
-// };
-
-// function slideanimation()  {
-//    sliderWrapper.style.transform = `translateX(${currentTranslate}px)`;
-//    if( isDragging ) requestAnimationFrame( slideanimation );
-// }
+///slider events
 const sliderEvents = {
-   'mousedown': clickDown,
-   'mouseup': clickLeave, 
-   // 'mouseleave':  clickLeave, 
-   'mousemove': clickMove, 
+   'mousedown': pointerDown,
+   'mouseup': pointerLeave, 
+   // 'mouseleave':  pointerLeave,
+   'mousemove': pointerMove,
    // 'touchstart',
    // 'touchend', 
    // 'touchmove'
 };
 
-///
+///global variables
 let startingPoint = 0,
-    isDragging = false,
-    currentIndex = 1,
-    slidesLength = slides.length;
+   isDragging = false,
+   currentIndex = 0,
+   slidesLength = slides.length;
 
-const sliderContainerWidth = sliderContainer.offsetWidth;
-console.log( sliderContainerWidth / 10 );
+const sliderContainerWidth = sliderContainer.getBoundingClientRect().width,
+   percentThreshold = 5;
 
+///prevent default behavior in slide like image dragging inside slider slide
 sliderContainer.addEventListener( 'dragstart', ( e ) => {
    const target = e.target as HTMLElement;
    const currentTarget = e.currentTarget;
@@ -84,52 +42,55 @@ sliderContainer.addEventListener( 'dragstart', ( e ) => {
    e.preventDefault();
 });
 
-// slides.forEach( slide => slide.addEventListener( 'dragstart', ( e ) => e.preventDefault() ) )
-
-function clickDown( e: MouseEvent | TouchEvent )  {
+function pointerDown( e: MouseEvent | TouchEvent )  {
    isDragging = true
    startingPoint= getPosition( e );
-   // console.log(  );
 }
 
-function clickMove( e: MouseEvent | TouchEvent )  {
+function pointerMove( e: MouseEvent | TouchEvent )  {
    if( !isDragging ) return;
   
+   ///if positive then the slide going to left otherwise right
    const translate = getPosition( e ) - startingPoint;
-   ///if positive going to left otherwise right
+   ///current percentage of drag
+   const currentPercent = ( 100 * Math.abs( translate ) ) / sliderContainerWidth;
 
-   ///if the drag distance is 10% of the container
-   if( Math.abs(translate) > ( sliderContainerWidth / 10 ) )  {
-      ///going to the right
+   console.log( currentPercent );
+   ///if the drag distance is grater than percentThreshold of the container
+   if( currentPercent > percentThreshold )  {
+
+      ///the slide going to the right
       if( translate < 0 )  {
-         console.log( 'less', sliderContainerWidth * currentIndex );
-         sliderWrapper.style.transitionDuration = '300ms';
-         sliderWrapper.style.transform = `translateX(-${sliderContainerWidth * currentIndex}px)`;
-         setTimeout( () => {
-            sliderWrapper.style.transitionDuration = '';
-         }, 300 );
+         if( currentIndex >= ( slides.length - 1 ) ) return;
          currentIndex++;
-         startingPoint = 0;
-         // console.log( sliderContainer.removeEventListener( 'mousemove', clickMove, false ) );
-         return;
-      } else if( translate < 0 )  {
+      } 
+
+      ///going to the left
+      if( translate > 0 )  {
+         if( currentIndex <= 0 ) return;
          currentIndex--;
       }
+
+      sliderWrapper.style.transitionDuration = '300ms';
+      sliderWrapper.style.transform = `translateX(${-( currentIndex * sliderContainerWidth )}px)`;
+      setTimeout( () => {
+         sliderWrapper.style.transitionDuration = '';
+      }, 300 );
+
+      startingPoint = 0;
+      isDragging = false;
+   } else {
+      sliderWrapper.style.transform = `translateX(${translate - ( currentIndex * sliderContainerWidth )}px)`;
    }
-   console.log( translate );
-   
-   sliderWrapper.style.transform = `translateX(${translate * currentIndex}px)`;
-
-   // if( Math.abs(translate) > ( sliderContainerWidth / 10 ) )  {
-   //    sliderWrapper.style.transform = `translateX(-${sliderContainerWidth}px)`;
-   // } else {
-   //    sliderWrapper.style.transform = `translateX(${translate}px)`;
-   // }
-
    // console.log( translate );
 }
 
-function clickLeave()  {
+function pointerLeave()  {
+   sliderWrapper.style.transitionDuration = '300ms';
+   sliderWrapper.style.transform = `translateX(${-( currentIndex * sliderContainerWidth )}px)`;   
+   setTimeout( () => {
+      sliderWrapper.style.transitionDuration = '';
+   }, 300 );
    isDragging = false;
    startingPoint = 0;
 }
