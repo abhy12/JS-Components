@@ -12,17 +12,6 @@ const slides = sliderContainer?.querySelectorAll( '.slide' ) as NodeListOf<HTMLE
  * Vertical Slider
  */
 
-///slider events
-const sliderEvents = {
-   'mousedown': pointerDown,
-   'mouseup': pointerLeave, 
-   // 'mouseleave':  pointerLeave,
-   'mousemove': pointerMove,
-   // 'touchstart',
-   // 'touchend', 
-   // 'touchmove'
-};
-
 ///global variables
 let startingPoint = 0,
    isDragging = false,
@@ -95,10 +84,22 @@ function pointerLeave()  {
    startingPoint = 0;
 }
 
+///slider events
+const sliderEvents = {
+   'mousedown': pointerDown,
+   'mouseup': pointerLeave, 
+   // 'mouseleave':  pointerLeave,
+   'mousemove': pointerMove,
+   // 'touchstart',
+   // 'touchend', 
+   // 'touchmove'
+};
+
+///add all the slider events
 Object.keys( sliderEvents ).map( event => {
    //@ts-ignore
    sliderContainer.addEventListener( event, sliderEvents[event] );
-})
+});
 
 function getPosition( e: MouseEvent | TouchEvent )  {
    return ( e instanceof MouseEvent ) ? e.clientX : e.touches[0].clientX;
