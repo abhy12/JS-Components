@@ -16,7 +16,8 @@ const slides = sliderContainer?.querySelectorAll( '.slide' ) as NodeListOf<HTMLE
 let startingPoint = 0,
    isDragging = false,
    currentIndex = 0,
-   slidesLength = slides.length;
+   slidesLength = slides.length,
+   swipeHarder = 0;
 
 const sliderContainerWidth = sliderContainer.getBoundingClientRect().width,
    percentThreshold = 5;
@@ -44,19 +45,25 @@ function pointerMove( e: MouseEvent | TouchEvent )  {
    ///current percentage of drag
    const currentPercent = ( 100 * Math.abs( translate ) ) / sliderContainerWidth;
 
-   console.log( currentPercent );
+   // console.log( currentPercent );
    ///if the drag distance is grater than percentThreshold of the container
    if( currentPercent > percentThreshold )  {
 
       ///the slide going to the right
       if( translate < 0 )  {
-         if( currentIndex >= ( slides.length - 1 ) ) return;
+         if( currentIndex >= ( slides.length - 1 ) ) {
+            sliderWrapper.style.transform = `translateX(${( translate - ( --swipeHarder ) ) - ( currentIndex * sliderContainerWidth )}px)`;
+            return;
+         };
          currentIndex++;
-      } 
+      }
 
       ///going to the left
       if( translate > 0 )  {
-         if( currentIndex <= 0 ) return;
+         if( currentIndex <= 0 ) {
+            sliderWrapper.style.transform = `translateX(${( translate - ( ++swipeHarder * 3 ) ) - ( currentIndex * sliderContainerWidth )}px)`;
+            return;
+         }
          currentIndex--;
       }
 
@@ -82,6 +89,7 @@ function pointerLeave()  {
    }, 300 );
    isDragging = false;
    startingPoint = 0;
+   swipeHarder = 0
 }
 
 ///slider events
@@ -90,9 +98,9 @@ const sliderEvents = {
    'mouseup': pointerLeave, 
    // 'mouseleave':  pointerLeave,
    'mousemove': pointerMove,
-   // 'touchstart',
-   // 'touchend', 
-   // 'touchmove'
+   'touchstart': pointerDown,
+   'touchend': pointerLeave, 
+   'touchmove': pointerMove
 };
 
 ///add all the slider events

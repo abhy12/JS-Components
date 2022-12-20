@@ -11,18 +11,8 @@ const slides = sliderContainer === null || sliderContainer === void 0 ? void 0 :
  * Class Component
  * Vertical Slider
  */
-///slider events
-const sliderEvents = {
-    'mousedown': pointerDown,
-    'mouseup': pointerLeave,
-    // 'mouseleave':  pointerLeave,
-    'mousemove': pointerMove,
-    // 'touchstart',
-    // 'touchend', 
-    // 'touchmove'
-};
 ///global variables
-let startingPoint = 0, isDragging = false, currentIndex = 0, slidesLength = slides.length;
+let startingPoint = 0, isDragging = false, currentIndex = 0, slidesLength = slides.length, swipeHarder = 0;
 const sliderContainerWidth = sliderContainer.getBoundingClientRect().width, percentThreshold = 5;
 ///prevent default behavior in slide like image dragging inside slider slide
 sliderContainer.addEventListener('dragstart', (e) => {
@@ -44,19 +34,24 @@ function pointerMove(e) {
     const translate = getPosition(e) - startingPoint;
     ///current percentage of drag
     const currentPercent = (100 * Math.abs(translate)) / sliderContainerWidth;
-    console.log(currentPercent);
+    // console.log( currentPercent );
     ///if the drag distance is grater than percentThreshold of the container
     if (currentPercent > percentThreshold) {
         ///the slide going to the right
         if (translate < 0) {
-            if (currentIndex >= (slides.length - 1))
+            if (currentIndex >= (slides.length - 1)) {
+                sliderWrapper.style.transform = `translateX(${(translate - (--swipeHarder)) - (currentIndex * sliderContainerWidth)}px)`;
                 return;
+            }
+            ;
             currentIndex++;
         }
         ///going to the left
         if (translate > 0) {
-            if (currentIndex <= 0)
+            if (currentIndex <= 0) {
+                sliderWrapper.style.transform = `translateX(${(translate - (++swipeHarder * 3)) - (currentIndex * sliderContainerWidth)}px)`;
                 return;
+            }
             currentIndex--;
         }
         sliderWrapper.style.transitionDuration = '300ms';
@@ -80,7 +75,19 @@ function pointerLeave() {
     }, 300);
     isDragging = false;
     startingPoint = 0;
+    swipeHarder = 0;
 }
+///slider events
+const sliderEvents = {
+    'mousedown': pointerDown,
+    'mouseup': pointerLeave,
+    // 'mouseleave':  pointerLeave,
+    'mousemove': pointerMove,
+    'touchstart': pointerDown,
+    'touchend': pointerLeave,
+    'touchmove': pointerMove
+};
+///add all the slider events
 Object.keys(sliderEvents).map(event => {
     //@ts-ignore
     sliderContainer.addEventListener(event, sliderEvents[event]);
