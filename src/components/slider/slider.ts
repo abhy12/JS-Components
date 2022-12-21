@@ -17,7 +17,7 @@ let startingPoint = 0,
    isDragging = false,
    currentIndex = 0,
    slidesLength = slides.length,
-   swipeHarder = 0;
+   makeSwipeHarder = 0;
 
 const sliderContainerWidth = sliderContainer.getBoundingClientRect().width,
    percentThreshold = 5;
@@ -42,28 +42,32 @@ function pointerMove( e: MouseEvent | TouchEvent )  {
   
    ///if positive then the slide going to left otherwise right
    const translate = getPosition( e ) - startingPoint;
+
    ///current percentage of drag
    const currentPercent = ( 100 * Math.abs( translate ) ) / sliderContainerWidth;
 
-   // console.log( currentPercent );
+   if( currentIndex >= ( slides.length - 1 ) && translate < 0 ) {
+      sliderWrapper.style.transform = `translateX(${( ( translate - (--makeSwipeHarder) ) / 3 ) - ( currentIndex * sliderContainerWidth )}px)`;
+      return;
+   };
+
+   if( currentIndex <= 0 && translate > 0 ) {
+      sliderWrapper.style.transform = `translateX(${ Math.abs( translate - ( ++makeSwipeHarder * 3 ) ) - ( currentIndex * sliderContainerWidth )}px)`;
+      return;
+   }
+
    ///if the drag distance is grater than percentThreshold of the container
    if( currentPercent > percentThreshold )  {
 
       ///the slide going to the right
       if( translate < 0 )  {
-         if( currentIndex >= ( slides.length - 1 ) ) {
-            sliderWrapper.style.transform = `translateX(${( translate - ( --swipeHarder ) ) - ( currentIndex * sliderContainerWidth )}px)`;
-            return;
-         };
+         if( currentIndex >= ( slides.length - 1 ) ) return;
          currentIndex++;
       }
 
       ///going to the left
       if( translate > 0 )  {
-         if( currentIndex <= 0 ) {
-            sliderWrapper.style.transform = `translateX(${( translate - ( ++swipeHarder * 3 ) ) - ( currentIndex * sliderContainerWidth )}px)`;
-            return;
-         }
+         if( currentIndex <= 0 ) return;
          currentIndex--;
       }
 
@@ -89,7 +93,7 @@ function pointerLeave()  {
    }, 300 );
    isDragging = false;
    startingPoint = 0;
-   swipeHarder = 0
+   makeSwipeHarder = 0;
 }
 
 ///slider events

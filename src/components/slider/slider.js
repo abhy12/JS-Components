@@ -12,7 +12,7 @@ const slides = sliderContainer === null || sliderContainer === void 0 ? void 0 :
  * Vertical Slider
  */
 ///global variables
-let startingPoint = 0, isDragging = false, currentIndex = 0, slidesLength = slides.length, swipeHarder = 0;
+let startingPoint = 0, isDragging = false, currentIndex = 0, slidesLength = slides.length, makeSwipeHarder = 0;
 const sliderContainerWidth = sliderContainer.getBoundingClientRect().width, percentThreshold = 5;
 ///prevent default behavior in slide like image dragging inside slider slide
 sliderContainer.addEventListener('dragstart', (e) => {
@@ -34,24 +34,27 @@ function pointerMove(e) {
     const translate = getPosition(e) - startingPoint;
     ///current percentage of drag
     const currentPercent = (100 * Math.abs(translate)) / sliderContainerWidth;
-    // console.log( currentPercent );
+    if (currentIndex >= (slides.length - 1) && translate < 0) {
+        sliderWrapper.style.transform = `translateX(${((translate - (--makeSwipeHarder)) / 3) - (currentIndex * sliderContainerWidth)}px)`;
+        return;
+    }
+    ;
+    if (currentIndex <= 0 && translate > 0) {
+        sliderWrapper.style.transform = `translateX(${Math.abs(translate - (++makeSwipeHarder * 3)) - (currentIndex * sliderContainerWidth)}px)`;
+        return;
+    }
     ///if the drag distance is grater than percentThreshold of the container
     if (currentPercent > percentThreshold) {
         ///the slide going to the right
         if (translate < 0) {
-            if (currentIndex >= (slides.length - 1)) {
-                sliderWrapper.style.transform = `translateX(${(translate - (--swipeHarder)) - (currentIndex * sliderContainerWidth)}px)`;
+            if (currentIndex >= (slides.length - 1))
                 return;
-            }
-            ;
             currentIndex++;
         }
         ///going to the left
         if (translate > 0) {
-            if (currentIndex <= 0) {
-                sliderWrapper.style.transform = `translateX(${(translate - (++swipeHarder * 3)) - (currentIndex * sliderContainerWidth)}px)`;
+            if (currentIndex <= 0)
                 return;
-            }
             currentIndex--;
         }
         sliderWrapper.style.transitionDuration = '300ms';
@@ -75,7 +78,7 @@ function pointerLeave() {
     }, 300);
     isDragging = false;
     startingPoint = 0;
-    swipeHarder = 0;
+    makeSwipeHarder = 0;
 }
 ///slider events
 const sliderEvents = {
