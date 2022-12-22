@@ -35,12 +35,20 @@ function pointerMove(e) {
     ///current percentage of drag
     const currentPercent = (100 * Math.abs(translate)) / sliderContainerWidth;
     if (currentIndex >= (slides.length - 1) && translate < 0) {
-        sliderWrapper.style.transform = `translateX(${((translate - (--makeSwipeHarder)) / 3) - (currentIndex * sliderContainerWidth)}px)`;
+        if (Math.abs(translate) >= (sliderContainerWidth / 2))
+            return;
+        sliderWrapper.style.transform = `translateX(${((translate - (--makeSwipeHarder)) / 2) - (currentIndex * sliderContainerWidth)}px)`;
         return;
     }
     ;
     if (currentIndex <= 0 && translate > 0) {
-        sliderWrapper.style.transform = `translateX(${Math.abs(translate - (++makeSwipeHarder * 3)) - (currentIndex * sliderContainerWidth)}px)`;
+        // const conWidth = sliderContainerWidth / 2;
+        // const percentOfTranslate = ( getPosition( e ) * 100 ) / conWidth;
+        // console.log( getPosition( e ), percentOfTranslate, ( getPosition( e ) / percentOfTranslate ) );
+        // sliderWrapper.style.transform = `translateX(${ Math.abs( translate - ( ++makeSwipeHarder * 10 ) ) - ( currentIndex * sliderContainerWidth )}px)`;
+        if (Math.abs(translate) >= (sliderContainerWidth / 2))
+            return;
+        sliderWrapper.style.transform = `translateX(${Math.abs(translate - (++makeSwipeHarder * 2)) - (currentIndex * sliderContainerWidth)}px)`;
         return;
     }
     ///if the drag distance is grater than percentThreshold of the container
