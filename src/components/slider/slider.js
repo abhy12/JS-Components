@@ -35,36 +35,22 @@ function pointerMove(e) {
     ///current percentage of drag
     const currentPercent = (100 * Math.abs(translate)) / sliderContainerWidth;
     if (currentIndex >= (slides.length - 1) && translate < 0) {
-        if (Math.abs(translate) >= (sliderContainerWidth / 2))
-            return;
-        sliderWrapper.style.transform = `translateX(${((translate - (--makeSwipeHarder)) / 2) - (currentIndex * sliderContainerWidth)}px)`;
+        sliderWrapper.style.transform = `translateX(${(translate / 2.5) - (currentIndex * sliderContainerWidth)}px)`;
         return;
     }
     ;
     if (currentIndex <= 0 && translate > 0) {
-        // const conWidth = sliderContainerWidth / 2;
-        // const percentOfTranslate = ( getPosition( e ) * 100 ) / conWidth;
-        // console.log( getPosition( e ), percentOfTranslate, ( getPosition( e ) / percentOfTranslate ) );
-        // sliderWrapper.style.transform = `translateX(${ Math.abs( translate - ( ++makeSwipeHarder * 10 ) ) - ( currentIndex * sliderContainerWidth )}px)`;
-        if (Math.abs(translate) >= (sliderContainerWidth / 2))
-            return;
-        sliderWrapper.style.transform = `translateX(${Math.abs(translate - (++makeSwipeHarder * 2)) - (currentIndex * sliderContainerWidth)}px)`;
+        sliderWrapper.style.transform = `translateX(${(translate / 2.5) + (currentIndex * sliderContainerWidth)}px)`;
         return;
     }
     ///if the drag distance is grater than percentThreshold of the container
     if (currentPercent > percentThreshold) {
         ///the slide going to the right
-        if (translate < 0) {
-            if (currentIndex >= (slides.length - 1))
-                return;
+        if (translate < 0)
             currentIndex++;
-        }
         ///going to the left
-        if (translate > 0) {
-            if (currentIndex <= 0)
-                return;
+        if (translate > 0)
             currentIndex--;
-        }
         sliderWrapper.style.transitionDuration = '300ms';
         sliderWrapper.style.transform = `translateX(${-(currentIndex * sliderContainerWidth)}px)`;
         setTimeout(() => {
@@ -76,7 +62,6 @@ function pointerMove(e) {
     else {
         sliderWrapper.style.transform = `translateX(${translate - (currentIndex * sliderContainerWidth)}px)`;
     }
-    // console.log( translate );
 }
 function pointerLeave() {
     sliderWrapper.style.transitionDuration = '300ms';
