@@ -107,7 +107,7 @@ class Accordion {
       if( this.button instanceof HTMLCollection || this.button instanceof NodeList || this.button instanceof Array )  {
          //@ts-ignore
          const btns = Array.from( this.button );
- 
+
          btns.forEach( ( el ) => {
             if( el instanceof HTMLCollection || el instanceof NodeList ) return;
 
@@ -133,7 +133,7 @@ class Accordion {
       target.setAttribute( 'aria-controls', containerId );
 
       let text: string | null;
-      
+
       if( this.collapsed )  {
 
          if( this.collapseText !== undefined )  {
@@ -179,7 +179,7 @@ document.body.addEventListener( 'click', function( e )  {
    if( !accordion ) return;
 
    if( accordion.classList.contains( 'colexping' ) ) return;
-   
+
    ///is container collapsed
    let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
    const accAnimationTime = +window.getComputedStyle( accordion ).getPropertyValue('transition-duration').replace( /s/, '' ) * 1000;
@@ -263,16 +263,4 @@ document.body.addEventListener( 'click', function( e )  {
 
       text !== undefined && ( el.innerText = text );
    });
-});
-
-const newAccordion = new Accordion({ 
-   container: '#cl-eg-1',
-   button: '#cl-eg-1-btn',
-});
-
-const secondbtn = ['#cl-eg-2-btn'];
-
-const newAccordion2 = new Accordion({
-   container: '.cl-eg-2',
-   button: secondbtn,
 });

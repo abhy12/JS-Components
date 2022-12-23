@@ -207,13 +207,4 @@ document.body.addEventListener('click', function (e) {
         text !== undefined && (el.innerText = text);
     });
 });
-const newAccordion = new Accordion({
-    container: '#cl-eg-1',
-    button: '#cl-eg-1-btn',
-});
-const secondbtn = ['#cl-eg-2-btn'];
-const newAccordion2 = new Accordion({
-    container: '.cl-eg-2',
-    button: secondbtn,
-});
 //# sourceMappingURL=accordion.js.map
