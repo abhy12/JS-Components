@@ -7,12 +7,10 @@ If you have control over HTML you can just add `<.. data-jsc-accCon=""><../>` th
 
 and add an ID to the accordion `<.. id="eg-1" data-jsc-accCon="true"><../>`
 
-then for accordion to trigger just add `data-jsc-target="{id}"` this to your button with the value of accordion id (you can use any element you want but button is recommended) like this:
+then for accordion to trigger just add `data-jsc-target="{id}"` this to your button with the value of accordion id (without "#") (you can use any element you want but button is recommended) like this:
 ```
 <button data-jsc-target="eg-2">...</button>"
 ```
-
-for accordion to work you have to give button `data-jsc-target` a value of accordion container ID without "#"
 
 ***Example***
 ```
