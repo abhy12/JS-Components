@@ -5,11 +5,12 @@
 ## Usage 
 If you have control over HTML you can just add `<.. data-jsc-accCon=""><../>` this to your accordion container (if you add value of false the accordion will not work) 
 
-and add an ID for trigger the accordion
- `<.. id="eg-1" data-jsc-accCon="true"><../>`
+and add an ID to the accordion `<.. id="eg-1" data-jsc-accCon="true"><../>`
 
-for accordion to trigger just add this to your button (you can use any element you want but button is recommended)
-`<button data-jsc-target="eg-2">...</button>"`
+then for accordion to trigger just add `data-jsc-target="{id}"` this to your button with the value of accordion id (you can use any element you want but button is recommended) like this:
+```
+<button data-jsc-target="eg-2">...</button>"
+```
 
 for accordion to work you have to give button `data-jsc-target` a value of accordion container ID without "#"
 
@@ -32,8 +33,7 @@ Create an instance of Accordion
 const newAccordion = new Accordion({	
    container: '.new-accordion',
    button: '#btn-2',
-   ///the default is collapse true
-   collapse: true,
+   collapse: true, ///default
 });
 ```
 one thing to note here that you can use any document query or any class as a container if that container don't have an existing ID then the accordion will generate an ID for the container
