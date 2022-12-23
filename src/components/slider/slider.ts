@@ -6,7 +6,6 @@ const slides = sliderContainer?.querySelectorAll( '.slide' ) as NodeListOf<HTMLE
  * TOOD
  * Work on next and previous slide threshold timing
  * Work on gap
- * Mobile Support
  * A11y
  * Class Component
  * Vertical Slider
@@ -16,13 +15,12 @@ const slides = sliderContainer?.querySelectorAll( '.slide' ) as NodeListOf<HTMLE
 let startingPoint = 0,
    isDragging = false,
    currentIndex = 0,
-   slidesLength = slides.length,
-   makeSwipeHarder = 0;
+   slidesLength = slides.length;
 
 const sliderContainerWidth = sliderContainer.getBoundingClientRect().width,
    percentThreshold = 5;
 
-///prevent default behavior in slide like image dragging inside slider slide
+///prevent default behavior in slide like image dragging effect inside slide
 sliderContainer.addEventListener( 'dragstart', ( e ) => {
    const target = e.target as HTMLElement;
    const currentTarget = e.currentTarget;
@@ -86,7 +84,6 @@ function pointerLeave()  {
    }, 300 );
    isDragging = false;
    startingPoint = 0;
-   makeSwipeHarder = 0;
 }
 
 ///slider events
