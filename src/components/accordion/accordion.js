@@ -126,10 +126,17 @@ class Accordion {
 ///if the accordion exists in the dom tree 
 ///assuming you have the controls of html 
 allAccordion.forEach(item => {
+    var _a;
+    let triggerer;
     const accId = item.id;
-    if (accId === '')
-        return;
-    const triggerer = document.querySelectorAll(`[data-${PREFIX}-target="${item.id}"]`);
+    if (accId === '') {
+        ///not selecting all the triggerer elements 
+        ///because if container has more than one accordion
+        triggerer = (_a = item.closest('.accordion-container')) === null || _a === void 0 ? void 0 : _a.querySelector(`[data-${PREFIX}-target]`);
+    }
+    else if (accId !== '') {
+        triggerer = document.querySelectorAll(`[data-${PREFIX}-target="${item.id}"]`);
+    }
     new Accordion({
         container: item,
         button: triggerer,

@@ -159,11 +159,16 @@ class Accordion {
 ///if the accordion exists in the dom tree 
 ///assuming you have the controls of html 
 allAccordion.forEach( item => {
+   let triggerer;
    const accId = item.id;
 
-   if( accId === '' ) return;
-
-   const triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${item.id}"]` ) as NodeListOf<HTMLElement>;
+   if( accId === '' ) {
+      ///not selecting all the triggerer elements 
+      ///because if container has more than one accordion
+      triggerer = item.closest( '.accordion-container' )?.querySelector( `[data-${PREFIX}-target]` ) as HTMLElement;
+   } else if( accId !== '' )  {
+      triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${item.id}"]` ) as NodeListOf<HTMLElement>;
+   }
 
    new Accordion({
       container: item,
