@@ -126,6 +126,9 @@ class Accordion {
 ///if the accordion exists in the dom tree 
 ///assuming you have the controls of html 
 allAccordion.forEach(item => {
+    const accId = item.id;
+    if (accId === '')
+        return;
     const triggerer = document.querySelectorAll(`[data-${PREFIX}-target="${item.id}"]`);
     new Accordion({
         container: item,
@@ -136,7 +139,7 @@ allAccordion.forEach(item => {
 document.body.addEventListener('click', function (e) {
     const target = e.target;
     const acID = target.dataset[`${PREFIX}Target`];
-    if (acID === null)
+    if (acID === null || acID === '')
         return;
     const accordion = document.querySelector(`${ACCORDIONSELECTOR}#${acID}`);
     if (!accordion)

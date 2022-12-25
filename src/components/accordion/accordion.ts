@@ -1,7 +1,7 @@
 ///you can change prefix if you want to
 const PREFIX = 'jsc',
       ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]:not([data-${PREFIX}-accCon='false'])`,
-      allAccordion = document.querySelectorAll(ACCORDIONSELECTOR) as NodeListOf<HTMLElement>;
+      allAccordion = document.querySelectorAll( ACCORDIONSELECTOR ) as NodeListOf<HTMLElement>;
 /**
  * TODO
 */
@@ -159,6 +159,10 @@ class Accordion {
 ///if the accordion exists in the dom tree 
 ///assuming you have the controls of html 
 allAccordion.forEach( item => {
+   const accId = item.id;
+
+   if( accId === '' ) return;
+
    const triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${item.id}"]` ) as NodeListOf<HTMLElement>;
 
    new Accordion({
@@ -172,7 +176,7 @@ document.body.addEventListener( 'click', function( e )  {
 	const target = e.target as HTMLElement;
    const acID: any = target.dataset[`${PREFIX}Target`];
 
-   if( acID === null ) return;
+   if( acID === null || acID === '' ) return;
 
    const accordion = ( document.querySelector( `${ACCORDIONSELECTOR}#${acID}` ) as HTMLElement );
 
