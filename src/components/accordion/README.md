@@ -3,11 +3,28 @@
 ## Light weight and and simple Accordion
 
 ## Usage 
-If you have control over HTML you can just add `<.. data-jsc-accCon=""><../>` this to your accordion container (if you add value of false the accordion will not work) 
 
-and add an ID to the accordion `<.. id="eg-1" data-jsc-accCon="true"><../>`
+## HTML Example 1
 
-then for accordion to trigger just add `data-jsc-target="{id}"` this to your button with the value of accordion id (without "#") (you can use any element you want but button is recommended) like this:
+If you have control over HTML the simplest and easy way to use the accordion is this:
+
+```
+<div class="accordion-container ...">
+  <h1><button data-jsc-target="">Lorem ipsum dolor sit amet.</button></h1>
+  <div data-jsc-accCon="">
+    <h2>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+  </div>
+</div>
+```
+The "accordion-container" element has to wrap the whole accordion and the button this is important in this example. After that we can add `data-jsc-target` dataset to button and `data-jsc-accCon` dataset to the accordion and that's it your accordion will be working fine.
+If you want more customize way to do this see [HTML Example 2](#html-example-2)
+
+## HTML Example 2
+In this example you don't have to follow the structure of html
+
+Just add `<.. data-jsc-accCon><../>` this dataset to your accordion (if you add value of false the accordion will not work) and add an ID to the accordion `<.. id="eg-1" data-jsc-accCon><../>`
+
+then for accordion to trigger just add `data-jsc-target="{id}"` this to your button with the value of accordion id (without "#") (you can use any element you want but button is more semantic html) like this:
 ```
 <button data-jsc-target="eg-2">...</button>"
 ```
@@ -25,7 +42,7 @@ then for accordion to trigger just add `data-jsc-target="{id}"` this to your but
 </div>
 ```
 
-## Another Way
+## Class based accordion
 Create an instance of Accordion
 ```
 const newAccordion = new Accordion({	
