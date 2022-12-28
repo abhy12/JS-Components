@@ -1,6 +1,6 @@
 ///you can change prefix if you want to
 const PREFIX = 'jsc',
-      ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]:not([data-${PREFIX}-accCon='false'])`,
+      ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]`,
       allAccordion = document.querySelectorAll( ACCORDIONSELECTOR ) as NodeListOf<HTMLElement>;
 /**
  * TODO
@@ -26,40 +26,39 @@ interface AccordionArgs {
 }
 
 class Accordion {
-   container: AccordionArgs['container'] = '';
+   container: HTMLElement | null = null;
    collapsed: boolean = true;
    button: AccordionArgs['button'];
    collapseText: AccordionArgs['collapseText'];
    expendText: AccordionArgs['expendText'];
 
    constructor( args: AccordionArgs )  {
-     ///if container argument is empty return
-     if( !args.container ) return;
+      let tempCon: HTMLElement | string = args.container;
 
-     this.container = args.container;
+      ///check if container value is htmlElement or some DOM query string
+      if( typeof tempCon === 'string' )  {
+         tempCon = ( document.querySelector( tempCon ) as HTMLElement );
+      }
 
-     if( args.button ) this.button = args.button;
+      ///if container argument is falsey return
+      if( !tempCon || ( tempCon instanceof HTMLElement ) === false ) return;
 
-     this._init();
+      this.container = tempCon;
+
+      if( args.button ) this.button = args.button;
+
+      this._init();
+   }
+
+   _is_valid_container(): boolean  {
+      return this.container instanceof HTMLElement;
    }
 
    _init()  {
-      let container = null;
-
-      ///check if container value is htmlElement or some DOM query
-      if( this.container instanceof HTMLElement )  {
-         container = this.container;
-      } else if( typeof this.container === 'string' )  {
-         container = ( document.querySelector( this.container ) as HTMLElement );
-      }
-
-      if( !container ) return;
-
-      ///probably not a good way to do it 
-      this.container = container;
+      if( !this.container ) return;
 
       ///set new id if the container don't have one
-      if( container.id === '' )  {
+      if( this.container.id === '' )  {
          let id = randmoId();
          while( true )  {
             if( document.getElementById( id ) )  {
@@ -68,22 +67,22 @@ class Accordion {
             }
             break;
          }
-         container.id = `${PREFIX}${id}`;
+         this.container.id = `${PREFIX}${id}`;
       }
 
       ///set accordion data
-      if( container.getAttribute( `data-${PREFIX}-accCon` ) === null || container.getAttribute( `data-${PREFIX}-accCon` ) !== 'false' )  {
-         container.setAttribute( `data-${PREFIX}-accCon`, 'true' );  
+      if( this.container.getAttribute( `data-${PREFIX}-accCon` ) === null || this.container.getAttribute( `data-${PREFIX}-accCon` ) !== 'false' )  {
+         this.container.setAttribute( `data-${PREFIX}-accCon`, 'true' );  
       }
 
       // @ts-ignore
       ///only false when collapsed explicitly has false value, default is true
       this.collapsed = ( this.collapsed !== false || this.collapsed !== 'false' ) ? true : false;
 
-      container.setAttribute( 'data-collapse', this.collapsed+'' );
+      this.container.setAttribute( 'data-collapse', this.collapsed+'' );
 
       ///if the collapse value is true hide the element
-      if( this.collapsed ) container.style.display = 'none';
+      if( this.collapsed ) this.container.style.display = 'none';
 
       this._init_target();
    }
@@ -154,6 +153,14 @@ class Accordion {
 
       if( text !== null ) target.innerText = text;
    }
+
+   enable()  {
+      this.container?.setAttribute( `data-${PREFIX}-accCon`, 'true' );
+   }
+
+   disable()  {
+      this.container?.setAttribute( `data-${PREFIX}-accCon`, 'false' );
+   }
 }
 
 ///if the accordion exists in the dom tree 
@@ -164,7 +171,7 @@ allAccordion.forEach( item => {
 
    if( accId === '' ) {
       ///not selecting all the triggerer elements 
-      ///because if container has more than one accordion
+      ///because of nested accordion under the container
       triggerer = item.closest( '.accordion-container' )?.querySelector( `[data-${PREFIX}-target]` ) as HTMLElement;
    } else if( accId !== '' )  {
       triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${item.id}"]` ) as NodeListOf<HTMLElement>;
@@ -185,7 +192,7 @@ document.body.addEventListener( 'click', function( e )  {
 
    const accordion = ( document.querySelector( `${ACCORDIONSELECTOR}#${acID}` ) as HTMLElement );
 
-   if( !accordion ) return;
+   if( !accordion || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' ) return;
 
    if( accordion.classList.contains( 'colexping' ) ) return;
 
