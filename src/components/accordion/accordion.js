@@ -31,9 +31,6 @@ class Accordion {
             this.button = args.button;
         this._init();
     }
-    _is_valid_container() {
-        return this.container instanceof HTMLElement;
-    }
     _init() {
         if (!this.container)
             return;
@@ -128,6 +125,11 @@ class Accordion {
         var _a;
         (_a = this.container) === null || _a === void 0 ? void 0 : _a.setAttribute(`data-${PREFIX}-accCon`, 'false');
     }
+    toggle() {
+        if (!(this.container instanceof HTMLElement))
+            return;
+        accordionToggle(this.container);
+    }
 }
 ///if the accordion exists in the dom tree 
 ///assuming you have the controls of html 
@@ -155,11 +157,12 @@ document.body.addEventListener('click', function (e) {
     if (acID === null || acID === '')
         return;
     const accordion = document.querySelector(`${ACCORDIONSELECTOR}#${acID}`);
-    if (!accordion || accordion.getAttribute(`data-${PREFIX}-accCon`) === 'false')
+    if (!accordion || accordion.getAttribute(`data-${PREFIX}-accCon`) === 'false' || accordion.classList.contains('colexping'))
         return;
-    if (accordion.classList.contains('colexping'))
-        return;
-    ///is container collapsed
+    accordionToggle(accordion);
+});
+function accordionToggle(accordion) {
+    ///whether container is collapsed
     let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
     const accAnimationTime = +window.getComputedStyle(accordion).getPropertyValue('transition-duration').replace(/s/, '') * 1000;
     ///save the height of futher use
@@ -173,11 +176,9 @@ document.body.addEventListener('click', function (e) {
         accordion.style.height = 'auto';
         ///not using this method for now might be using this in future
         // accordion.setAttribute('style', 'height:auto !important');
-        /**
-         * update the height because if accordion is collapsed
-         * previous value has to be 0 and we need the current height
-         * of the accordion for further use
-         */
+        ///update the height because if accordion is collapsed
+        ///previous value has to be 0 and we need the current height 
+        ///of the accordion for further use
         acHeight = accordion.offsetHeight;
         ///immediately change the element height to 0
         accordion.style.height = '0';
@@ -222,5 +223,5 @@ document.body.addEventListener('click', function (e) {
         }
         text !== undefined && (el.innerText = text);
     });
-});
+}
 //# sourceMappingURL=accordion.js.map
