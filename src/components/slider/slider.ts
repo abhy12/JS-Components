@@ -1,117 +1,151 @@
-const sliderContainer = document.querySelector( '.jsc-slider-container' ) as HTMLElement;
-const sliderWrapper = sliderContainer?.querySelector( '.jsc-slider-wrapper' ) as HTMLElement;
-const slides = sliderContainer?.querySelectorAll( '.slide' ) as NodeListOf<HTMLElement>;
-
 /**
  * TOOD
- * Work on next and previous slide threshold timing
  * Work on gap
  * A11y
- * Class Component
  * Vertical Slider
  */
 
-///global variables
-let startingPoint = 0,
-   isDragging = false,
-   currentIndex = 0,
-   slidesLength = slides.length,
-   dragTime = 0,
-   isFirstMove = false,
-   translate = 0;
-
-const sliderContainerWidth = sliderContainer.getBoundingClientRect().width,
-   percentThreshold = 50,
-   timeThreshold = 300;
-
-///prevent default behavior in slide like image dragging effect inside slide
-sliderContainer.addEventListener( 'dragstart', ( e ) => {
-   const target = e.target as HTMLElement;
-   const currentTarget = e.currentTarget;
-
-   if( !target.closest( '.slide' )?.classList.contains( 'slide' ) ) return;
-
-   e.preventDefault();
-});
-
-function pointerDown( e: MouseEvent | TouchEvent )  {
-   isDragging = true
-   startingPoint= getPosition( e );
+interface JsSliderArgs {
+   container: string | HTMLElement
 }
 
-function pointerMove( e: MouseEvent | TouchEvent )  {
-   if( !isDragging ) return;
-
-   if( !isFirstMove )  {
-      isFirstMove = true;
-      dragTime = new Date().getTime();
-   }
-
-   ///if positive then the slide going to left otherwise right
-   translate = getPosition( e ) - startingPoint;
-
-   ///current percentage of drag
-   const currentPercent = ( 100 * Math.abs( translate ) ) / sliderContainerWidth;
-
-   if( currentIndex >= ( slides.length - 1 ) && translate < 0 ) {
-      sliderWrapper.style.transform = `translateX(${( translate / 2.5 ) - ( currentIndex * sliderContainerWidth )}px)`;
-      return;
-   }
-
-   if( currentIndex <= 0 && translate > 0 ) {
-      sliderWrapper.style.transform = `translateX(${( translate / 2.5 ) + ( currentIndex * sliderContainerWidth )}px)`;
-      return;
-   }
-
-   sliderWrapper.style.transform = `translateX(${translate - ( currentIndex * sliderContainerWidth )}px)`;
-}
-
-function pointerLeave()  {
-   const currentPercent = ( 100 * Math.abs( translate ) ) / sliderContainerWidth;
-
-   ///if the drag distance is greater than percentThreshold of the container
-   ///or pointer leaving time minus the drag start time is lower than the time threshold
-   ///increase or decrease the index based on the translate value
-   if( isDragging && ( ( new Date().getTime() - dragTime ) < timeThreshold || currentPercent > percentThreshold ) )  {
-
-      ///slide going to the right
-      if( translate > 0 && currentIndex > 0  ) --currentIndex;
-
-      ///slide going to the left
-      if( translate < 0 && currentIndex < ( slidesLength - 1 ) ) ++currentIndex;
-   }
-
-   sliderWrapper.style.transitionDuration = '300ms';
-   sliderWrapper.style.transform = `translateX(${-( currentIndex * sliderContainerWidth )}px)`; 
-   setTimeout( () => {
-      sliderWrapper.style.transitionDuration = '';
-   }, 300 );
-
-   ///reset
-   isDragging = false;
+class JsSlider {
+   container: HTMLElement;
+   sliderWrapper: HTMLElement;
+   slides: NodeListOf<HTMLElement>;
+   sliderContainerWidth: number;
+   /// 
    startingPoint = 0;
-   isFirstMove = false;
+   isDragging = false;
+   currentIndex = 0;
+   slidesLength: number;
    dragTime = 0;
+   isFirstMove = false;
    translate = 0;
+   ///can be change via args
+   percentThreshold = 50;
+   timeThreshold = 300;
+   ///slider events
+   sliderEvents = {
+      'mousedown': this._pointerDown,
+      'mouseup': this._pointerLeave, 
+      // 'mouseleave':  this._pointerLeave,
+      'mousemove': this._pointerMove,
+      'touchstart': this._pointerDown,
+      'touchend': this._pointerLeave, 
+      'touchmove': this._pointerMove,
+      'dragstart': this._pointerDragStart,
+   }
+
+   constructor( args: JsSliderArgs ) {
+
+      if( typeof args.container === 'string' )  {
+         this.container = document.querySelector( args.container ) as HTMLElement;
+      } else if( args.container instanceof HTMLElement )  {
+         this.container = args.container;
+      }
+
+      if( !this.container )  return;
+
+      this._init();
+   }
+
+   _init()  {
+      ///save slider container width
+      this.sliderContainerWidth = this.container.getBoundingClientRect().width;
+      this.sliderWrapper = this.container.querySelector( '.jsc-slider-wrapper' ) as HTMLElement;
+      this.slides = this.container.querySelectorAll( '.slide' ) as NodeListOf<HTMLElement>;
+
+      if( !this.sliderWrapper || !this.slides ) return;
+
+      this.slidesLength = this.slides.length;
+
+      ///add all the slider events
+      Object.keys( this.sliderEvents ).map( event => {
+         this.container.addEventListener( event, ( e ) => {
+            // @ts-ignore
+            this.sliderEvents[event].call( this, e )
+         });
+      });
+   }
+
+   ///prevent default behavior in slide like image dragging effect inside slide
+   _pointerDragStart( e: MouseEvent | TouchEvent )  {
+      const target = e.target as HTMLElement;
+      const currentTarget = e.currentTarget;
+   
+      if( !target.closest( '.slide' )?.classList.contains( 'slide' ) ) return;
+   
+      e.preventDefault();
+   }
+
+   _pointerDown( e: MouseEvent | TouchEvent )  {
+      this.isDragging = true
+      this.startingPoint = this._getPosition( e );
+   }
+
+   _pointerMove( e: MouseEvent | TouchEvent )  {
+      if( !this.isDragging ) return;
+   
+      if( !this.isFirstMove )  {
+         this.isFirstMove = true;
+         this.dragTime = new Date().getTime();
+      }
+
+      ///if positive then the slide going to left otherwise right
+      this.translate = this._getPosition( e ) - this.startingPoint;
+
+      if( this.currentIndex >= ( this.slidesLength - 1 ) && this.translate < 0 ) {
+         this.sliderWrapper.style.transform = `translateX(${( this.translate / 2.5 ) - ( this.currentIndex * this.sliderContainerWidth )}px)`;
+         return;
+      }
+
+      if( this.currentIndex <= 0 && this.translate > 0 ) {
+         this.sliderWrapper.style.transform = `translateX(${( this.translate / 2.5 ) + ( this.currentIndex * this.sliderContainerWidth )}px)`;
+         return;
+      }
+
+      this.sliderWrapper.style.transform = `translateX(${this.translate - ( this.currentIndex * this.sliderContainerWidth )}px)`;
+   }
+
+   _pointerLeave()  {
+      ///current percentage of drag
+      const currentPercent = ( 100 * Math.abs( this.translate ) ) / this.sliderContainerWidth;
+
+      ///if the drag distance is greater than percentThreshold of the container
+      ///or pointer leaving time minus the drag start time is lower than the time threshold
+      ///increase or decrease the index based on the translate value
+      if( this.isDragging && ( ( new Date().getTime() - this.dragTime ) < this.timeThreshold || currentPercent > this.percentThreshold ) )  {
+
+         ///slide going to the right
+         if( this.translate > 0 && this.currentIndex > 0  ) --this.currentIndex;
+
+         ///slide going to the left
+         if( this.translate < 0 && this.currentIndex < ( this.slidesLength - 1 ) ) ++this.currentIndex;
+      }
+
+      this.sliderWrapper.style.transitionDuration = '300ms';
+      this.sliderWrapper.style.transform = `translateX(${-( this.currentIndex * this.sliderContainerWidth )}px)`; 
+      setTimeout( () => {
+         this.sliderWrapper.style.transitionDuration = '';
+      }, 300 );
+
+      ///reset
+      this.isDragging = false;
+      this.startingPoint = 0;
+      this.isFirstMove = false;
+      this.dragTime = 0;
+      this.translate = 0;
+   }
+
+   _getPosition( e: MouseEvent | TouchEvent )  {
+      return ( e instanceof MouseEvent ) ? e.clientX : e.touches[0].clientX;
+   }
 }
 
-///slider events
-const sliderEvents = {
-   'mousedown': pointerDown,
-   'mouseup': pointerLeave, 
-   // 'mouseleave':  pointerLeave,
-   'mousemove': pointerMove,
-   'touchstart': pointerDown,
-   'touchend': pointerLeave, 
-   'touchmove': pointerMove
-}
+const sliderContainer = document.querySelector( '.jsc-slider-container' ) as HTMLElement;
 
-///add all the slider events
-Object.keys( sliderEvents ).map( event => {
-   //@ts-ignore
-   sliderContainer.addEventListener( event, sliderEvents[event] );
+const slider = new JsSlider({
+   // container: sliderContainer,
+   container: '.jsc-slider-container',
 });
-
-function getPosition( e: MouseEvent | TouchEvent )  {
-   return ( e instanceof MouseEvent ) ? e.clientX : e.touches[0].clientX;
-}
