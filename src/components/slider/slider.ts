@@ -6,15 +6,19 @@
  */
 
 interface JsSliderArgs {
-   container: string | HTMLElement
+   container: string | HTMLElement,
+   slidesPerView?: number,
+   gap?: number,
 }
 
 class JsSlider {
+   ///core variables
    container: HTMLElement;
    sliderWrapper: HTMLElement;
    slides: NodeListOf<HTMLElement>;
    sliderContainerWidth: number;
-   /// 
+
+   ///state variables
    startingPoint = 0;
    isDragging = false;
    currentIndex = 0;
@@ -22,9 +26,13 @@ class JsSlider {
    dragTime = 0;
    isFirstMove = false;
    translate = 0;
+
    ///can be change via args
+   slidesPerView = 1;
    percentThreshold = 50;
    timeThreshold = 300;
+   gap = 0;
+
    ///slider events
    sliderEvents = {
       'mousedown': this._pointerDown,
@@ -38,7 +46,7 @@ class JsSlider {
    }
 
    constructor( args: JsSliderArgs ) {
-
+      ///check if container arg is string or htmlelement
       if( typeof args.container === 'string' )  {
          this.container = document.querySelector( args.container ) as HTMLElement;
       } else if( args.container instanceof HTMLElement )  {
@@ -46,6 +54,21 @@ class JsSlider {
       }
 
       if( !this.container )  return;
+      /** any expression after this */
+
+      /**** will improve this in more efficient way ****/
+
+      ///assign other arguments to global class variables
+      if( args.slidesPerView && args.slidesPerView > 0 )  {
+         this.slidesPerView = args.slidesPerView;
+      }
+
+      if( args.gap && args.gap > 0 )  {
+         ///multiplying gap for good user experience i guess
+         this.gap = args.gap * 2;
+      }
+
+      /** ******* */
 
       this._init();
    }
@@ -58,7 +81,7 @@ class JsSlider {
 
       if( !this.sliderWrapper || !this.slides ) return;
 
-      this.slidesLength = this.slides.length;
+      this.slidesLength = this.slides.length / this.slidesPerView;
 
       ///add all the slider events
       Object.keys( this.sliderEvents ).map( event => {
@@ -67,15 +90,28 @@ class JsSlider {
             this.sliderEvents[event].call( this, e )
          });
       });
+
+      ///initalize slides per view and gap
+      if( this.slidesPerView > 1 )  {
+         const perViewWidth = this.sliderContainerWidth / this.slidesPerView;
+
+         this.slides.forEach( ( slide, i ) =>  {
+            slide.style.width = perViewWidth + 'px';
+
+            if( i === 0 ) return;
+
+            // slide.style.marginLeft = this.gap + 'px';
+         });
+      }
    }
 
    ///prevent default behavior in slide like image dragging effect inside slide
    _pointerDragStart( e: MouseEvent | TouchEvent )  {
       const target = e.target as HTMLElement;
       const currentTarget = e.currentTarget;
-   
+
       if( !target.closest( '.slide' )?.classList.contains( 'slide' ) ) return;
-   
+
       e.preventDefault();
    }
 
@@ -86,7 +122,7 @@ class JsSlider {
 
    _pointerMove( e: MouseEvent | TouchEvent )  {
       if( !this.isDragging ) return;
-   
+
       if( !this.isFirstMove )  {
          this.isFirstMove = true;
          this.dragTime = new Date().getTime();
@@ -148,4 +184,6 @@ const sliderContainer = document.querySelector( '.jsc-slider-container' ) as HTM
 const slider = new JsSlider({
    // container: sliderContainer,
    container: '.jsc-slider-container',
+   slidesPerView: 2,
+   gap: 20,
 });

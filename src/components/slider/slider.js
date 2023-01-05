@@ -7,7 +7,7 @@
  */
 class JsSlider {
     constructor(args) {
-        ///
+        ///state variables
         this.startingPoint = 0;
         this.isDragging = false;
         this.currentIndex = 0;
@@ -15,8 +15,10 @@ class JsSlider {
         this.isFirstMove = false;
         this.translate = 0;
         ///can be change via args
+        this.slidesPerView = 1;
         this.percentThreshold = 50;
         this.timeThreshold = 300;
+        this.gap = 0;
         ///slider events
         this.sliderEvents = {
             'mousedown': this._pointerDown,
@@ -28,6 +30,7 @@ class JsSlider {
             'touchmove': this._pointerMove,
             'dragstart': this._pointerDragStart,
         };
+        ///check if container arg is string or htmlelement
         if (typeof args.container === 'string') {
             this.container = document.querySelector(args.container);
         }
@@ -36,6 +39,17 @@ class JsSlider {
         }
         if (!this.container)
             return;
+        /** any expression after this */
+        /**** will improve this in more efficient way ****/
+        ///assign other arguments to global class variables
+        if (args.slidesPerView && args.slidesPerView > 0) {
+            this.slidesPerView = args.slidesPerView;
+        }
+        if (args.gap && args.gap > 0) {
+            ///multiplying gap for good user experience i guess
+            this.gap = args.gap * 2;
+        }
+        /** ******* */
         this._init();
     }
     _init() {
@@ -45,7 +59,7 @@ class JsSlider {
         this.slides = this.container.querySelectorAll('.slide');
         if (!this.sliderWrapper || !this.slides)
             return;
-        this.slidesLength = this.slides.length;
+        this.slidesLength = this.slides.length / this.slidesPerView;
         ///add all the slider events
         Object.keys(this.sliderEvents).map(event => {
             this.container.addEventListener(event, (e) => {
@@ -53,6 +67,16 @@ class JsSlider {
                 this.sliderEvents[event].call(this, e);
             });
         });
+        ///initalize slides per view and gap
+        if (this.slidesPerView > 1) {
+            const perViewWidth = this.sliderContainerWidth / this.slidesPerView;
+            this.slides.forEach((slide, i) => {
+                slide.style.width = perViewWidth + 'px';
+                if (i === 0)
+                    return;
+                // slide.style.marginLeft = this.gap + 'px';
+            });
+        }
     }
     ///prevent default behavior in slide like image dragging effect inside slide
     _pointerDragStart(e) {
@@ -120,5 +144,7 @@ const sliderContainer = document.querySelector('.jsc-slider-container');
 const slider = new JsSlider({
     // container: sliderContainer,
     container: '.jsc-slider-container',
+    slidesPerView: 2,
+    gap: 20,
 });
 //# sourceMappingURL=slider.js.map
