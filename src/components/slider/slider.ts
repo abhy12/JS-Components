@@ -48,12 +48,12 @@ class JsSlider {
    constructor( args: JsSliderArgs ) {
       ///check if container arg is string or htmlelement
       if( typeof args.container === 'string' )  {
-         this.container = document.querySelector( args.container ) as HTMLElement;
-      } else if( args.container instanceof HTMLElement )  {
-         this.container = args.container;
+         args.container = document.querySelector( args.container ) as HTMLElement;
       }
 
-      if( !this.container )  return;
+      if( !( args.container instanceof HTMLElement ) )  return;
+
+      this.container = args.container;
       /** any expression after this */
 
       /**** will improve this in more efficient way ****/

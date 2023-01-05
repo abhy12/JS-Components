@@ -32,13 +32,11 @@ class JsSlider {
         };
         ///check if container arg is string or htmlelement
         if (typeof args.container === 'string') {
-            this.container = document.querySelector(args.container);
+            args.container = document.querySelector(args.container);
         }
-        else if (args.container instanceof HTMLElement) {
-            this.container = args.container;
-        }
-        if (!this.container)
+        if (!(args.container instanceof HTMLElement))
             return;
+        this.container = args.container;
         /** any expression after this */
         /**** will improve this in more efficient way ****/
         ///assign other arguments to global class variables
