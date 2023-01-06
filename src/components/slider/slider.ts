@@ -1,6 +1,5 @@
 /**
  * TOOD
- * Work on gap
  * A11y
  * Vertical Slider
  */
@@ -46,7 +45,7 @@ class JsSlider {
    }
 
    constructor( args: JsSliderArgs ) {
-      ///check if container arg is string or htmlelement
+      ///check if container arg is string
       if( typeof args.container === 'string' )  {
          args.container = document.querySelector( args.container ) as HTMLElement;
       }
@@ -96,11 +95,11 @@ class JsSlider {
          const perViewWidth = this.sliderContainerWidth / this.slidesPerView;
 
          this.slides.forEach( ( slide, i ) =>  {
-            slide.style.width = perViewWidth + 'px';
+            slide.style.width = perViewWidth - ( ( this.gap * ( this.slidesPerView - 1) ) / this.slidesPerView ) + 'px';
 
             if( i === 0 ) return;
 
-            // slide.style.marginLeft = this.gap + 'px';
+            slide.style.marginLeft = this.gap + 'px';
          });
       }
    }
@@ -131,17 +130,20 @@ class JsSlider {
       ///if positive then the slide going to left otherwise right
       this.translate = this._getPosition( e ) - this.startingPoint;
 
+      ///slider width plus gap
+      const sliderWidthPlusGap = this.sliderContainerWidth + this.gap;
+
       if( this.currentIndex >= ( this.slidesLength - 1 ) && this.translate < 0 ) {
-         this.sliderWrapper.style.transform = `translateX(${( this.translate / 2.5 ) - ( this.currentIndex * this.sliderContainerWidth )}px)`;
+         this.sliderWrapper.style.transform = `translateX(${( this.translate / 2.5 ) - ( this.currentIndex * sliderWidthPlusGap )}px)`;
          return;
       }
 
       if( this.currentIndex <= 0 && this.translate > 0 ) {
-         this.sliderWrapper.style.transform = `translateX(${( this.translate / 2.5 ) + ( this.currentIndex * this.sliderContainerWidth )}px)`;
+         this.sliderWrapper.style.transform = `translateX(${( this.translate / 2.5 ) + ( this.currentIndex * sliderWidthPlusGap )}px)`;
          return;
       }
 
-      this.sliderWrapper.style.transform = `translateX(${this.translate - ( this.currentIndex * this.sliderContainerWidth )}px)`;
+      this.sliderWrapper.style.transform = `translateX(${this.translate - ( this.currentIndex * sliderWidthPlusGap )}px)`;
    }
 
    _pointerLeave()  {
@@ -161,7 +163,7 @@ class JsSlider {
       }
 
       this.sliderWrapper.style.transitionDuration = '300ms';
-      this.sliderWrapper.style.transform = `translateX(${-( this.currentIndex * this.sliderContainerWidth )}px)`; 
+      this.sliderWrapper.style.transform = `translateX(${-( this.currentIndex * ( this.sliderContainerWidth + this.gap ) )}px)`; 
       setTimeout( () => {
          this.sliderWrapper.style.transitionDuration = '';
       }, 300 );
@@ -185,5 +187,5 @@ const slider = new JsSlider({
    // container: sliderContainer,
    container: '.jsc-slider-container',
    slidesPerView: 2,
-   gap: 20,
+   gap: 15,
 });
