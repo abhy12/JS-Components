@@ -92,10 +92,10 @@ class JsSlider {
 
       ///initalize slides per view and gap
       if( this.slidesPerView > 1 )  {
-         const perViewWidth = this.sliderContainerWidth / this.slidesPerView;
+         const perViewWidth =  ( this.sliderContainerWidth - ( this.gap * ( this.slidesPerView - 1 ) )  ) / this.slidesPerView;
 
          this.slides.forEach( ( slide, i ) =>  {
-            slide.style.width = perViewWidth - ( ( this.gap * ( this.slidesPerView - 1) ) / this.slidesPerView ) + 'px';
+            slide.style.width = perViewWidth + 'px';
 
             if( i === 0 ) return;
 
@@ -186,6 +186,6 @@ const sliderContainer = document.querySelector( '.jsc-slider-container' ) as HTM
 const slider = new JsSlider({
    // container: sliderContainer,
    container: '.jsc-slider-container',
-   slidesPerView: 2,
+   slidesPerView: 3,
    gap: 15,
 });
