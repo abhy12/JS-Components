@@ -1,12 +1,8 @@
 .jsc-slider-container{
- 
-  /* flex-wrap: wrap; */
   overflow-x: hidden;
-  transition: transform 0.3s ease-out;
 }
 .jsc-slider-container .jsc-slider-wrapper{
    display: flex;
-   /* gap: 20px; */
    transition-property: transform;
 }
 .jsc-slider-container .slide{
