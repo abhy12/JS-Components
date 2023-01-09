@@ -1,5 +1,7 @@
 /**
  * TOOD
+ * Responsive
+ * Controls
  * A11y
  * Vertical Slider
  */
@@ -91,6 +93,9 @@ class JsSlider {
          });
       });
 
+      ///add event on resize
+      window.onresize = () => this._onWindowResize();
+
       /** initalize slides gap **/
 
       let perViewWidth: number | null;
@@ -171,13 +176,17 @@ class JsSlider {
          if( this.translate < 0 && this.currentIndex < ( this.slidesLength - 1 ) ) ++this.currentIndex;
       }
 
+      this._reset();
+   }
+
+   _reset()  {
       this.sliderWrapper.style.transitionDuration = '300ms';
       this.sliderWrapper.style.transform = `translateX(${-( this.currentIndex * ( this.sliderContainerWidth + this.gap ) )}px)`; 
       setTimeout( () => {
          this.sliderWrapper.style.transitionDuration = '';
       }, 300 );
 
-      ///reset
+      ///reset state variables
       this.isDragging = false;
       this.startingPoint = 0;
       this.isFirstMove = false;
@@ -187,6 +196,11 @@ class JsSlider {
 
    _getPosition( e: MouseEvent | TouchEvent )  {
       return ( e instanceof MouseEvent ) ? e.clientX : e.touches[0].clientX;
+   }
+
+   _onWindowResize()  {
+      this.sliderContainerWidth = this.container.getBoundingClientRect().width;
+      this._reset();
    }
 }
 
