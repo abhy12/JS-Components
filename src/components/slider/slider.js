@@ -43,7 +43,8 @@ class JsSlider {
             this.slidesPerView = args.slidesPerView;
         }
         if (args.gap && args.gap > 0) {
-            ///multiplying gap for good user experience i guess
+            ///multiplying gap because i don't want "1" gap
+            ///equal to "1px", i like to double the gap
             this.gap = args.gap * 2;
         }
         /** ******* */
@@ -64,16 +65,21 @@ class JsSlider {
                 this.sliderEvents[event].call(this, e);
             });
         });
-        ///initalize slides per view and gap
+        /** initalize slides gap **/
+        let perViewWidth;
         if (this.slidesPerView > 1) {
-            const perViewWidth = (this.sliderContainerWidth - (this.gap * (this.slidesPerView - 1))) / this.slidesPerView;
-            this.slides.forEach((slide, i) => {
-                slide.style.width = perViewWidth + 'px';
-                if (i === 0)
-                    return;
-                slide.style.marginLeft = this.gap + 'px';
-            });
+            ///calculate slides per view gap
+            perViewWidth = (this.sliderContainerWidth - (this.gap * (this.slidesPerView - 1))) / this.slidesPerView;
         }
+        this.slides.forEach((slide, i) => {
+            if (perViewWidth !== null && perViewWidth) {
+                slide.style.width = perViewWidth + 'px';
+            }
+            if (i === 0)
+                return;
+            slide.style.marginLeft = this.gap + 'px';
+        });
+        /** End initalize slides gap **/
     }
     ///prevent default behavior in slide like image dragging effect inside slide
     _pointerDragStart(e) {
@@ -143,7 +149,7 @@ const sliderContainer = document.querySelector('.jsc-slider-container');
 const slider = new JsSlider({
     // container: sliderContainer,
     container: '.jsc-slider-container',
-    slidesPerView: 3,
+    slidesPerView: 1,
     gap: 15,
 });
 //# sourceMappingURL=slider.js.map
