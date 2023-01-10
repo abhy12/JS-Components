@@ -87,10 +87,8 @@ class JsSlider {
     }
     ///prevent default behavior in slide like image dragging effect inside slide
     _pointerDragStart(e) {
-        var _a;
         const target = e.target;
-        const currentTarget = e.currentTarget;
-        if (!((_a = target.closest('.slide')) === null || _a === void 0 ? void 0 : _a.classList.contains('slide')))
+        if (!target.closest('.slide'))
             return;
         e.preventDefault();
     }
@@ -135,12 +133,12 @@ class JsSlider {
         }
         this._reset();
     }
-    _reset() {
-        this.sliderWrapper.style.transitionDuration = '300ms';
+    _reset(duration = 300) {
+        this.sliderWrapper.style.transitionDuration = `${duration}ms`;
         this.sliderWrapper.style.transform = `translateX(${-(this.currentIndex * (this.sliderContainerWidth + this.gap))}px)`;
         setTimeout(() => {
             this.sliderWrapper.style.transitionDuration = '';
-        }, 300);
+        }, duration);
         ///reset state variables
         this.isDragging = false;
         this.startingPoint = 0;
@@ -153,7 +151,7 @@ class JsSlider {
     }
     _onWindowResize() {
         this.sliderContainerWidth = this.container.getBoundingClientRect().width;
-        this._reset();
+        this._reset(100);
     }
 }
 const sliderContainer = document.querySelector('.jsc-slider-container');

@@ -121,9 +121,8 @@ class JsSlider {
    ///prevent default behavior in slide like image dragging effect inside slide
    _pointerDragStart( e: MouseEvent | TouchEvent )  {
       const target = e.target as HTMLElement;
-      const currentTarget = e.currentTarget;
 
-      if( !target.closest( '.slide' )?.classList.contains( 'slide' ) ) return;
+      if( !target.closest( '.slide' ) ) return;
 
       e.preventDefault();
    }
@@ -179,12 +178,12 @@ class JsSlider {
       this._reset();
    }
 
-   _reset()  {
-      this.sliderWrapper.style.transitionDuration = '300ms';
+   _reset( duration: number = 300 )  {
+      this.sliderWrapper.style.transitionDuration = `${duration}ms`;
       this.sliderWrapper.style.transform = `translateX(${-( this.currentIndex * ( this.sliderContainerWidth + this.gap ) )}px)`; 
       setTimeout( () => {
          this.sliderWrapper.style.transitionDuration = '';
-      }, 300 );
+      }, duration );
 
       ///reset state variables
       this.isDragging = false;
@@ -200,7 +199,7 @@ class JsSlider {
 
    _onWindowResize()  {
       this.sliderContainerWidth = this.container.getBoundingClientRect().width;
-      this._reset();
+      this._reset( 100 );
    }
 }
 
