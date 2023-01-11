@@ -10,6 +10,8 @@ interface JsSliderArgs {
    container: string | HTMLElement,
    slidesPerView?: number,
    gap?: number,
+   prevEl?: string | HTMLElement,
+   nextEl?: string | HTMLElement,
 }
 
 class JsSlider {
@@ -68,6 +70,25 @@ class JsSlider {
          ///multiplying gap because i don't want "1" gap
          ///equal to "1px", i like to double the gap
          this.gap = args.gap * 2;
+      }
+
+      let prevBtn: string | HTMLElement | undefined = args.prevEl;
+      let nextBtn: string | HTMLElement | undefined = args.nextEl;
+
+      if( typeof prevBtn === 'string' )  {
+         prevBtn = this.container.querySelector( prevBtn ) ? this.container.querySelector( prevBtn ) as HTMLElement : document.querySelector( prevBtn ) as HTMLElement;
+      }
+
+      if( prevBtn instanceof HTMLElement )  {
+         prevBtn.addEventListener( 'click', this.prevSlide.bind( this ) );
+      }
+
+      if( typeof nextBtn === 'string' )  {
+         nextBtn = this.container.querySelector( nextBtn ) ? this.container.querySelector( nextBtn ) as HTMLElement : document.querySelector( nextBtn ) as HTMLElement;
+      }
+
+      if( nextBtn instanceof HTMLElement )  {
+         nextBtn.addEventListener( 'click', this.nextSlide.bind( this ) );
       }
 
       /** ******* */
@@ -225,4 +246,6 @@ const slider = new JsSlider({
    container: '.jsc-slider-container',
    slidesPerView: 1,
    gap: 15,
+   prevEl: '.prev',
+   nextEl: '.next',
 });

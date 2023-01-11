@@ -49,6 +49,20 @@ class JsSlider {
             ///equal to "1px", i like to double the gap
             this.gap = args.gap * 2;
         }
+        let prevBtn = args.prevEl;
+        let nextBtn = args.nextEl;
+        if (typeof prevBtn === 'string') {
+            prevBtn = this.container.querySelector(prevBtn) ? this.container.querySelector(prevBtn) : document.querySelector(prevBtn);
+        }
+        if (prevBtn instanceof HTMLElement) {
+            prevBtn.addEventListener('click', this.prevSlide.bind(this));
+        }
+        if (typeof nextBtn === 'string') {
+            nextBtn = this.container.querySelector(nextBtn) ? this.container.querySelector(nextBtn) : document.querySelector(nextBtn);
+        }
+        if (nextBtn instanceof HTMLElement) {
+            nextBtn.addEventListener('click', this.nextSlide.bind(this));
+        }
         /** ******* */
         this._init();
     }
@@ -175,5 +189,7 @@ const slider = new JsSlider({
     container: '.jsc-slider-container',
     slidesPerView: 1,
     gap: 15,
+    prevEl: '.prev',
+    nextEl: '.next',
 });
 //# sourceMappingURL=slider.js.map
