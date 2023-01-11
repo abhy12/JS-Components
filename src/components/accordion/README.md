@@ -1,6 +1,6 @@
 # Accordion
 
-## Light weight and and simple Accordion
+## Light weight and Simple Accordion
 
 ## Usage 
 
@@ -9,7 +9,7 @@
 If you have control over HTML the simplest and easy way to use the accordion is this:
 
 ```
-<div class="accordion-container ...">
+<div class="accordion-container">
   <h1><button data-jsc-target="">Lorem ipsum dolor sit amet.</button></h1>
   <div data-jsc-accCon="">
     <h2>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
@@ -31,13 +31,12 @@ then for accordion to trigger just add `data-jsc-target="{id}"` this to your but
 
 ***Example***
 ```
-<!-- Simple bootstrap like container -->
-<div class="accordion-container text-4xl bg-gray-300 text-black p-4 font-medium">
+<div class="accordion-container">
   <!-- Always wrap button to heading tag for accessibility -->
-  <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0" data-jsc-target="eg-1">Expend</button></h1>
+  <h1><button class="accordion-btn" data-jsc-target="eg-1">Expend</button></h1>
   <!-- Accordion Container -->
-  <div id="eg-1" class="accordion text-gray-600" data-jsc-accCon="">
-    <h2  class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+  <div id="eg-1" class="accordion" data-jsc-accCon="">
+    <h2>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
   </div>
 </div>
 ```
@@ -55,15 +54,14 @@ one thing to note here that you can use any document query or any class as a con
 
 ***Example***
 ```
-<!-- Simple bootstrap like container -->
-<div class="accordion-container text-4xl bg-gray-300 text-black p-4 font-medium">
+<div class="accordion-container">
   <!-- Always wrap button to heading tag for accessibility -->
    <h1>
-     <button id="btn-2" class="accordion-btn w-full bg-transparent border-0 text-left p-0">Expend</button>
+     <button id="btn-2" class="accordion-btn">Expend</button>
    </h1>
   <!-- Accordion Container -->
-   <div class="accordion text-gray-600" data-jsc-accCon="">
-     <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+   <div class="accordion" data-jsc-accCon="">
+     <h2>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
    </div>
 </div>
 ```
