@@ -1,5 +1,6 @@
 .jsc-slider-container{
   overflow-x: hidden;
+  position: relative;
 }
 .jsc-slider-container .jsc-slider-wrapper{
    display: flex;
@@ -13,4 +14,19 @@
    width: 100%;
    height: 550px;
    object-fit: cover;
+}
+.jsc-slide-btn{
+   position: absolute;
+   top: 50%;
+   left: 2%;
+   transform: translateY(-50%);
+   z-index: 9999;
+   padding: 8px 15px;
+   background: #efefee;
+   border-radius: 2px;
+   line-height: 1;
+}
+.jsc-slide-btn.next{
+   right: 2%;
+   left: unset;
 }
