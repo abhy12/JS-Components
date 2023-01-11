@@ -140,22 +140,25 @@ class JsSlider {
          this.dragTime = new Date().getTime();
       }
 
-      ///if positive then the slide going to left otherwise right
+      ///if positive then the slide going to previous slide otherwise next slide
       this.translate = this._getPosition( e ) - this.startingPoint;
 
       ///slider width plus gap
       const sliderWidthPlusGap = this.sliderContainerWidth + this.gap;
 
+      ///if current slide is last slide and going to next slide decrease the translate value
       if( this.currentIndex >= ( this.slidesLength - 1 ) && this.translate < 0 ) {
          this.sliderWrapper.style.transform = `translateX(${( this.translate / 2.5 ) - ( this.currentIndex * sliderWidthPlusGap )}px)`;
          return;
       }
 
+      ///if current slide is first slide and going to previous slide decrease the translate value
       if( this.currentIndex <= 0 && this.translate > 0 ) {
          this.sliderWrapper.style.transform = `translateX(${( this.translate / 2.5 ) + ( this.currentIndex * sliderWidthPlusGap )}px)`;
          return;
       }
 
+      ///restore the slide previous position if slide not going to left or right either
       this.sliderWrapper.style.transform = `translateX(${this.translate - ( this.currentIndex * sliderWidthPlusGap )}px)`;
    }
 
@@ -200,6 +203,18 @@ class JsSlider {
    _onWindowResize()  {
       this.sliderContainerWidth = this.container.getBoundingClientRect().width;
       this._reset( 100 );
+   }
+
+   nextSlide()  {
+      if( this.currentIndex >= ( this.slidesLength - 1 ) ) return;
+      this.currentIndex++;
+      this._reset();
+   }
+
+   prevSlide()  {
+      if( this.currentIndex <= 0 ) return;
+      this.currentIndex--;
+      this._reset();
    }
 }
 
