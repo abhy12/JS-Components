@@ -30,10 +30,12 @@ class JsSlider {
    dragTime = 0;
    isFirstMove = false;
    translate = 0;
-   breakPointsIndex: [];
+   breakPointsIndex: number[] = [];
    currentBreakPoint: number | null = null;
 
    ///can be change via args
+   defaultSlidesPerView: number = 1;
+   defaultGap: number = 0;
    slidesPerView = 1;
    percentThreshold = 50;
    timeThreshold = 300;
@@ -67,7 +69,7 @@ class JsSlider {
       ///assign other arguments to global class variables
 
       if( args.slidesPerView && args.slidesPerView > 0 )  {
-         this.slidesPerView = args.slidesPerView;
+         this.defaultSlidesPerView = args.slidesPerView;
       }
 
       if( args.gap && args.gap > 0 )  this.gap = args.gap;
@@ -106,52 +108,35 @@ class JsSlider {
 
       if( !this.sliderWrapper || !this.slides ) return;
 
-      /** initalize breakpoints */
-      const breakPoints: string[] = Object.keys( this.breakPoints ).sort().reverse();
+      /** initialize breakpoints */
+      const breakPointsIndex: string[] = Object.keys( this.breakPoints );
 
-      for( let i = 0; i < breakPoints.length; i++ ) {
-         if( !( +breakPoints[i] ) ) continue;
-         const responsive = this.breakPoints[breakPoints[i]];
-         let conMetTimes = 0;
+      if( breakPointsIndex.length > 0 )  {
+         this.breakPointsIndex = breakPointsIndex.map( point => +point ).filter( ( a ) => {
+            if( a < 0 ) return false;
+            return true;
+         }).sort().reverse();
 
-         if( typeof +( responsive.slidesPerView ) === 'number' )  {
-            this.slidesPerView = +( responsive.slidesPerView );
-            conMetTimes++;
-         }
-
-         if( typeof +( responsive.gap ) === 'number' )  {
-            this.gap = +( responsive.gap );
-            conMetTimes++;
-         }
-
-         if( conMetTimes > 0 ) {
-            this.currentBreakPoint = +breakPoints[i];
-            break;
-         }
+         ///apply all the responsive options to the slides
+         this._applyResponsiveSlides();
       }
 
       /** end initialization of breakpoints */
 
+      ///saving slides length
       this.slidesLength = this.slides.length / this.slidesPerView;
 
       ///add all the slider events
       Object.keys( this.sliderEvents ).map( event => {
          // @ts-ignore
-         this.container.addEventListener( event, ( e ) => this.sliderEvents[event].call( this, e ) );
+         this.container.addEventListener( event, this.sliderEvents[event].bind( this ) );
       });
 
       ///add event on resize
       window.onresize = () => this._onWindowResize();
 
-      /** initalize slides gap **/
-
-      ///multiplying gap because i don't want "1" gap
-      ///equal to "1px", i like to double the gap
-      this.gap*= 2;
-
+      ///calculate slides dimensions
       this._calcSlidesDimensions()
-
-      /** End initialization of slides gap **/
    }
 
    ///prevent default behavior in slide like image dragging effect inside slide
@@ -240,12 +225,46 @@ class JsSlider {
    }
 
    _onWindowResize()  {
+      this._applyResponsiveSlides();
       this.sliderContainerWidth = this.container.getBoundingClientRect().width;
       this._reset( 100 );
    }
 
+   _applyResponsiveSlides()  {
+      if( this.breakPointsIndex.length > 0 )  {
+         const windowWidth = window.innerWidth;
+         let conMetTimes = 0;
+
+         for( let i = 0; i < this.breakPointsIndex.length; i++ )  {
+            const responsiveOptions = this.breakPoints[this.breakPointsIndex[i]];
+
+            if( windowWidth <= this.breakPointsIndex[i] ) continue;
+
+            if( typeof +( responsiveOptions.slidesPerView ) === "number" )  {
+               this.slidesPerView = +( responsiveOptions.slidesPerView );
+               conMetTimes++;
+            }
+
+            if( typeof +( responsiveOptions.gap ) === "number" )  {
+               this.gap = +( responsiveOptions.gap );
+               conMetTimes++;
+            }
+
+            if( conMetTimes > 0 )  {
+               this.currentBreakPoint = this.breakPointsIndex[i];
+               break;
+            }
+         }
+
+         if( conMetTimes === 0 )  {
+            this.slidesPerView = this.defaultSlidesPerView;
+            this.gap = this.defaultGap;
+         }
+      }
+   }
+
    _calcSlidesDimensions()  {
-      let perViewWidth: number | null;
+      let perViewWidth: number | null = null;
 
       if( this.slidesPerView > 1 )  {
          ///calculate slides per view gap
@@ -255,11 +274,17 @@ class JsSlider {
       this.slides.forEach( ( slide, i ) =>  {
          if( perViewWidth !== null && perViewWidth )  {
             slide.style.width = perViewWidth + 'px';
+         } else if( perViewWidth === null )  {
+            ///if slidePerView is 1 no need to add any width to slide
+            slide.style.width = '';
          }
 
+         ///don't add left margin if this is first slide
          if( i === 0 ) return;
 
-         slide.style.marginLeft = this.gap + 'px';
+         ///multiplying gap because i don't want "1" gap
+         ///equal to "1px", i like to double the gap
+         slide.style.marginLeft = ( this.gap * 2 ) + 'px';
       });
    }
 
@@ -281,7 +306,7 @@ const sliderContainer = document.querySelector( '.jsc-slider-container' ) as HTM
 const slider = new JsSlider({
    // container: sliderContainer,
    container: '.jsc-slider-container',
-   slidesPerView: 2,
+   slidesPerView: 1,
    gap: 5,
    prevEl: '.prev',
    nextEl: '.next',
