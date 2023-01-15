@@ -246,7 +246,7 @@ class JsSlider {
             }
 
             if( typeof +( responsiveOptions.gap ) === "number" )  {
-               this.gap = +( responsiveOptions.gap );
+               this.gap = +( responsiveOptions.gap ) * 2;
                conMetTimes++;
             }
 
@@ -258,7 +258,7 @@ class JsSlider {
 
          if( conMetTimes === 0 )  {
             this.slidesPerView = this.defaultSlidesPerView;
-            this.gap = this.defaultGap;
+            this.gap = this.defaultGap * 2;
          }
       }
    }
@@ -284,7 +284,7 @@ class JsSlider {
 
          ///multiplying gap because i don't want "1" gap
          ///equal to "1px", i like to double the gap
-         slide.style.marginLeft = ( this.gap * 2 ) + 'px';
+         slide.style.marginLeft = this.gap + 'px';
       });
    }
 
