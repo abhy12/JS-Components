@@ -72,7 +72,7 @@ class JsSlider {
          this.defaultSlidesPerView = args.slidesPerView;
       }
 
-      if( args.gap && args.gap > 0 )  this.gap = args.gap;
+      if( args.gap && args.gap > 0 )  this.defaultGap = args.gap;
 
       let prevBtn: string | HTMLElement | undefined = args.prevEl;
       let nextBtn: string | HTMLElement | undefined = args.nextEl;
@@ -116,15 +116,12 @@ class JsSlider {
             if( a < 0 ) return false;
             return true;
          }).sort().reverse();
-
-         ///apply all the responsive options to the slides
-         this._applyResponsiveSlides();
       }
 
-      /** end initialization of breakpoints */
+      ///apply all the responsive options to the slides
+      this._applyResponsiveness();
 
-      ///saving slides length
-      this.slidesLength = this.slides.length / this.slidesPerView;
+      /** end initialization of breakpoints */
 
       ///add all the slider events
       Object.keys( this.sliderEvents ).map( event => {
@@ -136,8 +133,10 @@ class JsSlider {
       window.onresize = () => this._onWindowResize();
 
       ///calculate slides dimensions
-      this._calcSlidesDimensions()
+      this._calcSlidesDimensions();
    }
+
+   /** All Event functions */
 
    ///prevent default behavior in slide like image dragging effect inside slide
    _pointerDragStart( e: MouseEvent | TouchEvent )  {
@@ -185,12 +184,12 @@ class JsSlider {
 
    _pointerLeave()  {
       ///current percentage of drag
-      const currentPercent = ( 100 * Math.abs( this.translate ) ) / this.sliderContainerWidth;
+      const currentDragPercent = ( 100 * Math.abs( this.translate ) ) / this.sliderContainerWidth;
 
       ///if the drag distance is greater than percentThreshold of the container
       ///or pointer leaving time minus the drag start time is lower than the time threshold
       ///increase or decrease the index based on the translate value
-      if( this.isDragging && ( ( new Date().getTime() - this.dragTime ) < this.timeThreshold || currentPercent > this.percentThreshold ) )  {
+      if( this.isDragging && ( ( new Date().getTime() - this.dragTime ) < this.timeThreshold || currentDragPercent > this.percentThreshold ) )  {
 
          ///slide going to the right
          if( this.translate > 0 && this.currentIndex > 0  ) --this.currentIndex;
@@ -202,35 +201,37 @@ class JsSlider {
       this._reset();
    }
 
-   _reset( transitionDuration: number = 300 )  {
-      this.sliderWrapper.style.transitionDuration = `${transitionDuration}ms`;
-      this.sliderWrapper.style.transform = `translateX(${-( this.currentIndex * ( this.sliderContainerWidth + this.gap ) )}px)`; 
-      setTimeout( () => {
-         this.sliderWrapper.style.transitionDuration = '';
-      }, transitionDuration );
-
-      ///recalculate slides width
-      this._calcSlidesDimensions();
-
-      ///reset state variables
-      this.isDragging = false;
-      this.startingPoint = 0;
-      this.isFirstMove = false;
-      this.dragTime = 0;
-      this.translate = 0;
+   _onWindowResize()  {
+      this._applyResponsiveness();
+      this.sliderContainerWidth = this.container.getBoundingClientRect().width;
+      this._reset( 100 );
    }
+
+   /** End Event functions */
+
+   /** Controls Functions */
+
+   nextSlide()  {
+      if( this.currentIndex >= ( this.slidesLength - 1 ) ) return;
+      this.currentIndex++;
+      this._reset();
+   }
+
+   prevSlide()  {
+      if( this.currentIndex <= 0 ) return;
+      this.currentIndex--;
+      this._reset();
+   }
+
+   /** End Controls Functions */
+
+   /** Utilities Functions */
 
    _getPosition( e: MouseEvent | TouchEvent )  {
       return ( e instanceof MouseEvent ) ? e.clientX : e.touches[0].clientX;
    }
 
-   _onWindowResize()  {
-      this._applyResponsiveSlides();
-      this.sliderContainerWidth = this.container.getBoundingClientRect().width;
-      this._reset( 100 );
-   }
-
-   _applyResponsiveSlides()  {
+   _applyResponsiveness()  {
       if( this.breakPointsIndex.length > 0 )  {
          const windowWidth = window.innerWidth;
          let conMetTimes = 0;
@@ -241,7 +242,15 @@ class JsSlider {
             if( windowWidth <= this.breakPointsIndex[i] ) continue;
 
             if( typeof +( responsiveOptions.slidesPerView ) === "number" )  {
-               this.slidesPerView = +( responsiveOptions.slidesPerView );
+               if( +( responsiveOptions.slidesPerView ) !== this.slidesPerView )  {
+                  this.slidesPerView = +( responsiveOptions.slidesPerView );
+   
+                  ///when slidePerView change return slide to closest index value
+                  if( this.currentIndex > 0 )  {
+                     this.currentIndex = Math.abs( Math.floor( this.slidesPerView / this.currentIndex ) );
+                  }
+                  console.log( this.currentIndex );
+               }
                conMetTimes++;
             }
 
@@ -261,6 +270,9 @@ class JsSlider {
             this.gap = this.defaultGap * 2;
          }
       }
+
+      ///saving slides length
+      this.slidesLength = this.slides.length / this.slidesPerView;
    }
 
    _calcSlidesDimensions()  {
@@ -282,27 +294,34 @@ class JsSlider {
          ///don't add left margin if this is first slide
          if( i === 0 ) return;
 
-         ///multiplying gap because i don't want "1" gap
-         ///equal to "1px", i like to double the gap
+         ///multiplying gap because i don't want "1" gap equal to "1px"
+         ///i like to double the gap
          slide.style.marginLeft = this.gap + 'px';
       });
    }
 
-   nextSlide()  {
-      if( this.currentIndex >= ( this.slidesLength - 1 ) ) return;
-      this.currentIndex++;
-      this._reset();
+   _reset( transitionDuration: number = 300 )  {
+      this.sliderWrapper.style.transitionDuration = `${transitionDuration}ms`;
+      this.sliderWrapper.style.transform = `translateX(${-( this.currentIndex * ( this.sliderContainerWidth + this.gap ) )}px)`; 
+      setTimeout( () => {
+         this.sliderWrapper.style.transitionDuration = '';
+      }, transitionDuration );
+
+      ///recalculate slides width
+      this._calcSlidesDimensions();
+
+      ///reset state variables
+      this.isDragging = false;
+      this.startingPoint = 0;
+      this.isFirstMove = false;
+      this.dragTime = 0;
+      this.translate = 0;
    }
 
-   prevSlide()  {
-      if( this.currentIndex <= 0 ) return;
-      this.currentIndex--;
-      this._reset();
-   }
+   /** End Utilities Functions */
 }
 
 const sliderContainer = document.querySelector( '.jsc-slider-container' ) as HTMLElement;
-
 const slider = new JsSlider({
    // container: sliderContainer,
    container: '.jsc-slider-container',
