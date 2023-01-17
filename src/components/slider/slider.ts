@@ -1,7 +1,5 @@
 /**
  * TOOD
- * Responsive
- * Controls
  * A11y
  * Vertical Slider
  */
@@ -44,13 +42,9 @@ class JsSlider {
 
    ///slider events
    sliderEvents = {
-      'mousedown': this._pointerDown,
-      'mouseup': this._pointerLeave, 
-      // 'mouseleave':  this._pointerLeave,
-      'mousemove': this._pointerMove,
-      'touchstart': this._pointerDown,
-      'touchend': this._pointerLeave, 
-      'touchmove': this._pointerMove,
+      'pointerdown': this._pointerDown,
+      'pointerup': this._pointerLeave,
+      'pointermove': this._pointerMove,
       'dragstart': this._pointerDragStart,
    }
 
@@ -163,6 +157,13 @@ class JsSlider {
       ///if positive then the slide going to previous slide otherwise next slide
       this.translate = this._getPosition( e ) - this.startingPoint;
 
+      const pointerPosition = ( e instanceof MouseEvent ) ? e.clientX : e.touches[0].clientX;
+      // console.log( pointerPosition, this.sliderContainerWidth );
+      if( pointerPosition >= this.sliderContainerWidth )  {
+         this._pointerLeave();
+         return;
+      }
+
       ///slider width plus gap
       const sliderWidthPlusGap = this.sliderContainerWidth + this.gap;
 
@@ -244,12 +245,11 @@ class JsSlider {
             if( typeof +( responsiveOptions.slidesPerView ) === "number" )  {
                if( +( responsiveOptions.slidesPerView ) !== this.slidesPerView )  {
                   this.slidesPerView = +( responsiveOptions.slidesPerView );
-   
+
                   ///when slidePerView change return slide to closest index value
                   if( this.currentIndex > 0 )  {
                      this.currentIndex = Math.abs( Math.floor( this.slidesPerView / this.currentIndex ) );
                   }
-                  console.log( this.currentIndex );
                }
                conMetTimes++;
             }

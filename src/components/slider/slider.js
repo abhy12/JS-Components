@@ -1,8 +1,6 @@
 "use strict";
 /**
  * TOOD
- * Responsive
- * Controls
  * A11y
  * Vertical Slider
  */
@@ -27,13 +25,9 @@ class JsSlider {
         this.breakPoints = {};
         ///slider events
         this.sliderEvents = {
-            'mousedown': this._pointerDown,
-            'mouseup': this._pointerLeave,
-            // 'mouseleave':  this._pointerLeave,
-            'mousemove': this._pointerMove,
-            'touchstart': this._pointerDown,
-            'touchend': this._pointerLeave,
-            'touchmove': this._pointerMove,
+            'pointerdown': this._pointerDown,
+            'pointerup': this._pointerLeave,
+            'pointermove': this._pointerMove,
             'dragstart': this._pointerDragStart,
         };
         ///check if container arg is string
@@ -120,6 +114,12 @@ class JsSlider {
         }
         ///if positive then the slide going to previous slide otherwise next slide
         this.translate = this._getPosition(e) - this.startingPoint;
+        const pointerPosition = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
+        // console.log( pointerPosition, this.sliderContainerWidth );
+        if (pointerPosition >= this.sliderContainerWidth) {
+            this._pointerLeave();
+            return;
+        }
         ///slider width plus gap
         const sliderWidthPlusGap = this.sliderContainerWidth + this.gap;
         ///if current slide is last slide and going to next slide decrease the translate value
@@ -190,7 +190,6 @@ class JsSlider {
                         if (this.currentIndex > 0) {
                             this.currentIndex = Math.abs(Math.floor(this.slidesPerView / this.currentIndex));
                         }
-                        console.log(this.currentIndex);
                     }
                     conMetTimes++;
                 }
