@@ -23,13 +23,6 @@ class JsSlider {
         this.timeThreshold = 300;
         this.gap = 0;
         this.breakPoints = {};
-        ///slider events
-        this.sliderEvents = {
-            'pointerdown': this._pointerDown,
-            'pointerup': this._pointerLeave,
-            'pointermove': this._pointerMove,
-            'dragstart': this._pointerDragStart,
-        };
         ///check if container arg is string
         if (typeof args.container === 'string') {
             args.container = document.querySelector(args.container);
@@ -84,10 +77,10 @@ class JsSlider {
         this._applyResponsiveness();
         /** end initialization of breakpoints */
         ///add all the slider events
-        Object.keys(this.sliderEvents).map(event => {
-            // @ts-ignore
-            this.container.addEventListener(event, this.sliderEvents[event].bind(this));
-        });
+        this.container.addEventListener('pointerdown', this._pointerDown.bind(this));
+        this.container.addEventListener('pointerdown', this._pointerDragStart.bind(this));
+        this.container.addEventListener('pointerup', this._pointerLeave.bind(this));
+        this.container.addEventListener('pointermove', this._pointerMove.bind(this));
         ///add event on resize
         window.onresize = () => this._onWindowResize();
         ///calculate slides dimensions
@@ -204,6 +197,8 @@ class JsSlider {
             }
             if (conMetTimes === 0) {
                 this.slidesPerView = this.defaultSlidesPerView;
+                ///multiplying gap because i don't want "1" gap equal to "1px"
+                ///i like to double the gap
                 this.gap = this.defaultGap * 2;
             }
         }
@@ -227,8 +222,6 @@ class JsSlider {
             ///don't add left margin if this is first slide
             if (i === 0)
                 return;
-            ///multiplying gap because i don't want "1" gap equal to "1px"
-            ///i like to double the gap
             slide.style.marginLeft = this.gap + 'px';
         });
     }

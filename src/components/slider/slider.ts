@@ -38,15 +38,7 @@ class JsSlider {
    percentThreshold = 50;
    timeThreshold = 300;
    gap = 0;
-   breakPoints:any | {} = {}
-
-   ///slider events
-   sliderEvents = {
-      'pointerdown': this._pointerDown,
-      'pointerup': this._pointerLeave,
-      'pointermove': this._pointerMove,
-      'dragstart': this._pointerDragStart,
-   }
+   breakPoints:any | {} = {};
 
    constructor( args: JsSliderArgs ) {
       ///check if container arg is string
@@ -118,10 +110,10 @@ class JsSlider {
       /** end initialization of breakpoints */
 
       ///add all the slider events
-      Object.keys( this.sliderEvents ).map( event => {
-         // @ts-ignore
-         this.container.addEventListener( event, this.sliderEvents[event].bind( this ) );
-      });
+      this.container.addEventListener( 'pointerdown', this._pointerDown.bind( this ) );
+      this.container.addEventListener( 'pointerdown', this._pointerDragStart.bind( this ) );
+      this.container.addEventListener( 'pointerup', this._pointerLeave.bind( this ) );
+      this.container.addEventListener( 'pointermove', this._pointerMove.bind( this ) );
 
       ///add event on resize
       window.onresize = () => this._onWindowResize();
@@ -267,6 +259,9 @@ class JsSlider {
 
          if( conMetTimes === 0 )  {
             this.slidesPerView = this.defaultSlidesPerView;
+
+            ///multiplying gap because i don't want "1" gap equal to "1px"
+            ///i like to double the gap
             this.gap = this.defaultGap * 2;
          }
       }
@@ -294,8 +289,6 @@ class JsSlider {
          ///don't add left margin if this is first slide
          if( i === 0 ) return;
 
-         ///multiplying gap because i don't want "1" gap equal to "1px"
-         ///i like to double the gap
          slide.style.marginLeft = this.gap + 'px';
       });
    }
