@@ -3,6 +3,7 @@
  * A11y
  * Vertical Slider
  */
+let pointerPosition = 0;
 
 interface JsSliderArgs {
    container: string | HTMLElement,
@@ -21,8 +22,9 @@ class JsSlider {
    sliderContainerWidth: number;
 
    ///state variables
-   startingPoint = 0;
+   pointerStartingPosition = 0;
    isDragging = false;
+   isPointerMoved = false;
    currentIndex = 0;
    slidesLength: number;
    dragTime = 0;
@@ -111,7 +113,7 @@ class JsSlider {
 
       ///add all the slider events
       this.container.addEventListener( 'pointerdown', this._pointerDown.bind( this ) );
-      this.container.addEventListener( 'pointerdown', this._pointerDragStart.bind( this ) );
+      this.container.addEventListener( 'pointerdown', this._preventDragBehaviour.bind( this ) );
       this.container.addEventListener( 'pointerup', this._pointerLeave.bind( this ) );
       this.container.addEventListener( 'pointermove', this._pointerMove.bind( this ) );
 
@@ -125,7 +127,7 @@ class JsSlider {
    /** All Event functions */
 
    ///prevent default behavior in slide like image dragging effect inside slide
-   _pointerDragStart( e: MouseEvent | TouchEvent )  {
+   _preventDragBehaviour( e: MouseEvent | TouchEvent )  {
       const target = e.target as HTMLElement;
 
       if( !target.closest( '.slide' ) ) return;
@@ -134,8 +136,8 @@ class JsSlider {
    }
 
    _pointerDown( e: MouseEvent | TouchEvent )  {
-      this.isDragging = true
-      this.startingPoint = this._getPosition( e );
+      this.isDragging = true;
+      this.pointerStartingPosition = this._getPointerPosition( e );
    }
 
    _pointerMove( e: MouseEvent | TouchEvent )  {
@@ -146,11 +148,11 @@ class JsSlider {
          this.dragTime = new Date().getTime();
       }
 
-      ///if positive then the slide going to previous slide otherwise next slide
-      this.translate = this._getPosition( e ) - this.startingPoint;
+      const pointerPosition = this._getPointerPosition( e );
 
-      const pointerPosition = ( e instanceof MouseEvent ) ? e.clientX : e.touches[0].clientX;
-      // console.log( pointerPosition, this.sliderContainerWidth );
+      ///if positive then the slide going to previous slide otherwise next slide
+      this.translate = pointerPosition - this.pointerStartingPosition;
+
       if( pointerPosition >= this.sliderContainerWidth )  {
          this._pointerLeave();
          return;
@@ -197,7 +199,7 @@ class JsSlider {
    _onWindowResize()  {
       this._applyResponsiveness();
       this.sliderContainerWidth = this.container.getBoundingClientRect().width;
-      this._reset( 100 );
+      this._reset();
    }
 
    /** End Event functions */
@@ -220,7 +222,7 @@ class JsSlider {
 
    /** Utilities Functions */
 
-   _getPosition( e: MouseEvent | TouchEvent )  {
+   _getPointerPosition( e: MouseEvent | TouchEvent )  {
       return ( e instanceof MouseEvent ) ? e.clientX : e.touches[0].clientX;
    }
 
@@ -293,19 +295,22 @@ class JsSlider {
       });
    }
 
-   _reset( transitionDuration: number = 300 )  {
-      this.sliderWrapper.style.transitionDuration = `${transitionDuration}ms`;
-      this.sliderWrapper.style.transform = `translateX(${-( this.currentIndex * ( this.sliderContainerWidth + this.gap ) )}px)`; 
-      setTimeout( () => {
-         this.sliderWrapper.style.transitionDuration = '';
-      }, transitionDuration );
+   _reset()  {
+      if( this.isFirstMove )  {
+         this.sliderWrapper.style.transitionDuration = "300ms";
+         this.sliderWrapper.style.transform = `translateX(${-( this.currentIndex * ( this.sliderContainerWidth + this.gap ) )}px)`; 
+         setTimeout( () => {
+            this.sliderWrapper.style.transitionDuration = '';
+         }, 300 );
+      }
 
       ///recalculate slides width
       this._calcSlidesDimensions();
 
       ///reset state variables
       this.isDragging = false;
-      this.startingPoint = 0;
+      this.isPointerMoved = false;
+      this.pointerStartingPosition = 0;
       this.isFirstMove = false;
       this.dragTime = 0;
       this.translate = 0;

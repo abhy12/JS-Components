@@ -4,11 +4,13 @@
  * A11y
  * Vertical Slider
  */
+let pointerPosition = 0;
 class JsSlider {
     constructor(args) {
         ///state variables
-        this.startingPoint = 0;
+        this.pointerStartingPosition = 0;
         this.isDragging = false;
+        this.isPointerMoved = false;
         this.currentIndex = 0;
         this.dragTime = 0;
         this.isFirstMove = false;
@@ -78,7 +80,7 @@ class JsSlider {
         /** end initialization of breakpoints */
         ///add all the slider events
         this.container.addEventListener('pointerdown', this._pointerDown.bind(this));
-        this.container.addEventListener('pointerdown', this._pointerDragStart.bind(this));
+        this.container.addEventListener('pointerdown', this._preventDragBehaviour.bind(this));
         this.container.addEventListener('pointerup', this._pointerLeave.bind(this));
         this.container.addEventListener('pointermove', this._pointerMove.bind(this));
         ///add event on resize
@@ -88,7 +90,7 @@ class JsSlider {
     }
     /** All Event functions */
     ///prevent default behavior in slide like image dragging effect inside slide
-    _pointerDragStart(e) {
+    _preventDragBehaviour(e) {
         const target = e.target;
         if (!target.closest('.slide'))
             return;
@@ -96,7 +98,7 @@ class JsSlider {
     }
     _pointerDown(e) {
         this.isDragging = true;
-        this.startingPoint = this._getPosition(e);
+        this.pointerStartingPosition = this._getPointerPosition(e);
     }
     _pointerMove(e) {
         if (!this.isDragging)
@@ -105,10 +107,9 @@ class JsSlider {
             this.isFirstMove = true;
             this.dragTime = new Date().getTime();
         }
+        const pointerPosition = this._getPointerPosition(e);
         ///if positive then the slide going to previous slide otherwise next slide
-        this.translate = this._getPosition(e) - this.startingPoint;
-        const pointerPosition = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
-        // console.log( pointerPosition, this.sliderContainerWidth );
+        this.translate = pointerPosition - this.pointerStartingPosition;
         if (pointerPosition >= this.sliderContainerWidth) {
             this._pointerLeave();
             return;
@@ -147,7 +148,7 @@ class JsSlider {
     _onWindowResize() {
         this._applyResponsiveness();
         this.sliderContainerWidth = this.container.getBoundingClientRect().width;
-        this._reset(100);
+        this._reset();
     }
     /** End Event functions */
     /** Controls Functions */
@@ -165,7 +166,7 @@ class JsSlider {
     }
     /** End Controls Functions */
     /** Utilities Functions */
-    _getPosition(e) {
+    _getPointerPosition(e) {
         return (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
     }
     _applyResponsiveness() {
@@ -225,17 +226,20 @@ class JsSlider {
             slide.style.marginLeft = this.gap + 'px';
         });
     }
-    _reset(transitionDuration = 300) {
-        this.sliderWrapper.style.transitionDuration = `${transitionDuration}ms`;
-        this.sliderWrapper.style.transform = `translateX(${-(this.currentIndex * (this.sliderContainerWidth + this.gap))}px)`;
-        setTimeout(() => {
-            this.sliderWrapper.style.transitionDuration = '';
-        }, transitionDuration);
+    _reset() {
+        if (this.isFirstMove) {
+            this.sliderWrapper.style.transitionDuration = "300ms";
+            this.sliderWrapper.style.transform = `translateX(${-(this.currentIndex * (this.sliderContainerWidth + this.gap))}px)`;
+            setTimeout(() => {
+                this.sliderWrapper.style.transitionDuration = '';
+            }, 300);
+        }
         ///recalculate slides width
         this._calcSlidesDimensions();
         ///reset state variables
         this.isDragging = false;
-        this.startingPoint = 0;
+        this.isPointerMoved = false;
+        this.pointerStartingPosition = 0;
         this.isFirstMove = false;
         this.dragTime = 0;
         this.translate = 0;
