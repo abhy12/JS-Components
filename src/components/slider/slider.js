@@ -1,15 +1,14 @@
 "use strict";
-/**
- * TOOD
- * A11y
- * Vertical Slider
- */
 let pointerPosition = 0;
+let activeSlider = null;
+function getPointerPosition(e) {
+    return (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
+}
 class JsSlider {
     constructor(args) {
         ///state variables
         this.pointerStartingPosition = 0;
-        this.isDragging = false;
+        this.isClicked = false;
         this.isPointerMoved = false;
         this.currentIndex = 0;
         this.dragTime = 0;
@@ -66,6 +65,9 @@ class JsSlider {
         this.slides = this.container.querySelectorAll('.slide');
         if (!this.sliderWrapper || !this.slides)
             return;
+        //@ts-ignore
+        ///add current instance to the container for futher use likely for event bubbling
+        this.container.jsSlide = this;
         /** initialize breakpoints */
         const breakPointsIndex = Object.keys(this.breakPoints);
         if (breakPointsIndex.length > 0) {
@@ -80,40 +82,31 @@ class JsSlider {
         /** end initialization of breakpoints */
         ///add all the slider events
         this.container.addEventListener('pointerdown', this._pointerDown.bind(this));
-        this.container.addEventListener('pointerdown', this._preventDragBehaviour.bind(this));
         this.container.addEventListener('pointerup', this._pointerLeave.bind(this));
-        this.container.addEventListener('pointermove', this._pointerMove.bind(this));
         ///add event on resize
         window.onresize = () => this._onWindowResize();
         ///calculate slides dimensions
         this._calcSlidesDimensions();
     }
     /** All Event functions */
-    ///prevent default behavior in slide like image dragging effect inside slide
-    _preventDragBehaviour(e) {
+    _pointerDown(e) {
         const target = e.target;
         if (!target.closest('.slide'))
             return;
+        ///prevent default behavior in slide like image dragging effect inside slide
         e.preventDefault();
+        this.isClicked = true;
+        this.pointerStartingPosition = getPointerPosition(e);
     }
-    _pointerDown(e) {
-        this.isDragging = true;
-        this.pointerStartingPosition = this._getPointerPosition(e);
-    }
-    _pointerMove(e) {
-        if (!this.isDragging)
+    _pointerMove() {
+        if (!this.isClicked)
             return;
         if (!this.isFirstMove) {
             this.isFirstMove = true;
             this.dragTime = new Date().getTime();
         }
-        const pointerPosition = this._getPointerPosition(e);
         ///if positive then the slide going to previous slide otherwise next slide
         this.translate = pointerPosition - this.pointerStartingPosition;
-        if (pointerPosition >= this.sliderContainerWidth) {
-            this._pointerLeave();
-            return;
-        }
         ///slider width plus gap
         const sliderWidthPlusGap = this.sliderContainerWidth + this.gap;
         ///if current slide is last slide and going to next slide decrease the translate value
@@ -130,12 +123,13 @@ class JsSlider {
         this.sliderWrapper.style.transform = `translateX(${this.translate - (this.currentIndex * sliderWidthPlusGap)}px)`;
     }
     _pointerLeave() {
+        console.log('le');
         ///current percentage of drag
         const currentDragPercent = (100 * Math.abs(this.translate)) / this.sliderContainerWidth;
         ///if the drag distance is greater than percentThreshold of the container
         ///or pointer leaving time minus the drag start time is lower than the time threshold
         ///increase or decrease the index based on the translate value
-        if (this.isDragging && ((new Date().getTime() - this.dragTime) < this.timeThreshold || currentDragPercent > this.percentThreshold)) {
+        if (this.isClicked && ((new Date().getTime() - this.dragTime) < this.timeThreshold || currentDragPercent > this.percentThreshold)) {
             ///slide going to the right
             if (this.translate > 0 && this.currentIndex > 0)
                 --this.currentIndex;
@@ -154,15 +148,17 @@ class JsSlider {
     /** Controls Functions */
     nextSlide() {
         if (this.currentIndex >= (this.slidesLength - 1))
-            return;
+            return false;
         this.currentIndex++;
         this._reset();
+        return true;
     }
     prevSlide() {
         if (this.currentIndex <= 0)
-            return;
+            return false;
         this.currentIndex--;
         this._reset();
+        return true;
     }
     /** End Controls Functions */
     /** Utilities Functions */
@@ -227,17 +223,15 @@ class JsSlider {
         });
     }
     _reset() {
-        if (this.isFirstMove) {
-            this.sliderWrapper.style.transitionDuration = "300ms";
-            this.sliderWrapper.style.transform = `translateX(${-(this.currentIndex * (this.sliderContainerWidth + this.gap))}px)`;
-            setTimeout(() => {
-                this.sliderWrapper.style.transitionDuration = '';
-            }, 300);
-        }
+        this.sliderWrapper.style.transitionDuration = "300ms";
+        this.sliderWrapper.style.transform = `translateX(${-(this.currentIndex * (this.sliderContainerWidth + this.gap))}px)`;
+        setTimeout(() => {
+            this.sliderWrapper.style.transitionDuration = '';
+        }, 300);
         ///recalculate slides width
         this._calcSlidesDimensions();
         ///reset state variables
-        this.isDragging = false;
+        this.isClicked = false;
         this.isPointerMoved = false;
         this.pointerStartingPosition = 0;
         this.isFirstMove = false;
@@ -263,5 +257,27 @@ const slider = new JsSlider({
             gap: 15,
         },
     }
+});
+document.addEventListener('pointermove', (e) => {
+    const target = e.target;
+    let slider = null;
+    pointerPosition = getPointerPosition(e);
+    if (typeof target.closest === 'function' && activeSlider === null) {
+        slider = target === null || target === void 0 ? void 0 : target.closest('.jsc-slider-container');
+    }
+    if (activeSlider) {
+        slider = activeSlider;
+    }
+    if (slider && typeof slider.jsSlide !== 'undefined') {
+        if (!activeSlider)
+            activeSlider = slider;
+        slider.jsSlide._pointerMove();
+    }
+});
+document.addEventListener('pointerup', () => {
+    if (!activeSlider)
+        return;
+    activeSlider.jsSlide._pointerLeave();
+    activeSlider = null;
 });
 //# sourceMappingURL=slider.js.map
