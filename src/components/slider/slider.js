@@ -161,9 +161,6 @@ class JsSlider {
     }
     /** End Controls Functions */
     /** Utilities Functions */
-    _getPointerPosition(e) {
-        return (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
-    }
     _applyResponsiveness() {
         if (this.breakPointsIndex.length > 0) {
             const windowWidth = window.innerWidth;
