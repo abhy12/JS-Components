@@ -123,7 +123,6 @@ class JsSlider {
         this.sliderWrapper.style.transform = `translateX(${this.translate - (this.currentIndex * sliderWidthPlusGap)}px)`;
     }
     _pointerLeave() {
-        console.log('le');
         ///current percentage of drag
         const currentDragPercent = (100 * Math.abs(this.translate)) / this.sliderContainerWidth;
         ///if the drag distance is greater than percentThreshold of the container
