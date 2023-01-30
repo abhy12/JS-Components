@@ -14,7 +14,7 @@ class JsSlider {
         this.dragTime = 0;
         this.isFirstMove = false;
         this.translate = 0;
-        this.breakPointsIndex = [];
+        this.breakPointWidths = [];
         this.currentBreakPoint = null;
         ///can be change via args
         this.defaultSlidesPerView = 1;
@@ -69,9 +69,9 @@ class JsSlider {
         ///add current instance to the container for futher use likely for event bubbling
         this.container.jsSlide = this;
         /** initialize breakpoints */
-        const breakPointsIndex = Object.keys(this.breakPoints);
-        if (breakPointsIndex.length > 0) {
-            this.breakPointsIndex = breakPointsIndex.map(point => +point).filter((a) => {
+        const breakPointWidths = Object.keys(this.breakPoints);
+        if (breakPointWidths.length > 0) {
+            this.breakPointWidths = breakPointWidths.map(point => +point).filter((a) => {
                 if (a < 0)
                     return false;
                 return true;
@@ -92,6 +92,7 @@ class JsSlider {
     _pointerDown(e) {
         var _a;
         const target = e.target;
+        ///don't start moving slider if current target is not a slide, wrapper or container
         if (target !== this.container && ((_a = target.closest('.slide')) === null || _a === void 0 ? void 0 : _a.closest('.jsc-slider-container')) !== this.container && target.closest('.jsc-slider-wrapper') !== this.sliderWrapper)
             return;
         ///prevent default behavior in slide like image dragging effect inside slide
@@ -124,6 +125,10 @@ class JsSlider {
         this.sliderWrapper.style.transform = `translateX(${this.translate - (this.currentIndex * sliderWidthPlusGap)}px)`;
     }
     _pointerLeave() {
+        if (!this.isFirstMove) {
+            this.isClicked = false;
+            return;
+        }
         ///current percentage of drag
         const currentDragPercent = (100 * Math.abs(this.translate)) / this.sliderContainerWidth;
         ///if the drag distance is greater than percentThreshold of the container
@@ -163,12 +168,12 @@ class JsSlider {
     /** End Controls Functions */
     /** Utilities Functions */
     _applyResponsiveness() {
-        if (this.breakPointsIndex.length > 0) {
+        if (this.breakPointWidths.length > 0) {
             const windowWidth = window.innerWidth;
             let conMetTimes = 0;
-            for (let i = 0; i < this.breakPointsIndex.length; i++) {
-                const responsiveOptions = this.breakPoints[this.breakPointsIndex[i]];
-                if (windowWidth <= this.breakPointsIndex[i])
+            for (let i = 0; i < this.breakPointWidths.length; i++) {
+                const responsiveOptions = this.breakPoints[this.breakPointWidths[i]];
+                if (windowWidth <= this.breakPointWidths[i])
                     continue;
                 if (typeof +(responsiveOptions.slidesPerView) === "number") {
                     if (+(responsiveOptions.slidesPerView) !== this.slidesPerView) {
@@ -185,7 +190,7 @@ class JsSlider {
                     conMetTimes++;
                 }
                 if (conMetTimes > 0) {
-                    this.currentBreakPoint = this.breakPointsIndex[i];
+                    this.currentBreakPoint = this.breakPointWidths[i];
                     break;
                 }
             }
@@ -236,25 +241,7 @@ class JsSlider {
         this.translate = 0;
     }
 }
-const sliderContainer = document.querySelector('.jsc-slider-container');
-const slider = new JsSlider({
-    // container: sliderContainer,
-    container: '.jsc-slider-container',
-    slidesPerView: 1,
-    gap: 5,
-    prevEl: '.prev',
-    nextEl: '.next',
-    breakPoints: {
-        480: {
-            slidesPerView: 2,
-            gap: 10,
-        },
-        768: {
-            slidesPerView: 3,
-            gap: 15,
-        },
-    }
-});
+/** global events */
 document.addEventListener('pointermove', (e) => {
     const target = e.target;
     let slider = null;
@@ -276,5 +263,25 @@ document.addEventListener('pointerup', () => {
         return;
     activeSlider.jsSlide._pointerLeave();
     activeSlider = null;
+});
+/** End global events */
+const sliderContainer = document.querySelector('.jsc-slider-container');
+const slider = new JsSlider({
+    // container: sliderContainer,
+    container: '.jsc-slider-container',
+    slidesPerView: 1,
+    gap: 5,
+    prevEl: '.prev',
+    nextEl: '.next',
+    breakPoints: {
+        480: {
+            slidesPerView: 2,
+            gap: 10,
+        },
+        768: {
+            slidesPerView: 3,
+            gap: 15,
+        },
+    }
 });
 //# sourceMappingURL=slider.js.map

@@ -3,7 +3,7 @@
  * A11y
  * Vertical Slider
  */
-interface JsSliderElement extends HTMLElement {
+interface JsSliderElement extends HTMLElement  {
    jsSlide: JsSlider
 }
 
@@ -23,7 +23,7 @@ function getPointerPosition( e: MouseEvent | TouchEvent )  {
    return ( e instanceof MouseEvent ) ? e.clientX : e.touches[0].clientX;
 }
 
-class JsSlider {
+class JsSlider  {
    ///core variables
    container: HTMLElement;
    sliderWrapper: HTMLElement;
@@ -39,7 +39,7 @@ class JsSlider {
    dragTime = 0;
    isFirstMove = false;
    translate = 0;
-   breakPointsIndex: number[] = [];
+   breakPointWidths: number[] = [];
    currentBreakPoint: number | null = null;
 
    ///can be change via args
@@ -51,13 +51,13 @@ class JsSlider {
    gap = 0;
    breakPoints:any | {} = {};
 
-   constructor( args: JsSliderArgs ) {
+   constructor( args: JsSliderArgs )  {
       ///check if container arg is string
       if( typeof args.container === 'string' )  {
          args.container = document.querySelector( args.container ) as HTMLElement;
       }
 
-      if( !( args.container instanceof HTMLElement ) )  return;
+      if( !( args.container instanceof HTMLElement ) )  return
 
       this.container = args.container;
       /** any expression after this */
@@ -103,17 +103,17 @@ class JsSlider {
       this.sliderWrapper = this.container.querySelector( '.jsc-slider-wrapper' ) as HTMLElement;
       this.slides = this.container.querySelectorAll( '.slide' ) as NodeListOf<HTMLElement>;
 
-      if( !this.sliderWrapper || !this.slides ) return;
+      if( !this.sliderWrapper || !this.slides )  return
 
       //@ts-ignore
       ///add current instance to the container for futher use likely for event bubbling
       this.container.jsSlide = this; 
 
       /** initialize breakpoints */
-      const breakPointsIndex: string[] = Object.keys( this.breakPoints );
+      const breakPointWidths: string[] = Object.keys( this.breakPoints );
 
-      if( breakPointsIndex.length > 0 )  {
-         this.breakPointsIndex = breakPointsIndex.map( point => +point ).filter( ( a ) => {
+      if( breakPointWidths.length > 0 )  {
+         this.breakPointWidths = breakPointWidths.map( point => +point ).filter( ( a ) =>  {
             if( a < 0 ) return false;
             return true;
          }).sort().reverse();
@@ -139,6 +139,8 @@ class JsSlider {
 
    _pointerDown( e: MouseEvent | TouchEvent )  {
       const target = e.target as HTMLElement;
+
+      ///don't start moving slider if current target is not a slide, wrapper or container
       if( target !== this.container && target.closest( '.slide' )?.closest( '.jsc-slider-container' ) !== this.container && target.closest( '.jsc-slider-wrapper' ) !== this.sliderWrapper ) return
 
       ///prevent default behavior in slide like image dragging effect inside slide
@@ -163,15 +165,15 @@ class JsSlider {
       const sliderWidthPlusGap = this.sliderContainerWidth + this.gap;
 
       ///if current slide is last slide and going to next slide decrease the translate value
-      if( this.currentIndex >= ( this.slidesLength - 1 ) && this.translate < 0 ) {
+      if( this.currentIndex >= ( this.slidesLength - 1 ) && this.translate < 0 )  {
          this.sliderWrapper.style.transform = `translateX(${( this.translate / 2.5 ) - ( this.currentIndex * sliderWidthPlusGap )}px)`;
-         return;
+         return
       }
 
       ///if current slide is first slide and going to previous slide decrease the translate value
-      if( this.currentIndex <= 0 && this.translate > 0 ) {
+      if( this.currentIndex <= 0 && this.translate > 0 )  {
          this.sliderWrapper.style.transform = `translateX(${( this.translate / 2.5 ) + ( this.currentIndex * sliderWidthPlusGap )}px)`;
-         return;
+         return
       }
 
       ///restore the slide previous position if slide not going to left or right either
@@ -179,6 +181,11 @@ class JsSlider {
    }
 
    _pointerLeave()  {
+      if( !this.isFirstMove )  {
+         this.isClicked = false;
+         return
+      }
+
       ///current percentage of drag
       const currentDragPercent = ( 100 * Math.abs( this.translate ) ) / this.sliderContainerWidth;
 
@@ -225,14 +232,14 @@ class JsSlider {
 
    /** Utilities Functions */
    _applyResponsiveness()  {
-      if( this.breakPointsIndex.length > 0 )  {
+      if( this.breakPointWidths.length > 0 )  {
          const windowWidth = window.innerWidth;
          let conMetTimes = 0;
 
-         for( let i = 0; i < this.breakPointsIndex.length; i++ )  {
-            const responsiveOptions = this.breakPoints[this.breakPointsIndex[i]];
+         for( let i = 0; i < this.breakPointWidths.length; i++ )  {
+            const responsiveOptions = this.breakPoints[this.breakPointWidths[i]];
 
-            if( windowWidth <= this.breakPointsIndex[i] ) continue;
+            if( windowWidth <= this.breakPointWidths[i] ) continue;
 
             if( typeof +( responsiveOptions.slidesPerView ) === "number" )  {
                if( +( responsiveOptions.slidesPerView ) !== this.slidesPerView )  {
@@ -252,8 +259,8 @@ class JsSlider {
             }
 
             if( conMetTimes > 0 )  {
-               this.currentBreakPoint = this.breakPointsIndex[i];
-               break;
+               this.currentBreakPoint = this.breakPointWidths[i];
+               break
             }
          }
 
@@ -281,13 +288,14 @@ class JsSlider {
       this.slides.forEach( ( slide, i ) =>  {
          if( perViewWidth !== null && perViewWidth )  {
             slide.style.width = perViewWidth + 'px';
+
          } else if( perViewWidth === null )  {
             ///if slidePerView is 1 no need to add any width to slide
             slide.style.width = '';
          }
 
          ///don't add left margin if this is first slide
-         if( i === 0 ) return;
+         if( i === 0 ) return
 
          slide.style.marginLeft = this.gap + 'px';
       });
@@ -315,26 +323,7 @@ class JsSlider {
    /** End Utilities Functions */
 }
 
-const sliderContainer = document.querySelector( '.jsc-slider-container' ) as HTMLElement;
-const slider = new JsSlider({
-   // container: sliderContainer,
-   container: '.jsc-slider-container',
-   slidesPerView: 1,
-   gap: 5,
-   prevEl: '.prev',
-   nextEl: '.next',
-   breakPoints: {
-      480: {
-         slidesPerView: 2,
-         gap: 10,
-      },
-      768: {
-         slidesPerView: 3,
-         gap: 15,
-      },
-   }
-});
-
+/** global events */
 
 document.addEventListener( 'pointermove', ( e ) =>  {
    const target = e.target as HTMLElement;
@@ -362,4 +351,26 @@ document.addEventListener( 'pointerup', () =>  {
    activeSlider.jsSlide._pointerLeave();
 
    activeSlider = null;
+});
+
+/** End global events */
+
+const sliderContainer = document.querySelector( '.jsc-slider-container' ) as HTMLElement;
+const slider = new JsSlider({
+   // container: sliderContainer,
+   container: '.jsc-slider-container',
+   slidesPerView: 1,
+   gap: 5,
+   prevEl: '.prev',
+   nextEl: '.next',
+   breakPoints: {
+      480: {
+         slidesPerView: 2,
+         gap: 10,
+      },
+      768: {
+         slidesPerView: 3,
+         gap: 15,
+      },
+   }
 });
