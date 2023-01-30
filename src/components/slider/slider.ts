@@ -139,7 +139,7 @@ class JsSlider {
 
    _pointerDown( e: MouseEvent | TouchEvent )  {
       const target = e.target as HTMLElement;
-      if( !target.closest( '.slide' ) ) return
+      if( target !== this.container && target.closest( '.slide' )?.closest( '.jsc-slider-container' ) !== this.container && target.closest( '.jsc-slider-wrapper' ) !== this.sliderWrapper ) return
 
       ///prevent default behavior in slide like image dragging effect inside slide
       e.preventDefault();

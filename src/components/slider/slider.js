@@ -90,8 +90,9 @@ class JsSlider {
     }
     /** All Event functions */
     _pointerDown(e) {
+        var _a;
         const target = e.target;
-        if (!target.closest('.slide'))
+        if (target !== this.container && ((_a = target.closest('.slide')) === null || _a === void 0 ? void 0 : _a.closest('.jsc-slider-container')) !== this.container && target.closest('.jsc-slider-wrapper') !== this.sliderWrapper)
             return;
         ///prevent default behavior in slide like image dragging effect inside slide
         e.preventDefault();
