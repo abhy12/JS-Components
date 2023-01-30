@@ -1,10 +1,8 @@
-# Accordion
+# Light weight and Simple Accordion
 
-## Light weight and Simple Accordion
+## Usage :
 
-## Usage 
-
-## HTML Example 1
+### HTML Example 1
 
 If you have control over HTML the simplest and easy way to use the accordion is this:
 
@@ -16,10 +14,10 @@ If you have control over HTML the simplest and easy way to use the accordion is 
   </div>
 </div>
 ```
-The "accordion-container" element has to wrap the whole accordion and the button this is important in this example. After that we can add `data-jsc-target` dataset to button and `data-jsc-accCon` dataset to the accordion and that's it your accordion will be working fine.
+The "accordion-container" element has to wrap the whole accordion and the button this is important in this example. After that we can add `data-jsc-target` dataset to button and `data-jsc-accCon` dataset to the accordion and that's it your accordion will be working fine.   
 If you want more customize way to do this see [HTML Example 2](#html-example-2)
 
-## HTML Example 2
+### HTML Example 2
 In this example you don't have to follow the structure of html
 
 Just add `<.. data-jsc-accCon><../>` this dataset to your accordion (if you add value of false the accordion will not work) and add an ID to the accordion `<.. id="eg-1" data-jsc-accCon><../>`
@@ -41,7 +39,7 @@ then for accordion to trigger just add `data-jsc-target="{id}"` this to your but
 </div>
 ```
 
-## Class based accordion
+### Class based accordion
 Create an instance of Accordion
 ```
 const newAccordion = new Accordion({	
@@ -66,7 +64,7 @@ one thing to note here that you can use any document query or any class as a con
 </div>
 ```
 
-## You can add collapse and expend text on button
+### You can add collapse and expend text on button
 
 ***HTML Example***
 
