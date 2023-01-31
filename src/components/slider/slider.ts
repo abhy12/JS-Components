@@ -110,13 +110,13 @@ class JsSlider  {
       this.container.jsSlide = this; 
 
       /** initialize breakpoints */
-      const breakPointWidths: string[] = Object.keys( this.breakPoints );
+      
+      const breakPointWidths: number[] = [];
+      ///add all the breakpoints keys which has number value to breakPointWidths
+      Object.keys( this.breakPoints ).forEach( val => ( +val >= 0 ) ? breakPointWidths.push( +val ) : '' );
 
       if( breakPointWidths.length > 0 )  {
-         this.breakPointWidths = breakPointWidths.map( point => +point ).filter( ( a ) =>  {
-            if( a < 0 ) return false;
-            return true;
-         }).sort().reverse();
+         this.breakPointWidths = breakPointWidths.sort().reverse();
       }
 
       ///apply all the responsive options to the slides
@@ -231,6 +231,7 @@ class JsSlider  {
    /** End Controls Functions */
 
    /** Utilities Functions */
+
    _applyResponsiveness()  {
       if( this.breakPointWidths.length > 0 )  {
          const windowWidth = window.innerWidth;

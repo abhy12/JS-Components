@@ -69,13 +69,11 @@ class JsSlider {
         ///add current instance to the container for futher use likely for event bubbling
         this.container.jsSlide = this;
         /** initialize breakpoints */
-        const breakPointWidths = Object.keys(this.breakPoints);
+        const breakPointWidths = [];
+        ///add all the breakpoints keys which has number value to breakPointWidths
+        Object.keys(this.breakPoints).forEach(val => (+val >= 0) ? breakPointWidths.push(+val) : '');
         if (breakPointWidths.length > 0) {
-            this.breakPointWidths = breakPointWidths.map(point => +point).filter((a) => {
-                if (a < 0)
-                    return false;
-                return true;
-            }).sort().reverse();
+            this.breakPointWidths = breakPointWidths.sort().reverse();
         }
         ///apply all the responsive options to the slides
         this._applyResponsiveness();
