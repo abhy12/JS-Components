@@ -1,21 +1,21 @@
 {
   "name": "js-components",
   "version": "1.0.0",
-  "description": "js components ",
+  "description": "js components",
   "main": "index.html",
   "scripts": {
-    "start": "concurrently --kill-others \"tsc -watch\" \"npx tailwindcss -i ./src/style.css -o ./src/components/style.css --watch --minify\""
+    "start": "concurrently --kill-others \"tsc -watch\" \"npx tailwindcss -i ./tailwind.css -o ./style.css --watch --minify\""
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Abhishek-Yesankar/JS-Components.git"
+    "url": "git+https://github.com/abhy12/JS-Components.git"
   },
   "author": "Abhishek Yesankar",
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
-    "url": "https://github.com/Abhishek-Yesankar/JS-Components/issues"
+    "url": "https://github.com/abhy12/JS-Components/issues"
   },
-  "homepage": "https://github.com/Abhishek-Yesankar/JS-Components#readme",
+  "homepage": "https://github.com/abhy12/JS-Components#readme",
   "devDependencies": {
     "tailwindcss": "^3.2.4",
     "typescript": "^4.9.4"
