@@ -261,15 +261,15 @@ class JsSlider  {
 
       ///change current slide index to closest slides per view
       if( this.currentIndex > 0 )  {
+         const currentSlideRatio = Math.floor( prevSlidePosition / this.slidesPerView );
+
+         ///i not sure which slide to show when slidePerView changes so this is temporary "fix"
          if( this.currentIndex === ( this.slidesLength / prevPerView ) - 1 )  {
             this.currentIndex = Math.abs( ( this.slidesLength / this.slidesPerView ) ) - 1;
-         } else {
-            const currentSlideRatio = Math.floor( prevSlidePosition / this.slidesPerView );
-            if( currentSlideRatio <= 0 )  {
-               this.currentIndex = 0;
-            } else if( currentSlideRatio > 0 )  {
-               this.currentIndex = currentSlideRatio;
-            }
+         } else if( currentSlideRatio <= 0 )  {
+            this.currentIndex = 0;
+         }  else if( currentSlideRatio > 0 )  {
+            this.currentIndex = currentSlideRatio;
          }
       }
 
