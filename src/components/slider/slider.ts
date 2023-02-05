@@ -4,7 +4,7 @@
  * Vertical Slider
  */
 interface JsSliderElement extends HTMLElement  {
-   jsSlide: JsSlider
+   jsSlide?: JsSlider
 }
 
 let pointerPosition = 0;
@@ -25,7 +25,7 @@ function getPointerPosition( e: MouseEvent | TouchEvent )  {
 
 class JsSlider  {
    ///core variables
-   container: HTMLElement;
+   container: JsSliderElement;
    sliderWrapper: HTMLElement;
    slides: NodeListOf<HTMLElement>;
    sliderContainerWidth: number;
@@ -36,15 +36,15 @@ class JsSlider  {
    isPointerMoved = false;
    currentIndex = 0;
    slidesLength: number;
+   totalSlidesPerView: number;
    dragTime = 0;
    isFirstMove = false;
    translate = 0;
    breakPointWidths: number[] = [];
    currentBreakPoint: number | null = null;
+   currentActiveWidth: number = 0;
 
    ///can be change via args
-   defaultSlidesPerView: number = 1;
-   defaultGap: number = 0;
    slidesPerView = 1;
    percentThreshold = 50;
    timeThreshold = 300;
@@ -66,10 +66,10 @@ class JsSlider  {
       ///assign other arguments to global class variables
 
       if( args.slidesPerView && args.slidesPerView > 0 )  {
-         this.defaultSlidesPerView = args.slidesPerView;
+         this.slidesPerView = args.slidesPerView;
       }
 
-      if( args.gap && args.gap > 0 )  this.defaultGap = args.gap;
+      if( args.gap && args.gap > 0 )  this.gap = args.gap;
 
       let prevBtn: string | HTMLElement | undefined = args.prevEl;
       let nextBtn: string | HTMLElement | undefined = args.nextEl;
@@ -105,19 +105,24 @@ class JsSlider  {
 
       if( !this.sliderWrapper || !this.slides )  return
 
-      //@ts-ignore
       ///add current instance to the container for futher use likely for event bubbling
       this.container.jsSlide = this; 
 
       /** initialize breakpoints */
-      
-      const breakPointWidths: number[] = [];
-      ///add all the breakpoints keys which has number value to breakPointWidths
-      Object.keys( this.breakPoints ).forEach( val => ( +val >= 0 ) ? breakPointWidths.push( +val ) : '' );
 
-      if( breakPointWidths.length > 0 )  {
-         this.breakPointWidths = breakPointWidths.sort().reverse();
+      ///save all the default values to breakpoint with value of width "0"
+      this.breakPoints[0] = {
+         slidesPerView: this.slidesPerView,
+         gap: this.gap
       }
+
+      const breakPointWidths: number[] = [];
+      ///add all the breakpoints keys which has value of number to the breakPointWidths
+      Object.keys( this.breakPoints ).forEach( val => ( +val >= 0 ) ? breakPointWidths.push( +val ) : '' );
+      this.breakPointWidths = breakPointWidths.sort();
+
+      ///saving slides length
+      this.slidesLength = this.slides.length;
 
       ///apply all the responsive options to the slides
       this._applyResponsiveness();
@@ -165,7 +170,7 @@ class JsSlider  {
       const sliderWidthPlusGap = this.sliderContainerWidth + this.gap;
 
       ///if current slide is last slide and going to next slide decrease the translate value
-      if( this.currentIndex >= ( this.slidesLength - 1 ) && this.translate < 0 )  {
+      if( this.currentIndex >= ( this.totalSlidesPerView - 1 ) && this.translate < 0 )  {
          this.sliderWrapper.style.transform = `translateX(${( this.translate / 2.5 ) - ( this.currentIndex * sliderWidthPlusGap )}px)`;
          return
       }
@@ -198,7 +203,7 @@ class JsSlider  {
          if( this.translate > 0 && this.currentIndex > 0  ) --this.currentIndex;
 
          ///slide going to the left
-         if( this.translate < 0 && this.currentIndex < ( this.slidesLength - 1 ) ) ++this.currentIndex;
+         if( this.translate < 0 && this.currentIndex < ( this.totalSlidesPerView - 1 ) ) ++this.currentIndex;
       }
 
       this._reset();
@@ -215,7 +220,7 @@ class JsSlider  {
    /** Controls Functions */
 
    nextSlide()  {
-      if( this.currentIndex >= ( this.slidesLength - 1 ) ) return false;
+      if( this.currentIndex >= ( this.totalSlidesPerView - 1 ) ) return false;
       this.currentIndex++;
       this._reset();
       return true;
@@ -233,49 +238,42 @@ class JsSlider  {
    /** Utilities Functions */
 
    _applyResponsiveness()  {
-      if( this.breakPointWidths.length > 0 )  {
-         const windowWidth = window.innerWidth;
-         let conMetTimes = 0;
+      const windowWidth = window.innerWidth;
+      const prevPerView = this.slidesPerView;
+      const prevSlidePosition = ( this.currentIndex + 1 ) * prevPerView;
 
-         for( let i = 0; i < this.breakPointWidths.length; i++ )  {
-            const responsiveOptions = this.breakPoints[this.breakPointWidths[i]];
+      this.breakPointWidths.forEach( width =>  {
+         if( windowWidth < width )  return
 
-            if( windowWidth <= this.breakPointWidths[i] ) continue;
-
-            if( typeof +( responsiveOptions.slidesPerView ) === "number" )  {
-               if( +( responsiveOptions.slidesPerView ) !== this.slidesPerView )  {
-                  this.slidesPerView = +( responsiveOptions.slidesPerView );
-
-                  ///when slidePerView change return slide to closest index value
-                  if( this.currentIndex > 0 )  {
-                     this.currentIndex = Math.abs( Math.floor( this.slidesPerView / this.currentIndex ) );
-                  }
-               }
-               conMetTimes++;
-            }
-
-            if( typeof +( responsiveOptions.gap ) === "number" )  {
-               this.gap = +( responsiveOptions.gap ) * 2;
-               conMetTimes++;
-            }
-
-            if( conMetTimes > 0 )  {
-               this.currentBreakPoint = this.breakPointWidths[i];
-               break
-            }
+         ///slidesPerView
+         if( +( this.breakPoints[width].slidesPerView ) > 0 )  {
+            ///not trying to add values
+            this.slidesPerView = ( +this.breakPoints[width].slidesPerView );
          }
 
-         if( conMetTimes === 0 )  {
-            this.slidesPerView = this.defaultSlidesPerView;
-
+         ///gap
+         if( +( this.breakPoints[width].gap ) > 0 )  {
             ///multiplying gap because i don't want "1" gap equal to "1px"
-            ///i like to double the gap
-            this.gap = this.defaultGap * 2;
+            ///i want to double the gap
+            this.gap = ( +this.breakPoints[width].gap ) * 2;
+         }
+      });
+
+      ///change current slide index to closest slides per view
+      if( this.currentIndex > 0 )  {
+         if( this.currentIndex === ( this.slidesLength / prevPerView ) - 1 )  {
+            this.currentIndex = Math.abs( ( this.slidesLength / this.slidesPerView ) ) - 1;
+         } else {
+            const currentSlideRatio = Math.floor( prevSlidePosition / this.slidesPerView );
+            if( currentSlideRatio <= 0 )  {
+               this.currentIndex = 0;
+            } else if( currentSlideRatio > 0 )  {
+               this.currentIndex = currentSlideRatio;
+            }
          }
       }
 
-      ///saving slides length
-      this.slidesLength = this.slides.length / this.slidesPerView;
+      this.totalSlidesPerView = this.slidesLength / this.slidesPerView;
    }
 
    _calcSlidesDimensions()  {
@@ -349,7 +347,7 @@ document.addEventListener( 'pointermove', ( e ) =>  {
 document.addEventListener( 'pointerup', () =>  {
    if( !activeSlider ) return
 
-   activeSlider.jsSlide._pointerLeave();
+   activeSlider.jsSlide?._pointerLeave();
 
    activeSlider = null;
 });

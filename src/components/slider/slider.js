@@ -16,9 +16,8 @@ class JsSlider {
         this.translate = 0;
         this.breakPointWidths = [];
         this.currentBreakPoint = null;
+        this.currentActiveWidth = 0;
         ///can be change via args
-        this.defaultSlidesPerView = 1;
-        this.defaultGap = 0;
         this.slidesPerView = 1;
         this.percentThreshold = 50;
         this.timeThreshold = 300;
@@ -35,10 +34,10 @@ class JsSlider {
         /**** will improve this in more efficient way ****/
         ///assign other arguments to global class variables
         if (args.slidesPerView && args.slidesPerView > 0) {
-            this.defaultSlidesPerView = args.slidesPerView;
+            this.slidesPerView = args.slidesPerView;
         }
         if (args.gap && args.gap > 0)
-            this.defaultGap = args.gap;
+            this.gap = args.gap;
         let prevBtn = args.prevEl;
         let nextBtn = args.nextEl;
         if (typeof prevBtn === 'string') {
@@ -65,16 +64,20 @@ class JsSlider {
         this.slides = this.container.querySelectorAll('.slide');
         if (!this.sliderWrapper || !this.slides)
             return;
-        //@ts-ignore
         ///add current instance to the container for futher use likely for event bubbling
         this.container.jsSlide = this;
         /** initialize breakpoints */
+        ///save all the default values to breakpoint with value of width "0"
+        this.breakPoints[0] = {
+            slidesPerView: this.slidesPerView,
+            gap: this.gap
+        };
         const breakPointWidths = [];
-        ///add all the breakpoints keys which has number value to breakPointWidths
+        ///add all the breakpoints keys which has value of number to the breakPointWidths
         Object.keys(this.breakPoints).forEach(val => (+val >= 0) ? breakPointWidths.push(+val) : '');
-        if (breakPointWidths.length > 0) {
-            this.breakPointWidths = breakPointWidths.sort().reverse();
-        }
+        this.breakPointWidths = breakPointWidths.sort();
+        ///saving slides length
+        this.slidesLength = this.slides.length;
         ///apply all the responsive options to the slides
         this._applyResponsiveness();
         /** end initialization of breakpoints */
@@ -110,7 +113,7 @@ class JsSlider {
         ///slider width plus gap
         const sliderWidthPlusGap = this.sliderContainerWidth + this.gap;
         ///if current slide is last slide and going to next slide decrease the translate value
-        if (this.currentIndex >= (this.slidesLength - 1) && this.translate < 0) {
+        if (this.currentIndex >= (this.totalSlidesPerView - 1) && this.translate < 0) {
             this.sliderWrapper.style.transform = `translateX(${(this.translate / 2.5) - (this.currentIndex * sliderWidthPlusGap)}px)`;
             return;
         }
@@ -137,7 +140,7 @@ class JsSlider {
             if (this.translate > 0 && this.currentIndex > 0)
                 --this.currentIndex;
             ///slide going to the left
-            if (this.translate < 0 && this.currentIndex < (this.slidesLength - 1))
+            if (this.translate < 0 && this.currentIndex < (this.totalSlidesPerView - 1))
                 ++this.currentIndex;
         }
         this._reset();
@@ -150,7 +153,7 @@ class JsSlider {
     /** End Event functions */
     /** Controls Functions */
     nextSlide() {
-        if (this.currentIndex >= (this.slidesLength - 1))
+        if (this.currentIndex >= (this.totalSlidesPerView - 1))
             return false;
         this.currentIndex++;
         this._reset();
@@ -166,41 +169,40 @@ class JsSlider {
     /** End Controls Functions */
     /** Utilities Functions */
     _applyResponsiveness() {
-        if (this.breakPointWidths.length > 0) {
-            const windowWidth = window.innerWidth;
-            let conMetTimes = 0;
-            for (let i = 0; i < this.breakPointWidths.length; i++) {
-                const responsiveOptions = this.breakPoints[this.breakPointWidths[i]];
-                if (windowWidth <= this.breakPointWidths[i])
-                    continue;
-                if (typeof +(responsiveOptions.slidesPerView) === "number") {
-                    if (+(responsiveOptions.slidesPerView) !== this.slidesPerView) {
-                        this.slidesPerView = +(responsiveOptions.slidesPerView);
-                        ///when slidePerView change return slide to closest index value
-                        if (this.currentIndex > 0) {
-                            this.currentIndex = Math.abs(Math.floor(this.slidesPerView / this.currentIndex));
-                        }
-                    }
-                    conMetTimes++;
-                }
-                if (typeof +(responsiveOptions.gap) === "number") {
-                    this.gap = +(responsiveOptions.gap) * 2;
-                    conMetTimes++;
-                }
-                if (conMetTimes > 0) {
-                    this.currentBreakPoint = this.breakPointWidths[i];
-                    break;
-                }
+        const windowWidth = window.innerWidth;
+        const prevPerView = this.slidesPerView;
+        const prevSlidePosition = (this.currentIndex + 1) * prevPerView;
+        this.breakPointWidths.forEach(width => {
+            if (windowWidth < width)
+                return;
+            ///slidesPerView
+            if (+(this.breakPoints[width].slidesPerView) > 0) {
+                ///not trying to add values
+                this.slidesPerView = (+this.breakPoints[width].slidesPerView);
             }
-            if (conMetTimes === 0) {
-                this.slidesPerView = this.defaultSlidesPerView;
+            ///gap
+            if (+(this.breakPoints[width].gap) > 0) {
                 ///multiplying gap because i don't want "1" gap equal to "1px"
-                ///i like to double the gap
-                this.gap = this.defaultGap * 2;
+                ///i want to double the gap
+                this.gap = (+this.breakPoints[width].gap) * 2;
+            }
+        });
+        ///change current slide index to closest slides per view
+        if (this.currentIndex > 0) {
+            if (this.currentIndex === (this.slidesLength / prevPerView) - 1) {
+                this.currentIndex = Math.abs((this.slidesLength / this.slidesPerView)) - 1;
+            }
+            else {
+                const currentSlideRatio = Math.floor(prevSlidePosition / this.slidesPerView);
+                if (currentSlideRatio <= 0) {
+                    this.currentIndex = 0;
+                }
+                else if (currentSlideRatio > 0) {
+                    this.currentIndex = currentSlideRatio;
+                }
             }
         }
-        ///saving slides length
-        this.slidesLength = this.slides.length / this.slidesPerView;
+        this.totalSlidesPerView = this.slidesLength / this.slidesPerView;
     }
     _calcSlidesDimensions() {
         let perViewWidth = null;
@@ -257,9 +259,10 @@ document.addEventListener('pointermove', (e) => {
     }
 });
 document.addEventListener('pointerup', () => {
+    var _a;
     if (!activeSlider)
         return;
-    activeSlider.jsSlide._pointerLeave();
+    (_a = activeSlider.jsSlide) === null || _a === void 0 ? void 0 : _a._pointerLeave();
     activeSlider = null;
 });
 /** End global events */
