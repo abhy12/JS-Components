@@ -36,8 +36,8 @@ just replace "YOUR-ID" with your own same unique html ID(without "#") and that's
   </h1>
 ```
 
-***Read More***
-Add `data-jsc-target` dataset with the value of accordion id to any button you like to trigger accordion. 
+***Read More***  
+Add `data-jsc-target` dataset with the value of accordion id to any button you like to trigger accordion.  
 If you add `data-jsc-accCon=""` dataset with the value of "false" to the accordion then the accordion will not work.
 
 ### HTML Example 2
