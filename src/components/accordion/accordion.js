@@ -128,17 +128,6 @@ class JscAccordion {
         accordionToggle(this.container);
     }
 }
-///Event Bubbling for Accordion triggerer
-document.body.addEventListener('click', function (e) {
-    const target = e.target;
-    const acID = target.dataset[`${PREFIX}Target`];
-    if (acID === null || acID === '')
-        return;
-    const accordion = document.querySelector(`${ACCORDIONSELECTOR}#${acID}`);
-    if (!accordion || accordion.getAttribute(`data-${PREFIX}-accCon`) === 'false' || accordion.classList.contains('colexping'))
-        return;
-    accordionToggle(accordion);
-});
 function accordionToggle(accordion) {
     ///whether container is collapsed
     let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
@@ -185,7 +174,6 @@ function accordionToggle(accordion) {
         accordion.dataset.collapse = 'true';
         isCollapse = true;
     }
-    ;
     const triggerer = document.querySelectorAll(`[data-${PREFIX}-target="${accordion.id}"]`);
     triggerer.forEach((el) => {
         let text = undefined;
@@ -202,10 +190,20 @@ function accordionToggle(accordion) {
         text !== undefined && (el.innerText = text);
     });
 }
-///after DOM loaded see if there is any accordion container, if found any convert them to accordion
 window.onload = () => {
+    ///Event Bubbling for Accordion triggerer
+    document.body.addEventListener('click', function (e) {
+        const target = e.target;
+        const acID = target.dataset[`${PREFIX}Target`];
+        if (acID === null || acID === '')
+            return;
+        const accordion = document.querySelector(`${ACCORDIONSELECTOR}#${acID}`);
+        if (!accordion || accordion.getAttribute(`data-${PREFIX}-accCon`) === 'false' || accordion.classList.contains('colexping'))
+            return;
+        accordionToggle(accordion);
+    });
     const allAccordion = document.querySelectorAll(ACCORDIONSELECTOR);
-    ///if the accordion container already exists in the DOM 
+    ///after DOM loaded see if there is any accordion container, if found any convert them to accordion
     allAccordion.forEach(item => {
         var _a;
         let triggerer;

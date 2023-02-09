@@ -165,21 +165,6 @@ class JscAccordion  {
 }
 
 
-///Event Bubbling for Accordion triggerer
-document.body.addEventListener( 'click', function( e )  {
-	const target = e.target as HTMLElement;
-   const acID: any = target.dataset[`${PREFIX}Target`];
-
-   if( acID === null || acID === '' ) return
-
-   const accordion = ( document.querySelector( `${ACCORDIONSELECTOR}#${acID}` ) as HTMLElement );
-
-   if( !accordion || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || accordion.classList.contains( 'colexping' ) ) return
-
-   accordionToggle( accordion );
-});
-
-
 function accordionToggle( accordion: HTMLElement )  {
    ///whether container is collapsed
    let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
@@ -240,7 +225,7 @@ function accordionToggle( accordion: HTMLElement )  {
       accordion.dataset.collapse = 'true';
 
       isCollapse = true;
-   };
+   }
 
    const triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${accordion.id}"]` ) as NodeListOf<HTMLElement>;
 
@@ -265,11 +250,24 @@ function accordionToggle( accordion: HTMLElement )  {
 }
 
 
-///after DOM loaded see if there is any accordion container, if found any convert them to accordion
 window.onload = () =>  {
+   ///Event Bubbling for Accordion triggerer
+   document.body.addEventListener( 'click', function( e )  {
+      const target = e.target as HTMLElement;
+      const acID: any = target.dataset[`${PREFIX}Target`];
+
+      if( acID === null || acID === '' ) return
+
+      const accordion = ( document.querySelector( `${ACCORDIONSELECTOR}#${acID}` ) as HTMLElement );
+
+      if( !accordion || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || accordion.classList.contains( 'colexping' ) ) return
+
+      accordionToggle( accordion );
+   });
+
    const allAccordion = document.querySelectorAll( ACCORDIONSELECTOR ) as NodeListOf<HTMLElement>;
 
-   ///if the accordion container already exists in the DOM 
+   ///after DOM loaded see if there is any accordion container, if found any convert them to accordion
    allAccordion.forEach( item =>  {
       let triggerer;
       const accId = item.id;
