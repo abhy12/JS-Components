@@ -1,23 +1,20 @@
-///you can change prefix if you want to
-const PREFIX = 'jsc',
-      ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]`,
-      allAccordion = document.querySelectorAll( ACCORDIONSELECTOR ) as NodeListOf<HTMLElement>;
-/**
- * TODO
-*/
+const PREFIX = 'jsc';
+const ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]`;
 
 ///credit https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
-function randmoId( length: number = 8 ) {
+function randmoId( length: number = 8 )  {
    let result           = '';
    let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
    let charactersLength = characters.length;
-   for ( let i = 0; i < length; i++ ) {
+
+   for( let i = 0; i < length; i++ )  {
       result += characters.charAt( Math.floor( Math.random() * charactersLength ) );
    }
+
    return result;
 }
 
-interface AccordionArgs {
+interface AccordionArgs  {
    container: string | HTMLElement,
    button?: string | Element | HTMLElement | HTMLCollectionOf<HTMLElement> | NodeListOf<HTMLElement> | (HTMLElement| string)[] | undefined | null,
    collapse?: boolean | undefined,
@@ -25,7 +22,7 @@ interface AccordionArgs {
    expendText?: string | undefined,
 }
 
-class Accordion {
+class JscAccordion  {
    container: HTMLElement | null = null;
    collapsed: boolean = true;
    button: AccordionArgs['button'];
@@ -41,7 +38,7 @@ class Accordion {
       }
 
       ///if container argument is falsey return
-      if( !tempCon || ( tempCon instanceof HTMLElement ) === false ) return;
+      if( !tempCon || ( tempCon instanceof HTMLElement ) === false ) return
 
       this.container = tempCon;
 
@@ -51,18 +48,20 @@ class Accordion {
    }
 
    _init()  {
-      if( !this.container ) return;
+      if( !this.container ) return
 
       ///set new id if the container don't have one
       if( this.container.id === '' )  {
          let id = randmoId();
+
          while( true )  {
             if( document.getElementById( id ) )  {
                id = randmoId();
-               continue;
+               continue
             }
-            break;
+            break
          }
+
          this.container.id = `${PREFIX}${id}`;
       }
 
@@ -75,7 +74,7 @@ class Accordion {
       ///only false when collapsed explicitly has false value, default is true
       this.collapsed = ( this.collapsed !== false || this.collapsed !== 'false' ) ? true : false;
 
-      this.container.setAttribute( 'data-collapse', this.collapsed+'' );
+      this.container.setAttribute( 'data-collapse', this.collapsed + '' );
 
       ///if the collapse value is true hide the element
       if( this.collapsed ) this.container.style.display = 'none';
@@ -84,7 +83,7 @@ class Accordion {
    }
 
    _init_target()  {
-      if( !this.button ) return;
+      if( !this.button ) return
 
       let trigger: any = null;
 
@@ -96,7 +95,7 @@ class Accordion {
 
       if( trigger ) {
          this._finalizeTarget( trigger );
-         return;
+         return
       };
 
       if( this.button instanceof HTMLCollection || this.button instanceof NodeList || this.button instanceof Array )  {
@@ -104,7 +103,7 @@ class Accordion {
          const btns = Array.from( this.button );
 
          btns.forEach( ( el ) => {
-            if( el instanceof HTMLCollection || el instanceof NodeList ) return;
+            if( el instanceof HTMLCollection || el instanceof NodeList ) return
 
             let btn: any = el;
 
@@ -112,7 +111,7 @@ class Accordion {
                btn = document.querySelector( btn );
             }
 
-            if( !btn ) return;
+            if( !btn ) return
 
             this._finalizeTarget( btn );
          });
@@ -159,50 +158,32 @@ class Accordion {
    }
 
    toggle()  {
-      if( !( this.container instanceof HTMLElement ) ) return;
+      if( !( this.container instanceof HTMLElement ) ) return
 
       accordionToggle( this.container );
    }
 }
 
-///if the accordion exists in the dom tree 
-///assuming you have the controls of html 
-allAccordion.forEach( item => {
-   let triggerer;
-   const accId = item.id;
-
-   if( accId === '' ) {
-      ///not selecting all the triggerer elements 
-      ///because of nested accordion under the container
-      triggerer = item.closest( '.accordion-container' )?.querySelector( `[data-${PREFIX}-target]` ) as HTMLElement;
-   } else if( accId !== '' )  {
-      triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${item.id}"]` ) as NodeListOf<HTMLElement>;
-   }
-
-   new Accordion({
-      container: item,
-      button: triggerer,
-   });
-});
 
 ///Event Bubbling for Accordion triggerer
 document.body.addEventListener( 'click', function( e )  {
 	const target = e.target as HTMLElement;
    const acID: any = target.dataset[`${PREFIX}Target`];
 
-   if( acID === null || acID === '' ) return;
+   if( acID === null || acID === '' ) return
 
    const accordion = ( document.querySelector( `${ACCORDIONSELECTOR}#${acID}` ) as HTMLElement );
 
-   if( !accordion || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || accordion.classList.contains( 'colexping' ) ) return;
+   if( !accordion || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || accordion.classList.contains( 'colexping' ) ) return
 
    accordionToggle( accordion );
 });
 
+
 function accordionToggle( accordion: HTMLElement )  {
    ///whether container is collapsed
    let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
-   const accAnimationTime = +window.getComputedStyle( accordion ).getPropertyValue('transition-duration').replace( /s/, '' ) * 1000;
+   const accAnimationTime = +window.getComputedStyle( accordion ).getPropertyValue( 'transition-duration' ).replace( /s/, '' ) * 1000;
    ///save the height of futher use
    let acHeight = accordion.offsetHeight;
 
@@ -228,12 +209,12 @@ function accordionToggle( accordion: HTMLElement )  {
       accordion.style.height = '0';
    
       ///wait just a little bit for animation to work properly
-      setTimeout( () => {
+      setTimeout( () =>  {
          accordion.style.height = acHeight + 'px';
       }, 0 );
 
       ///after animation change inline height to nothing
-      setTimeout( () => {
+      setTimeout( () =>  {
          accordion.style.height = '';
          accordion.classList.remove( 'colexping' );
       }, accAnimationTime );
@@ -246,11 +227,11 @@ function accordionToggle( accordion: HTMLElement )  {
 
       accordion.style.height = acHeight + 'px';
 
-      setTimeout( () => {
+      setTimeout( () =>  {
          accordion.style.height = '0';
       }, 5 );
 
-      setTimeout( () => {
+      setTimeout( () =>  {
          accordion.style.display = 'none';
          accordion.style.height = '';
          accordion.classList.remove( 'colexping' );
@@ -263,11 +244,11 @@ function accordionToggle( accordion: HTMLElement )  {
 
    const triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${accordion.id}"]` ) as NodeListOf<HTMLElement>;
 
-   triggerer.forEach( ( el: HTMLElement ) => {
+   triggerer.forEach( ( el: HTMLElement ) =>  {
 
       let text: undefined | string = undefined;
 
-      if( isCollapse ) {
+      if( isCollapse )  {
          text = el.dataset.collapsetext;
          el.setAttribute( 'aria-expanded', 'false' );
          el.classList.add( 'collapsed' );
@@ -280,5 +261,30 @@ function accordionToggle( accordion: HTMLElement )  {
       }
 
       text !== undefined && ( el.innerText = text );
+   });
+}
+
+
+///after DOM loaded see if there is any accordion container, if found any convert them to accordion
+window.onload = () =>  {
+   const allAccordion = document.querySelectorAll( ACCORDIONSELECTOR ) as NodeListOf<HTMLElement>;
+
+   ///if the accordion container already exists in the DOM 
+   allAccordion.forEach( item =>  {
+      let triggerer;
+      const accId = item.id;
+
+      if( accId === '' )  {
+         ///not selecting all the triggerer elements 
+         ///because of nested accordion under the container
+         triggerer = item.closest( '.jsc-accordion' )?.querySelector( `[data-${PREFIX}-target]` ) as HTMLElement;
+      } else if( accId !== '' )  {
+         triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${item.id}"]` ) as NodeListOf<HTMLElement>;
+      }
+
+      new JscAccordion({
+         container: item,
+         button: triggerer,
+      });
    });
 }

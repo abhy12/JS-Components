@@ -1,9 +1,6 @@
 "use strict";
-///you can change prefix if you want to
-const PREFIX = 'jsc', ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]`, allAccordion = document.querySelectorAll(ACCORDIONSELECTOR);
-/**
- * TODO
-*/
+const PREFIX = 'jsc';
+const ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]`;
 ///credit https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 function randmoId(length = 8) {
     let result = '';
@@ -14,7 +11,7 @@ function randmoId(length = 8) {
     }
     return result;
 }
-class Accordion {
+class JscAccordion {
     constructor(args) {
         this.container = null;
         this.collapsed = true;
@@ -131,25 +128,6 @@ class Accordion {
         accordionToggle(this.container);
     }
 }
-///if the accordion exists in the dom tree 
-///assuming you have the controls of html 
-allAccordion.forEach(item => {
-    var _a;
-    let triggerer;
-    const accId = item.id;
-    if (accId === '') {
-        ///not selecting all the triggerer elements 
-        ///because of nested accordion under the container
-        triggerer = (_a = item.closest('.accordion-container')) === null || _a === void 0 ? void 0 : _a.querySelector(`[data-${PREFIX}-target]`);
-    }
-    else if (accId !== '') {
-        triggerer = document.querySelectorAll(`[data-${PREFIX}-target="${item.id}"]`);
-    }
-    new Accordion({
-        container: item,
-        button: triggerer,
-    });
-});
 ///Event Bubbling for Accordion triggerer
 document.body.addEventListener('click', function (e) {
     const target = e.target;
@@ -224,4 +202,26 @@ function accordionToggle(accordion) {
         text !== undefined && (el.innerText = text);
     });
 }
+///after DOM loaded see if there is any accordion container, if found any convert them to accordion
+window.onload = () => {
+    const allAccordion = document.querySelectorAll(ACCORDIONSELECTOR);
+    ///if the accordion container already exists in the DOM 
+    allAccordion.forEach(item => {
+        var _a;
+        let triggerer;
+        const accId = item.id;
+        if (accId === '') {
+            ///not selecting all the triggerer elements 
+            ///because of nested accordion under the container
+            triggerer = (_a = item.closest('.jsc-accordion')) === null || _a === void 0 ? void 0 : _a.querySelector(`[data-${PREFIX}-target]`);
+        }
+        else if (accId !== '') {
+            triggerer = document.querySelectorAll(`[data-${PREFIX}-target="${item.id}"]`);
+        }
+        new JscAccordion({
+            container: item,
+            button: triggerer,
+        });
+    });
+};
 //# sourceMappingURL=accordion.js.map
