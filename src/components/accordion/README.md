@@ -54,7 +54,7 @@ In this example you don't need to add any html ID to the container or in the but
 </div>
 ```
 
-The "jsc-accordion" element has to wrap the whole accordion and the button this is important.
+The "jsc-accordion" element has to wrap the whole accordion and the button this is important.  
 ***Note: The downside of not adding ID to this is that it will not work perfectly in nested accordion.***  
 
 
@@ -75,7 +75,7 @@ Create an instance of Accordion
 const newAccordion = new JscAccordion({	
    container: '.new-accordion',
    button: '#btn',
-   collapse: true, ///default,
+   collapsed: true, ///default,
 
    ///change button text on collapse or expend
    collapseText: 'Collapse',
