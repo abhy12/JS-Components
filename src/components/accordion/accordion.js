@@ -14,7 +14,6 @@ function randmoId(length = 8) {
 class JscAccordion {
     constructor(args) {
         this.container = null;
-        this.collapsed = true;
         let tempCon = args.container;
         ///check if container value is htmlElement or some DOM query string
         if (typeof tempCon === 'string') {
@@ -24,8 +23,20 @@ class JscAccordion {
         if (!tempCon || (tempCon instanceof HTMLElement) === false)
             return;
         this.container = tempCon;
+        ///trigger
         if (args.button)
             this.button = args.button;
+        ///if collapsed argument is defined and have boolean value then change the value
+        ///unless it can be change via html.
+        ///it will not overwrite the html value when you defined collapsed value argument      
+        if (args.collapsed !== undefined) {
+            if (!args.collapsed) {
+                this.collapsed = false;
+            }
+            else if (args.collapsed === true) {
+                this.collapsed = true;
+            }
+        }
         this._init();
     }
     _init() {
@@ -47,9 +58,16 @@ class JscAccordion {
         if (this.container.getAttribute(`data-${PREFIX}-accCon`) === null || this.container.getAttribute(`data-${PREFIX}-accCon`) !== 'false') {
             this.container.setAttribute(`data-${PREFIX}-accCon`, 'true');
         }
-        // @ts-ignore
-        ///only false when collapsed explicitly has false value, default is true
-        this.collapsed = (this.collapsed !== false || this.collapsed !== 'false') ? true : false;
+        ///if collapsed value is undefined change the value to html collapse value default is true
+        if (this.collapsed === undefined) {
+            const collapseValue = this.container.getAttribute('data-collapse');
+            if (collapseValue === 'false') {
+                this.collapsed = false;
+            }
+            else {
+                this.collapsed = true;
+            }
+        }
         this.container.setAttribute('data-collapse', this.collapsed + '');
         ///if the collapse value is true hide the element
         if (this.collapsed)
@@ -70,7 +88,6 @@ class JscAccordion {
             this._finalizeTarget(trigger);
             return;
         }
-        ;
         if (this.button instanceof HTMLCollection || this.button instanceof NodeList || this.button instanceof Array) {
             //@ts-ignore
             const btns = Array.from(this.button);
@@ -190,6 +207,7 @@ function accordionToggle(accordion) {
         text !== undefined && (el.innerText = text);
     });
 }
+/// get all the "accordion elements" in the DOM and convert them to Accordion
 window.onload = () => {
     ///Event Bubbling for Accordion triggerer
     document.body.addEventListener('click', function (e) {
