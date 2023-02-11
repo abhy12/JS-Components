@@ -1,20 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap');
 
+*{
+  font-family: 'Playfair Display', serif;
+}
 html,
 body{
   height: 100%;
   margin: 0;
   max-width: 960px;
   margin: 60px auto;
-}
-.accordion-container{
-  font-family: 'Playfair Display', serif;
-}
-.accordion{
-  /* background: #efefef; */
-  overflow: hidden;
-  transition: all 300ms ease-in-out;
-  margin: 0;
 }
 .accordion-btn{
   position: relative;
