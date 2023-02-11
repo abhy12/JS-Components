@@ -1,5 +1,6 @@
 const PREFIX = 'jsc';
 const ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]`;
+let toggleTimeoutId: number;
 
 ///credit https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 function randmoId( length: number = 8 )  {
@@ -61,6 +62,8 @@ class JscAccordion  {
 
    _init()  {
       if( !this.container ) return
+
+      this.container.style.overflow = 'hidden';
 
       ///set new id if the container don't have one
       if( this.container.id === '' )  {
@@ -186,12 +189,26 @@ class JscAccordion  {
 function accordionToggle( accordion: HTMLElement )  {
    ///whether container is collapsed
    let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
-   const accAnimationTime = +window.getComputedStyle( accordion ).getPropertyValue( 'transition-duration' ).replace( /s/, '' ) * 1000;
+   ///adding 60ms more for transition bug
+   const transitionTime = 300 + 60;
    ///save the height of futher use
    let acHeight = accordion.offsetHeight;
 
+   if( accordion.classList.contains( 'colexping' ) ) return
    ///add a class to accordion
    accordion.classList.add( 'colexping' );
+
+   ///just a measure for unkown transition bugs won't happen 
+   ///when previous setTimeout is not happend already
+   ///see below setTimeout for more
+   clearTimeout( toggleTimeoutId );
+
+   ///deducting 60ms for transition bug
+   accordion.style.transition = `height ${transitionTime - 60}ms ease-in-out`;
+   toggleTimeoutId = setTimeout( () => {
+      accordion.style.transition = '';
+   },
+   transitionTime );
 
    if( isCollapse )  {
       //it will change the whatever display the element has before
@@ -199,7 +216,7 @@ function accordionToggle( accordion: HTMLElement )  {
 
       ///to get the full height of the element
       accordion.style.height = 'auto';
-   
+
       ///not using this method for now might be using this in future
       // accordion.setAttribute('style', 'height:auto !important');
 
@@ -210,7 +227,7 @@ function accordionToggle( accordion: HTMLElement )  {
 
       ///immediately change the element height to 0
       accordion.style.height = '0';
-   
+
       ///wait just a little bit for animation to work properly
       setTimeout( () =>  {
          accordion.style.height = acHeight + 'px';
@@ -220,7 +237,7 @@ function accordionToggle( accordion: HTMLElement )  {
       setTimeout( () =>  {
          accordion.style.height = '';
          accordion.classList.remove( 'colexping' );
-      }, accAnimationTime );
+      }, transitionTime );
 
       accordion.dataset.collapse = 'false';
 
@@ -238,7 +255,7 @@ function accordionToggle( accordion: HTMLElement )  {
          accordion.style.display = 'none';
          accordion.style.height = '';
          accordion.classList.remove( 'colexping' );
-      }, accAnimationTime );
+      }, transitionTime );
 
       accordion.dataset.collapse = 'true';
 
@@ -268,25 +285,28 @@ function accordionToggle( accordion: HTMLElement )  {
 }
 
 
-/// get all the "accordion elements" in the DOM and convert them to Accordion
+function accordionToggleEventHandler( e: Event )  {
+   const target = e.target as HTMLElement;
+   const acID: any = target.dataset[`${PREFIX}Target`];
+
+   if( acID === null || acID === '' ) return
+
+   const accordion = ( document.querySelector( `${ACCORDIONSELECTOR}#${acID}` ) as HTMLElement );
+
+   if( !accordion || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || accordion.classList.contains( 'colexping' ) ) return
+
+   accordionToggle( accordion );
+}
+
+///Run necessary "things" when DOM loaded
 window.onload = () =>  {
-   ///Event Bubbling for Accordion triggerer
-   document.body.addEventListener( 'click', function( e )  {
-      const target = e.target as HTMLElement;
-      const acID: any = target.dataset[`${PREFIX}Target`];
+   ///add click event of accordion trigger to body for event Bubbling
+   document.body.addEventListener( 'click', accordionToggleEventHandler );
 
-      if( acID === null || acID === '' ) return
-
-      const accordion = ( document.querySelector( `${ACCORDIONSELECTOR}#${acID}` ) as HTMLElement );
-
-      if( !accordion || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || accordion.classList.contains( 'colexping' ) ) return
-
-      accordionToggle( accordion );
-   });
-
+   ///get all the accordion content container
    const allAccordion = document.querySelectorAll( ACCORDIONSELECTOR ) as NodeListOf<HTMLElement>;
 
-   ///after DOM loaded see if there is any accordion container, if found any convert them to accordion
+   ///convert accordion container to "accordion"
    allAccordion.forEach( item =>  {
       let triggerer;
       const accId = item.id;
