@@ -18,12 +18,12 @@ Basic structure
 ```
 <!-- Accordion wrapper -->
 <div class="jsc-accordion">
-  <!-- Always wrap button to heading tag for accessibility -->
-  <h1><button data-jsc-target="YOUR-ID">Lorem ipsum dolor sit amet.</button></h1>
-  <!-- Accordion -->
-  <div id="YOUR-ID" class="accordion" data-jsc-accCon="true">
-    <!-- Your content -->
-  </div>
+   <!-- Always wrap button to heading tag for accessibility -->
+   <h1><button data-jsc-target="YOUR-ID">Lorem ipsum dolor sit amet.</button></h1>
+   <!-- Accordion -->
+   <div id="YOUR-ID" data-jsc-accCon="true">
+      <!-- Your content -->
+   </div>
 </div>
 ```
 
@@ -31,9 +31,9 @@ just replace "YOUR-ID" with your own same unique html ID(without "#") and that's
 
 #### Change button text on collapse or expend
 ```
-  <h1>
-    <button class="..." data-collapsetext="collapse" data-expendtext="Expend">Collapse</button>
-  </h1>
+<h1>
+   <button class="..." data-collapsetext="collapse" data-expendtext="Expend">Collapse</button>
+</h1>
 ```
 
 ***Read More***  
@@ -45,12 +45,12 @@ In this example you don't need to add any html ID to the container or in the but
 
 ```
 <div class="jsc-accordion">
-  <!-- Always wrap button to heading tag for accessibility -->
-  <h1><button data-jsc-target="">Lorem ipsum dolor sit amet.</button></h1>
-  <!-- Accordion content container -->
-  <div class="accordion" data-jsc-accCon="true">
-    <!-- Your content -->
-  </div>
+   <!-- Always wrap button to heading tag for accessibility -->
+   <h1><button data-jsc-target="">Lorem ipsum dolor sit amet.</button></h1>
+   <!-- Accordion content container -->
+   <div data-jsc-accCon="true">
+      <!-- Your content -->
+   </div>
 </div>
 ```
 
@@ -65,7 +65,7 @@ The "jsc-accordion" element has to wrap the whole accordion and the button this 
 ```
 <button id="btn">Lorem ipsum dolor sit amet.</button>
 <div class="new-accordion">
-  <!-- Your content -->
+   <!-- Your content -->
 </div>
 ```
 
@@ -75,7 +75,7 @@ Create an instance of Accordion
 const newAccordion = new JscAccordion({	
    container: '.new-accordion',
    button: '#btn',
-   collapsed: true, ///default,
+   collapsed: true, ///initial default
 
    ///change button text on collapse or expend
    collapseText: 'Collapse',
@@ -83,4 +83,4 @@ const newAccordion = new JscAccordion({
 });
 ```
 
-***Note: you can use any document query or any class as a container if that container don't have an existing ID then the accordion will generate an ID for that container.***
+***Note: you can use any document query for selecting an accordion container but if that accordion container don't have an existing ID then this Accordion instance will generate a new ID for that accordion container.***
