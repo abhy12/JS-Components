@@ -27,9 +27,9 @@ class JscAccordion {
         ///trigger
         if (args.button)
             this.button = args.button;
-        ///if collapsed argument is defined and have boolean value then change the value
-        ///unless it can be change via html.
-        ///it will not overwrite the html value when you defined collapsed value argument      
+        ///if collapsed argument is defined and have boolean a value then change the collapsed value
+        ///otherwise it can be change via html.
+        ///it will not overwrite the html value when you defined collapsed value argument.
         if (args.collapsed !== undefined) {
             if (!args.collapsed) {
                 this.collapsed = false;

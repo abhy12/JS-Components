@@ -64,7 +64,8 @@ class JsSlider {
         this.slides = this.container.querySelectorAll('.slide');
         if (!this.sliderWrapper || !this.slides)
             return;
-        ///add current instance to the container for futher use likely for event bubbling
+        ///https://developer.mozilla.org/en-US/docs/Glossary/Expando
+        ///add current instance to the container element for futher use likely for event bubbling
         this.container.jsSlide = this;
         /** initialize breakpoints */
         ///save all the default values to breakpoint with value of width "0"
@@ -190,7 +191,7 @@ class JsSlider {
         ///change current slide index to closest slides per view
         if (this.currentIndex > 0) {
             const currentSlideRatio = Math.floor(prevSlidePosition / this.slidesPerView);
-            ///i not sure which slide to show when slidePerView changes so this is temporary "fix"
+            ///i am not sure which slide to show when slidePerView changes so this is a temporary "solution"
             if (this.currentIndex === (this.slidesLength / prevPerView) - 1) {
                 this.currentIndex = Math.abs((this.slidesLength / this.slidesPerView)) - 1;
             }
