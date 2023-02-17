@@ -1,10 +1,17 @@
 "use strict";
-let pointerPosition = 0;
-let activeSlider = null;
+/**
+ * TOOD
+ *
+ * Optimize resize event
+ * A11y
+ * Vertical Slider
+ */
+///current pointer position
+let currentPointerPosition = 0;
 function getPointerPosition(e) {
     return (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
 }
-class JsSlider {
+class JscSlider {
     constructor(args) {
         ///state variables
         this.pointerStartingPosition = 0;
@@ -66,7 +73,7 @@ class JsSlider {
             return;
         ///https://developer.mozilla.org/en-US/docs/Glossary/Expando
         ///add current instance to the container element for futher use likely for event bubbling
-        this.container.jsSlide = this;
+        this.container.jscSlider = this;
         /** initialize breakpoints */
         ///save all the default values to breakpoint with value of width "0"
         this.breakPoints[0] = {
@@ -110,7 +117,7 @@ class JsSlider {
             this.dragTime = new Date().getTime();
         }
         ///if positive then the slide going to previous slide otherwise next slide
-        this.translate = pointerPosition - this.pointerStartingPosition;
+        this.translate = currentPointerPosition - this.pointerStartingPosition;
         ///slider width plus gap
         const sliderWidthPlusGap = this.sliderContainerWidth + this.gap;
         ///if current slide is last slide and going to next slide decrease the translate value
@@ -241,48 +248,34 @@ class JsSlider {
         this.translate = 0;
     }
 }
-/** global events */
-document.addEventListener('pointermove', (e) => {
-    const target = e.target;
-    let slider = null;
-    pointerPosition = getPointerPosition(e);
-    if (typeof target.closest === 'function' && activeSlider === null) {
-        slider = target === null || target === void 0 ? void 0 : target.closest('.jsc-slider-container');
-    }
-    if (activeSlider) {
-        slider = activeSlider;
-    }
-    if (slider && typeof slider.jsSlide !== 'undefined') {
+///using IIFE so activeSlider variable can't be alter by anyone
+(() => {
+    ///current active slider
+    let activeSlider = null;
+    /** global events */
+    document.addEventListener('pointermove', (e) => {
+        const target = e.target;
+        let slider = null;
+        currentPointerPosition = getPointerPosition(e);
+        if (typeof target.closest === 'function' && activeSlider === null) {
+            slider = target === null || target === void 0 ? void 0 : target.closest('.jsc-slider-container');
+        }
+        if (activeSlider) {
+            slider = activeSlider;
+        }
+        if (slider && typeof slider.jscSlider !== 'undefined') {
+            if (!activeSlider)
+                activeSlider = slider;
+            slider.jscSlider._pointerMove();
+        }
+    });
+    document.addEventListener('pointerup', () => {
+        var _a;
         if (!activeSlider)
-            activeSlider = slider;
-        slider.jsSlide._pointerMove();
-    }
-});
-document.addEventListener('pointerup', () => {
-    var _a;
-    if (!activeSlider)
-        return;
-    (_a = activeSlider.jsSlide) === null || _a === void 0 ? void 0 : _a._pointerLeave();
-    activeSlider = null;
-});
-/** End global events */
-const sliderContainer = document.querySelector('.jsc-slider-container');
-const slider = new JsSlider({
-    // container: sliderContainer,
-    container: '.jsc-slider-container',
-    slidesPerView: 1,
-    gap: 5,
-    prevEl: '.prev',
-    nextEl: '.next',
-    breakPoints: {
-        480: {
-            slidesPerView: 2,
-            gap: 10,
-        },
-        768: {
-            slidesPerView: 3,
-            gap: 15,
-        },
-    }
-});
+            return;
+        (_a = activeSlider.jscSlider) === null || _a === void 0 ? void 0 : _a._pointerLeave();
+        activeSlider = null;
+    });
+    /** End global events */
+})();
 //# sourceMappingURL=slider.js.map

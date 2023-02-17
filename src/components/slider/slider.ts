@@ -1,16 +1,19 @@
 /**
  * TOOD
+ * 
+ * Optimize resize event
  * A11y
  * Vertical Slider
  */
-interface JsSliderElement extends HTMLElement  {
-   jsSlide?: JsSlider
+
+interface JscSliderElement extends HTMLElement  {
+   jscSlider?: JscSlider
 }
 
-let pointerPosition = 0;
-let activeSlider: null | JsSliderElement = null;
+///current pointer position
+let currentPointerPosition = 0;
 
-interface JsSliderArgs {
+interface JscSliderArgs {
    container: string | HTMLElement,
    slidesPerView?: number,
    gap?: number,
@@ -23,9 +26,9 @@ function getPointerPosition( e: MouseEvent | TouchEvent )  {
    return ( e instanceof MouseEvent ) ? e.clientX : e.touches[0].clientX;
 }
 
-class JsSlider  {
+class JscSlider  {
    ///core variables
-   container: JsSliderElement;
+   container: JscSliderElement;
    sliderWrapper: HTMLElement;
    slides: NodeListOf<HTMLElement>;
    sliderContainerWidth: number;
@@ -51,7 +54,7 @@ class JsSlider  {
    gap = 0;
    breakPoints:any | {} = {};
 
-   constructor( args: JsSliderArgs )  {
+   constructor( args: JscSliderArgs )  {
       ///check if container arg is string
       if( typeof args.container === 'string' )  {
          args.container = document.querySelector( args.container ) as HTMLElement;
@@ -107,7 +110,7 @@ class JsSlider  {
 
       ///https://developer.mozilla.org/en-US/docs/Glossary/Expando
       ///add current instance to the container element for futher use likely for event bubbling
-      this.container.jsSlide = this; 
+      this.container.jscSlider = this; 
 
       /** initialize breakpoints */
 
@@ -165,7 +168,7 @@ class JsSlider  {
       }
 
       ///if positive then the slide going to previous slide otherwise next slide
-      this.translate = pointerPosition - this.pointerStartingPosition;
+      this.translate = currentPointerPosition - this.pointerStartingPosition;
 
       ///slider width plus gap
       const sliderWidthPlusGap = this.sliderContainerWidth + this.gap;
@@ -323,54 +326,41 @@ class JsSlider  {
    /** End Utilities Functions */
 }
 
-/** global events */
 
-document.addEventListener( 'pointermove', ( e ) =>  {
-   const target = e.target as HTMLElement;
-   let slider: null | JsSliderElement = null;
-   pointerPosition = getPointerPosition( e );
+///using IIFE so activeSlider variable can't be alter by anyone
+(() =>  {
+   ///current active slider
+   let activeSlider: null | JscSliderElement = null;
 
-   if( typeof target.closest === 'function' && activeSlider === null )  {
-      slider = target?.closest( '.jsc-slider-container' ) as JsSliderElement;
-   }
+   /** global events */
 
-   if( activeSlider )  {
-      slider = activeSlider;
-   }
+   document.addEventListener( 'pointermove', ( e ) =>  {
+      const target = e.target as HTMLElement;
+      let slider: null | JscSliderElement = null;
+      currentPointerPosition = getPointerPosition( e );
 
-   if( slider && typeof slider.jsSlide !== 'undefined' )  {
-      if( !activeSlider )  activeSlider = slider;
+      if( typeof target.closest === 'function' && activeSlider === null )  {
+         slider = target?.closest( '.jsc-slider-container' ) as JscSliderElement;
+      }
 
-      slider.jsSlide._pointerMove();
-   }
-});
+      if( activeSlider )  {
+         slider = activeSlider;
+      }
 
-document.addEventListener( 'pointerup', () =>  {
-   if( !activeSlider ) return
+      if( slider && typeof slider.jscSlider !== 'undefined' )  {
+         if( !activeSlider )  activeSlider = slider;
 
-   activeSlider.jsSlide?._pointerLeave();
+         slider.jscSlider._pointerMove();
+      }
+   });
 
-   activeSlider = null;
-});
+   document.addEventListener( 'pointerup', () =>  {
+      if( !activeSlider ) return
 
-/** End global events */
+      activeSlider.jscSlider?._pointerLeave();
 
-const sliderContainer = document.querySelector( '.jsc-slider-container' ) as HTMLElement;
-const slider = new JsSlider({
-   // container: sliderContainer,
-   container: '.jsc-slider-container',
-   slidesPerView: 1,
-   gap: 5,
-   prevEl: '.prev',
-   nextEl: '.next',
-   breakPoints: {
-      480: {
-         slidesPerView: 2,
-         gap: 10,
-      },
-      768: {
-         slidesPerView: 3,
-         gap: 15,
-      },
-   }
-});
+      activeSlider = null;
+   });
+
+   /** End global events */
+})();
