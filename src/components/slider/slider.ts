@@ -244,7 +244,6 @@ class JscSlider  {
    _applyResponsiveness()  {
       const windowWidth = window.innerWidth;
       const prevPerView = this.slidesPerView;
-      const prevSlidePosition = ( this.currentIndex + 1 ) * prevPerView;
 
       this.breakPointWidths.forEach( width =>  {
          if( windowWidth < width )  return
@@ -263,17 +262,19 @@ class JscSlider  {
          }
       });
 
-      ///change current slide index to closest slides per view
-      if( this.currentIndex > 0 )  {
-         const currentSlideRatio = Math.floor( prevSlidePosition / this.slidesPerView );
-
-         ///i am not sure which slide to show when slidePerView changes so this is a temporary "solution"
-         if( this.currentIndex === ( this.slidesLength / prevPerView ) - 1 )  {
-            this.currentIndex = Math.abs( ( this.slidesLength / this.slidesPerView ) ) - 1;
-         } else if( currentSlideRatio <= 0 )  {
-            this.currentIndex = 0;
-         }  else if( currentSlideRatio > 0 )  {
-            this.currentIndex = currentSlideRatio;
+      ///adjust slide index based on current slidesPerView
+      if( this.currentIndex > 0 && prevPerView !== this.slidesPerView )  {
+         if( this.slidesPerView < prevPerView )  {
+            ///Suppose we have total of 6 slides and we want to find out the nearest index, 
+            ///so the current value of slidesPreView = 3 and the currentIndex = 1 (2nd slide) 
+            ///and we are changing slidesPreView to 1 so the currentIndex should be 3 (4th slide)
+            ///prevSlidePreView x currentIndex = 3
+            this.currentIndex = ( prevPerView * this.currentIndex ) / this.slidesPerView; 
+         } else if( this.slidesPerView > prevPerView )  {
+            ///prevView = 1, prevIndex = 4, currentView = 3
+            ///prevIndex / currentView = 1.3333333
+            ///round it to 1
+            this.currentIndex = Math.floor( this.currentIndex / this.slidesPerView );
          }
       }
 
