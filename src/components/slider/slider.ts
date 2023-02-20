@@ -1,17 +1,26 @@
 /**
  * TOOD
  * 
- * Optimize resize event
  * A11y
  * Vertical Slider
  */
+
+///resize observer of slider
+const __JscSliderResizeObserver = new ResizeObserver( ( entries =>  {
+   entries.forEach( entry =>  {
+      const target = entry.target as JscSliderElement;
+      if( target.jscSlider instanceof JscSlider )  {
+         target.jscSlider._onSliderResize();
+      }
+   });
+}));
 
 interface JscSliderElement extends HTMLElement  {
    jscSlider?: JscSlider
 }
 
 ///current pointer position
-let currentPointerPosition = 0;
+let __JscCurrentPointerPosition = 0;
 
 interface JscSliderArgs {
    container: string | HTMLElement,
@@ -55,7 +64,7 @@ class JscSlider  {
    breakPoints:any | {} = {};
 
    constructor( args: JscSliderArgs )  {
-      ///check if container arg is string
+      ///check if container arg is string and valid DOM query
       if( typeof args.container === 'string' )  {
          args.container = document.querySelector( args.container ) as HTMLElement;
       }
@@ -137,8 +146,8 @@ class JscSlider  {
       this.container.addEventListener( 'pointerdown', this._pointerDown.bind( this ) );
       this.container.addEventListener( 'pointerup', this._pointerLeave.bind( this ) );
 
-      ///add event on resize
-      window.onresize = () => this._onWindowResize();
+      ///add resize observer
+      __JscSliderResizeObserver.observe( this.container );
 
       ///calculate slides dimensions
       this._calcSlidesDimensions();
@@ -168,7 +177,7 @@ class JscSlider  {
       }
 
       ///if positive then the slide going to previous slide otherwise next slide
-      this.translate = currentPointerPosition - this.pointerStartingPosition;
+      this.translate = __JscCurrentPointerPosition - this.pointerStartingPosition;
 
       ///slider width plus gap
       const sliderWidthPlusGap = this.sliderContainerWidth + this.gap;
@@ -213,7 +222,7 @@ class JscSlider  {
       this._reset();
    }
 
-   _onWindowResize()  {
+   _onSliderResize()  {
       this._applyResponsiveness();
       this.sliderContainerWidth = this.container.getBoundingClientRect().width;
       this._reset();
@@ -338,17 +347,18 @@ class JscSlider  {
    document.addEventListener( 'pointermove', ( e ) =>  {
       const target = e.target as HTMLElement;
       let slider: null | JscSliderElement = null;
-      currentPointerPosition = getPointerPosition( e );
+      __JscCurrentPointerPosition = getPointerPosition( e );
 
+      ///checking if the target has closest method because if the pointer
+      ///goes outside to the client viewport then the current target will be
+      ///HTMLDocument which don't have closest method.
       if( typeof target.closest === 'function' && activeSlider === null )  {
-         slider = target?.closest( '.jsc-slider-container' ) as JscSliderElement;
-      }
-
-      if( activeSlider )  {
+         slider = target.closest( '.jsc-slider-container' ) as JscSliderElement;
+      } else if( activeSlider )  { 
          slider = activeSlider;
       }
 
-      if( slider && typeof slider.jscSlider !== 'undefined' )  {
+      if( slider && slider.jscSlider instanceof JscSlider )  {
          if( !activeSlider )  activeSlider = slider;
 
          slider.jscSlider._pointerMove();
@@ -356,9 +366,9 @@ class JscSlider  {
    });
 
    document.addEventListener( 'pointerup', () =>  {
-      if( !activeSlider ) return
+      if( !activeSlider || !( activeSlider.jscSlider instanceof JscSlider ) ) return
 
-      activeSlider.jscSlider?._pointerLeave();
+      activeSlider.jscSlider._pointerLeave();
 
       activeSlider = null;
    });
