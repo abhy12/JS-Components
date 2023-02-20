@@ -101,7 +101,7 @@ const newAccordion = new JscAccordion({
    container: ".new-accordion"
 }
 ```
-<td>You can use CSS selector or any DOM element for selecting "accordion"</td>
+<td>You can use CSS selector or any DOM element for selecting "accordion".</td>
 </td>
 </tr>  
 <tr>
@@ -118,7 +118,7 @@ const newAccordion = new JscAccordion({
 </td>
 <td>You can use single selector as a accordion toggle button or collection of HTML element in array or DOM elements nodes.  
 
-**Note**: use can use either multiple values of DOM query string selector or DOM elements nodes, not both at same time as button property value</td>
+**Note**: you can use either multiple values of DOM query string selector or DOM elements nodes, not both at same time as button property value.</td>
 </tr>
 <tr>
 <td> collapsed </td>
@@ -132,7 +132,7 @@ const newAccordion = new JscAccordion({
 }
 ```
 </td>
-<td>Default initial state of accordion if false then expended otherwise collapsed as initial default state</td>
+<td>Whether you want accordion to be collapsed or not, default is true.</td>
 </tr>
 <tr>
 <td> collapseText </td>
@@ -145,7 +145,7 @@ const newAccordion = new JscAccordion({
 }
 ```
 </td>
-<td>If accordion is collapsed then the text of button can be replace by this property value</td>
+<td>If accordion is collapsed then the text of button can be replace by this property value.</td>
 </tr>
 <tr>
 <td> expendText </td>
@@ -158,7 +158,7 @@ const newAccordion = new JscAccordion({
 }
 ```
 </td>
-<td>If accordion is expended then the text of button can be replace by this property value</td>
+<td>If accordion is expended then the text of button can be replace by this property value.</td>
 </tr>
 </table>  
 
@@ -174,7 +174,7 @@ const newAccordion = new JscAccordion({
 enable 
 ```
 </td>
-<td>Enable the accordion</td>
+<td>Enable the accordion.</td>
 </tr>
 <tr>
 <td>
@@ -183,7 +183,7 @@ enable
 disable 
 ```
 </td>
-<td>Disable the accordion</td>
+<td>Disable the accordion.</td>
 </tr>
 <tr>
 <td>
@@ -192,6 +192,6 @@ disable
 toggle
 ```
  </td>
-<td>Toggle the accordion if accordion is collapsed then it will expend or vice versa</td>
+<td>Toggle the accordion if accordion is collapsed then it will expend or vice versa.</td>
 </tr>
 </table>  
