@@ -10,7 +10,7 @@ const __JscSliderResizeObserver = new ResizeObserver((entries => {
     entries.forEach(entry => {
         const target = entry.target;
         if (target.jscSlider instanceof JscSlider) {
-            target.jscSlider._onSliderResize();
+            target.jscSlider._resize();
         }
     });
 }));
@@ -161,7 +161,7 @@ class JscSlider {
         }
         this._reset();
     }
-    _onSliderResize() {
+    _resize() {
         this._applyResponsiveness();
         this.sliderContainerWidth = this.container.getBoundingClientRect().width;
         this._reset();
@@ -188,7 +188,7 @@ class JscSlider {
         const windowWidth = window.innerWidth;
         const prevPerView = this.slidesPerView;
         this.breakPointWidths.forEach(width => {
-            if (windowWidth < width)
+            if (width > windowWidth)
                 return;
             ///slidesPerView
             if (+(this.breakPoints[width].slidesPerView) > 0) {
@@ -276,8 +276,6 @@ class JscSlider {
             slider = activeSlider;
         }
         if (slider && slider.jscSlider instanceof JscSlider) {
-            if (!activeSlider)
-                activeSlider = slider;
             slider.jscSlider._pointerMove();
         }
     });
