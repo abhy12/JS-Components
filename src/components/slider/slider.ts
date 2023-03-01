@@ -1,6 +1,6 @@
 /**
  * TOOD
- * 
+ *
  * A11y
  * Vertical Slider
  */
@@ -55,6 +55,10 @@ class JscSlider  {
    breakPointWidths: number[] = [];
    currentBreakPoint: number | null = null;
    currentActiveWidth: number = 0;
+   _isTransitioning: boolean = false;
+   _transitionTimeoutId: number = 0;
+   _tempIndex: number = 0;
+   _pausePointer: number = 0;
 
    ///can be change via args
    slidesPerView = 1;
@@ -119,7 +123,7 @@ class JscSlider  {
 
       ///https://developer.mozilla.org/en-US/docs/Glossary/Expando
       ///add current instance to the container element for futher use likely for event bubbling
-      this.container.jscSlider = this; 
+      this.container.jscSlider = this;
 
       /** initialize breakpoints */
 
@@ -159,13 +163,23 @@ class JscSlider  {
       const target = e.target as HTMLElement;
 
       ///don't start moving slider if current target is not a slide, wrapper or container
-      if( target !== this.container && target.closest( '.slide' )?.closest( '.jsc-slider-container' ) !== this.container && target.closest( '.jsc-slider-wrapper' ) !== this.sliderWrapper ) return
+      if( target !== this.container && target.closest( '.slide' )?.closest( '.jsc-slider-container' ) !== this.container
+          && target.closest( '.jsc-slider-wrapper' ) !== this.sliderWrapper ) return
 
       ///prevent default behavior in slide like image dragging effect inside slide
       e.preventDefault();
 
-      this.isClicked = true;
       this.pointerStartingPosition = getPointerPosition( e );
+      this.isClicked = true;
+
+      if( this._isTransitioning )  {
+         clearTimeout( this._transitionTimeoutId );
+         this._isTransitioning = false;
+         this._tempIndex = this.currentIndex;
+         this.sliderWrapper.style.transitionDuration = '';
+         this._pausePointer = ( ( this.currentIndex ) * ( this.sliderContainerWidth + this.gap ) ) + this.sliderWrapper.getBoundingClientRect().left
+         this._pointerMove();
+      }
    }
 
    _pointerMove()  {
@@ -176,8 +190,8 @@ class JscSlider  {
          this.dragTime = new Date().getTime();
       }
 
-      ///if positive then the slide going to previous slide otherwise next slide
-      this.translate = __JscCurrentPointerPosition - this.pointerStartingPosition;
+      ///if positive then going to previous slide otherwise to the next slide
+      this.translate = ( __JscCurrentPointerPosition - this.pointerStartingPosition ) + ( this._pausePointer );
 
       ///slider width plus gap
       const sliderWidthPlusGap = this.sliderContainerWidth + this.gap;
@@ -194,11 +208,13 @@ class JscSlider  {
          return
       }
 
-      ///restore the slide previous position if slide not going to left or right either
+      ///move the slider
       this.sliderWrapper.style.transform = `translateX(${this.translate - ( this.currentIndex * sliderWidthPlusGap )}px)`;
    }
 
    _pointerLeave()  {
+      ///if the slider was clicked without moving
+      ///then we don't have to do anything after that
       if( !this.isFirstMove )  {
          this.isClicked = false;
          return
@@ -208,15 +224,15 @@ class JscSlider  {
       const currentDragPercent = ( 100 * Math.abs( this.translate ) ) / this.sliderContainerWidth;
 
       ///if the drag distance is greater than percentThreshold of the container
-      ///or pointer leaving time minus the drag start time is lower than the time threshold
+      ///or currentTime - dragStartTime is lower than the time threshold
       ///increase or decrease the index based on the translate value
       if( this.isClicked && ( ( new Date().getTime() - this.dragTime ) < this.timeThreshold || currentDragPercent > this.percentThreshold ) )  {
 
-         ///slide going to the right
-         if( this.translate > 0 && this.currentIndex > 0  ) --this.currentIndex;
+         ///going to previous slide
+         if( this.translate > 0 && this.currentIndex > 0 )  this.prevSlide();
 
-         ///slide going to the left
-         if( this.translate < 0 && this.currentIndex < ( this.totalSlidesPerView - 1 ) ) ++this.currentIndex;
+         ///going to next slide
+         if( this.translate < 0 && this.currentIndex < ( this.totalSlidesPerView - 1 ) )  this.nextSlide();
       }
 
       this._reset();
@@ -234,14 +250,24 @@ class JscSlider  {
 
    nextSlide()  {
       if( this.currentIndex >= ( this.totalSlidesPerView - 1 ) ) return false;
-      this.currentIndex++;
+      this._tempIndex = this.currentIndex + 1;
+      clearTimeout( this._transitionTimeoutId );
+      this._transitionTimeoutId = setTimeout( () =>  {
+         this.currentIndex++;
+      }, 200 );
+
       this._reset();
       return true;
    }
 
    prevSlide()  {
       if( this.currentIndex <= 0 ) return false;
-      this.currentIndex--;
+      this._tempIndex = this.currentIndex - 1;
+      clearTimeout( this._transitionTimeoutId );
+      this._transitionTimeoutId = setTimeout( () =>  {
+         this.currentIndex--;
+      }, 200 );
+
       this._reset();
       return true;
    }
@@ -274,11 +300,11 @@ class JscSlider  {
       ///adjust slide index based on current slidesPerView
       if( this.currentIndex > 0 && prevPerView !== this.slidesPerView )  {
          if( this.slidesPerView < prevPerView )  {
-            ///Suppose we have total of 6 slides and we want to find out the nearest index, 
-            ///so the current value of slidesPreView = 3 and the currentIndex = 1 (2nd slide) 
+            ///Suppose we have total of 6 slides and we want to find out the nearest index,
+            ///so the current value of slidesPreView = 3 and the currentIndex = 1 (2nd slide)
             ///and we are changing slidesPreView to 1 so the currentIndex should be 3 (4th slide)
             ///prevSlidePreView x currentIndex = 3
-            this.currentIndex = ( prevPerView * this.currentIndex ) / this.slidesPerView; 
+            this.currentIndex = ( prevPerView * this.currentIndex ) / this.slidesPerView;
          } else if( this.slidesPerView > prevPerView )  {
             ///prevView = 1, prevIndex = 4, currentView = 3
             ///prevIndex / currentView = 1.3333333
@@ -291,18 +317,19 @@ class JscSlider  {
    }
 
    _calcSlidesDimensions()  {
-      let perViewWidth: number | null = null;
+      let slideWidth: number | null = null;
 
       if( this.slidesPerView > 1 )  {
-         ///calculate slides per view gap
-         perViewWidth = ( this.sliderContainerWidth - ( this.gap * ( this.slidesPerView - 1 ) ) ) / this.slidesPerView;
+         ///calculate slide width
+         slideWidth = ( this.sliderContainerWidth - ( this.gap * ( this.slidesPerView - 1 ) ) ) / this.slidesPerView;
       }
 
       this.slides.forEach( ( slide, i ) =>  {
-         if( perViewWidth !== null && perViewWidth )  {
-            slide.style.width = perViewWidth + 'px';
+         if( slideWidth )  slide.style.width = slideWidth + 'px';
 
-         } else if( perViewWidth === null )  {
+         ///have to do this because the previous slidePerView slide width can be
+         ///different, so we have to remove the previous width it
+         if( slideWidth === null )  {
             ///if slidePerView is 1 no need to add any width to slide
             slide.style.width = '';
          }
@@ -316,10 +343,18 @@ class JscSlider  {
 
    _reset()  {
       this.sliderWrapper.style.transitionDuration = "300ms";
-      this.sliderWrapper.style.transform = `translateX(${-( this.currentIndex * ( this.sliderContainerWidth + this.gap ) )}px)`; 
-      setTimeout( () => {
+      ///restore slide position
+      ///using tempIndex for mimicking translate
+      this.sliderWrapper.style.transform = `translateX(${-( this._tempIndex * ( this.sliderContainerWidth + this.gap ) )}px)`;
+      this._isTransitioning = true;
+
+      setTimeout( () =>  {
          this.sliderWrapper.style.transitionDuration = '';
       }, 300 );
+
+      setTimeout( () =>  {
+         this._isTransitioning = false;
+      }, 200 );
 
       ///recalculate slides width
       this._calcSlidesDimensions();
@@ -331,6 +366,7 @@ class JscSlider  {
       this.isFirstMove = false;
       this.dragTime = 0;
       this.translate = 0;
+      this._pausePointer = 0;
    }
 
    /** End Utilities Functions */
@@ -354,7 +390,7 @@ class JscSlider  {
       ///HTMLDocument which don't have closest method.
       if( typeof target.closest === 'function' && activeSlider === null )  {
          slider = target.closest( '.jsc-slider-container' ) as JscSliderElement;
-      } else if( activeSlider )  { 
+      } else if( activeSlider )  {
          slider = activeSlider;
       }
 
