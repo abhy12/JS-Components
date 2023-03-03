@@ -381,29 +381,49 @@ class JscSlider  {
    /** global events */
 
    document.addEventListener( 'pointermove', ( e ) =>  {
-      const target = e.target as HTMLElement;
-      let slider: null | JscSliderElement = null;
+      const target = e.target;
       __JscCurrentPointerPosition = getPointerPosition( e );
 
-      ///checking if the target has closest method because if the pointer
-      ///goes outside to the client viewport then the current target will be
-      ///HTMLDocument which don't have closest method.
-      if( typeof target.closest === 'function' && activeSlider === null )  {
-         slider = target.closest( '.jsc-slider-container' ) as JscSliderElement;
-      } else if( activeSlider )  {
-         slider = activeSlider;
+      ///checking if the target is not a HTMLdocument because HTMLdocument don't have any nearset element
+      ///so there is no point of assigning new activeSlider, same goes to if the previous activeSlider
+      ///is equal to current target slider container
+      if( target instanceof HTMLElement )  {
+         const closestSlider = target.closest( '.jsc-slider-container' ) as JscSliderElement;
+         if( closestSlider !== activeSlider )  activeSlider = closestSlider;
       }
 
-      if( slider && slider.jscSlider instanceof JscSlider )  {
-         slider.jscSlider._pointerMove();
+      ///if slider isClicked if false then don't need to invoke slider move method
+      if( !activeSlider || !( activeSlider.jscSlider instanceof JscSlider ) || !activeSlider.jscSlider.isClicked )  {
+         activeSlider = null
+         return
       }
+
+      activeSlider.jscSlider._pointerMove();
    });
 
-   document.addEventListener( 'pointerup', () =>  {
-      if( !activeSlider || !( activeSlider.jscSlider instanceof JscSlider ) ) return
+
+   function sliderLeave( e: Event, isBlurEvent: boolean = false )  {
+      const target = e.target;
+      if( activeSlider === null || !( activeSlider.jscSlider instanceof JscSlider ) ) return
+
+      ///if closest element is equal to current active slider don't need to reset the slider.
+      ///Doing this because if the pointer pointing at the slider gap which is margin then this event
+      ///will occur so which means slider is still moving so there is no need to rest the slider
+      ///P.S don't need to worry about how slider will actually leave when the closest slider is activeSlider
+      ///because it's directly implamented in the slider class itself
+      if( !isBlurEvent && !( target instanceof HTMLElement && ( target.closest( '.jsc-slider-container' ) !== activeSlider ) ) )  return
 
       activeSlider.jscSlider._pointerLeave();
       activeSlider = null;
+   }
+
+   ///pointer leave events
+   document.addEventListener( 'pointerup', sliderLeave );
+   document.addEventListener( 'pointerout', sliderLeave );
+
+   ///this event will happen when browser tab changes
+   document.addEventListener( 'visibilitychange', ( e ) => {
+      sliderLeave( e, true );
    });
 
    /** End global events */
