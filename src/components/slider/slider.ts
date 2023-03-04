@@ -392,12 +392,13 @@ class JscSlider  {
          if( closestSlider !== activeSlider )  activeSlider = closestSlider;
       }
 
-      ///if slider isClicked if false then don't need to invoke slider move method
+      ///if slider isClicked is false then don't move current activeSlider
       if( !activeSlider || !( activeSlider.jscSlider instanceof JscSlider ) || !activeSlider.jscSlider.isClicked )  {
          activeSlider = null
          return
       }
 
+      ///move slider
       activeSlider.jscSlider._pointerMove();
    });
 
