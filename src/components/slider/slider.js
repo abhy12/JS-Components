@@ -1,11 +1,5 @@
 "use strict";
-/**
- * TOOD
- *
- * A11y
- * Vertical Slider
- */
-///resize observer of slider
+///resize observer for slider
 const __JscSliderResizeObserver = new ResizeObserver((entries => {
     entries.forEach(entry => {
         const target = entry.target;
@@ -26,7 +20,7 @@ class JscSlider {
         this.isClicked = false;
         this.isPointerMoved = false;
         this.currentIndex = 0;
-        this.dragTime = 0;
+        this.firstDragTime = 0;
         this.isFirstMove = false;
         this.translate = 0;
         this.breakPointWidths = [];
@@ -35,7 +29,7 @@ class JscSlider {
         this._isTransitioning = false;
         this._transitionTimeoutId = 0;
         this._tempIndex = 0;
-        this._pausePointer = 0;
+        this._pointerPausePosition = 0;
         ///can be change via args
         this.slidesPerView = 1;
         this.percentThreshold = 50;
@@ -121,12 +115,24 @@ class JscSlider {
         e.preventDefault();
         this.pointerStartingPosition = getPointerPosition(e);
         this.isClicked = true;
+        ///if slider is clicked during transitioning
         if (this._isTransitioning) {
             clearTimeout(this._transitionTimeoutId);
             this._isTransitioning = false;
             this._tempIndex = this.currentIndex;
             this.sliderWrapper.style.transitionDuration = '';
-            this._pausePointer = ((this.currentIndex) * (this.sliderContainerWidth + this.gap)) + this.sliderWrapper.getBoundingClientRect().left;
+            /**
+            * we need pointer pause position from the left
+            * so suppose if the current slide is first slide
+            * and when it's changing to next slide we will get
+            * the extact left position from "getBoundingClientRect" method
+            * but if the slide position is other than first we get the
+            * leftPosition + sliderWidth x currentSlidePosition = ?
+            * (actually it's not accurate but it's easy to understand this way)
+            * so we don't want "sliderWidth x currentSlidePosition" to be added to the
+            * leftPosition so we have reduce it according to the current slide
+            */
+            this._pointerPausePosition = ((this.currentIndex) * (this.sliderContainerWidth + this.gap)) + this.sliderWrapper.getBoundingClientRect().left;
             this._pointerMove();
         }
     }
@@ -135,10 +141,10 @@ class JscSlider {
             return;
         if (!this.isFirstMove) {
             this.isFirstMove = true;
-            this.dragTime = new Date().getTime();
+            this.firstDragTime = new Date().getTime();
         }
         ///if positive then going to previous slide otherwise to the next slide
-        this.translate = (__JscCurrentPointerPosition - this.pointerStartingPosition) + (this._pausePointer);
+        this.translate = (__JscCurrentPointerPosition - this.pointerStartingPosition) + (this._pointerPausePosition);
         ///slider width plus gap
         const sliderWidthPlusGap = this.sliderContainerWidth + this.gap;
         ///if current slide is last slide and going to next slide decrease the translate value
@@ -166,7 +172,7 @@ class JscSlider {
         ///if the drag distance is greater than percentThreshold of the container
         ///or currentTime - dragStartTime is lower than the time threshold
         ///increase or decrease the index based on the translate value
-        if (this.isClicked && ((new Date().getTime() - this.dragTime) < this.timeThreshold || currentDragPercent > this.percentThreshold)) {
+        if (this.isClicked && ((new Date().getTime() - this.firstDragTime) < this.timeThreshold || currentDragPercent > this.percentThreshold)) {
             ///going to previous slide
             if (this.translate > 0 && this.currentIndex > 0)
                 this.prevSlide();
@@ -228,16 +234,20 @@ class JscSlider {
         ///adjust slide index based on current slidesPerView
         if (this.currentIndex > 0 && prevPerView !== this.slidesPerView) {
             if (this.slidesPerView < prevPerView) {
-                ///Suppose we have total of 6 slides and we want to find out the nearest index,
-                ///so the current value of slidesPreView = 3 and the currentIndex = 1 (2nd slide)
-                ///and we are changing slidesPreView to 1 so the currentIndex should be 3 (4th slide)
-                ///prevSlidePreView x currentIndex = 3
+                /**
+                * Suppose we have total of 6 slides and we want to find out the nearest index,
+                * so the current value of slidesPreView = 3 and the currentIndex = 1 (2nd slide)
+                * and we are changing slidesPreView to 1 so the currentIndex should be 3 (4th slide)
+                * prevSlidePreView x currentIndex = 3
+                */
                 this.currentIndex = (prevPerView * this.currentIndex) / this.slidesPerView;
             }
             else if (this.slidesPerView > prevPerView) {
-                ///prevView = 1, prevIndex = 4, currentView = 3
-                ///prevIndex / currentView = 1.3333333
-                ///round it to 1
+                /**
+                * prevView = 1, prevIndex = 4, currentView = 3
+                * prevIndex / currentView = 1.3333333
+                * round it to 1
+                */
                 this.currentIndex = Math.floor(this.currentIndex / this.slidesPerView);
             }
         }
@@ -283,9 +293,9 @@ class JscSlider {
         this.isPointerMoved = false;
         this.pointerStartingPosition = 0;
         this.isFirstMove = false;
-        this.dragTime = 0;
+        this.firstDragTime = 0;
         this.translate = 0;
-        this._pausePointer = 0;
+        this._pointerPausePosition = 0;
     }
 }
 ///using IIFE so activeSlider variable can't be alter by anyone
@@ -316,11 +326,13 @@ class JscSlider {
         const target = e.target;
         if (activeSlider === null || !(activeSlider.jscSlider instanceof JscSlider))
             return;
-        ///if closest element is equal to current active slider don't need to reset the slider.
-        ///Doing this because if the pointer pointing at the slider gap which is margin then this event
-        ///will occur so which means slider is still moving so there is no need to rest the slider
-        ///P.S don't need to worry about how slider will actually leave when the closest slider is activeSlider
-        ///because it's directly implamented in the slider class itself
+        /**
+        * if closest element is equal to current active slider don't need to reset the slider.
+        * Doing this because if the pointer pointing at the slider gap which is margin then this event
+        * will occur so which means slider is still moving so there is no need to rest the slider
+        * P.S don't need to worry about how slider will actually leave when the closest slider is activeSlider
+        * because it's directly implamented in the slider class itself
+        */
         if (!isBlurEvent && !(target instanceof HTMLElement && (target.closest('.jsc-slider-container') !== activeSlider)))
             return;
         activeSlider.jscSlider._pointerLeave();
