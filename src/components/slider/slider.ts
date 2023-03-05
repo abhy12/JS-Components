@@ -1,16 +1,21 @@
-/**
- * TOOD
- * A11y
- * Vertical Slider
- */
-interface JsSliderElement extends HTMLElement  {
-   jsSlide?: JsSlider
+///resize observer for slider
+const __JscSliderResizeObserver = new ResizeObserver( ( entries =>  {
+   entries.forEach( entry =>  {
+      const target = entry.target as JscSliderElement;
+      if( target.jscSlider instanceof JscSlider )  {
+         target.jscSlider._resize();
+      }
+   });
+}));
+
+interface JscSliderElement extends HTMLElement  {
+   jscSlider?: JscSlider
 }
 
-let pointerPosition = 0;
-let activeSlider: null | JsSliderElement = null;
+///current pointer position
+let __JscCurrentPointerPosition = 0;
 
-interface JsSliderArgs {
+interface JscSliderArgs {
    container: string | HTMLElement,
    slidesPerView?: number,
    gap?: number,
@@ -23,9 +28,9 @@ function getPointerPosition( e: MouseEvent | TouchEvent )  {
    return ( e instanceof MouseEvent ) ? e.clientX : e.touches[0].clientX;
 }
 
-class JsSlider  {
+class JscSlider  {
    ///core variables
-   container: JsSliderElement;
+   container: JscSliderElement;
    sliderWrapper: HTMLElement;
    slides: NodeListOf<HTMLElement>;
    sliderContainerWidth: number;
@@ -37,12 +42,16 @@ class JsSlider  {
    currentIndex = 0;
    slidesLength: number;
    totalSlidesPerView: number;
-   dragTime = 0;
+   firstDragTime = 0;
    isFirstMove = false;
    translate = 0;
    breakPointWidths: number[] = [];
    currentBreakPoint: number | null = null;
    currentActiveWidth: number = 0;
+   _isTransitioning: boolean = false;
+   _transitionTimeoutId: number = 0;
+   _tempIndex: number = 0;
+   _pointerPausePosition: number = 0;
 
    ///can be change via args
    slidesPerView = 1;
@@ -51,8 +60,8 @@ class JsSlider  {
    gap = 0;
    breakPoints:any | {} = {};
 
-   constructor( args: JsSliderArgs )  {
-      ///check if container arg is string
+   constructor( args: JscSliderArgs )  {
+      ///check if container arg is string and valid DOM query
       if( typeof args.container === 'string' )  {
          args.container = document.querySelector( args.container ) as HTMLElement;
       }
@@ -79,6 +88,7 @@ class JsSlider  {
       }
 
       if( prevBtn instanceof HTMLElement )  {
+         prevBtn.setAttribute( 'aria-label', 'Previous slide' );
          prevBtn.addEventListener( 'click', this.prevSlide.bind( this ) );
       }
 
@@ -87,6 +97,7 @@ class JsSlider  {
       }
 
       if( nextBtn instanceof HTMLElement )  {
+         nextBtn.setAttribute( 'aria-label', 'Next slide' );
          nextBtn.addEventListener( 'click', this.nextSlide.bind( this ) );
       }
 
@@ -105,9 +116,12 @@ class JsSlider  {
 
       if( !this.sliderWrapper || !this.slides )  return
 
+      ///this will be change when autoplay option going to introduce but for now it's hardcoded
+      this.sliderWrapper.setAttribute( 'aria-live', 'polite' );
+
       ///https://developer.mozilla.org/en-US/docs/Glossary/Expando
       ///add current instance to the container element for futher use likely for event bubbling
-      this.container.jsSlide = this; 
+      this.container.jscSlider = this;
 
       /** initialize breakpoints */
 
@@ -125,6 +139,13 @@ class JsSlider  {
       ///saving slides length
       this.slidesLength = this.slides.length;
 
+      ///A11Y
+      this.slides.forEach( ( slide, i ) =>  {
+         slide.setAttribute( 'role', 'group' );
+         slide.setAttribute( 'aria-roledescription', 'slide' );
+         slide.setAttribute( 'aria-label', `${i + 1} / ${this.slidesLength}` );
+      });
+
       ///apply all the responsive options to the slides
       this._applyResponsiveness();
 
@@ -134,8 +155,8 @@ class JsSlider  {
       this.container.addEventListener( 'pointerdown', this._pointerDown.bind( this ) );
       this.container.addEventListener( 'pointerup', this._pointerLeave.bind( this ) );
 
-      ///add event on resize
-      window.onresize = () => this._onWindowResize();
+      ///add resize observer
+      __JscSliderResizeObserver.observe( this.container );
 
       ///calculate slides dimensions
       this._calcSlidesDimensions();
@@ -147,13 +168,35 @@ class JsSlider  {
       const target = e.target as HTMLElement;
 
       ///don't start moving slider if current target is not a slide, wrapper or container
-      if( target !== this.container && target.closest( '.slide' )?.closest( '.jsc-slider-container' ) !== this.container && target.closest( '.jsc-slider-wrapper' ) !== this.sliderWrapper ) return
+      if( target !== this.container && target.closest( '.slide' )?.closest( '.jsc-slider-container' ) !== this.container
+          && target.closest( '.jsc-slider-wrapper' ) !== this.sliderWrapper ) return
 
       ///prevent default behavior in slide like image dragging effect inside slide
       e.preventDefault();
 
-      this.isClicked = true;
       this.pointerStartingPosition = getPointerPosition( e );
+      this.isClicked = true;
+
+      ///if slider is clicked during transitioning
+      if( this._isTransitioning )  {
+         clearTimeout( this._transitionTimeoutId );
+         this._isTransitioning = false;
+         this._tempIndex = this.currentIndex;
+         this.sliderWrapper.style.transitionDuration = '';
+         /**
+         * we need pointer pause position from the left
+         * so suppose if the current slide is first slide
+         * and when it's changing to next slide we will get
+         * the extact left position from "getBoundingClientRect" method
+         * but if the slide position is other than first we get the
+         * leftPosition + sliderWidth x currentSlidePosition = ?
+         * (actually it's not accurate but it's easy to understand this way)
+         * so we don't want "sliderWidth x currentSlidePosition" to be added to the
+         * leftPosition so we have reduce it according to the current slide
+         */
+         this._pointerPausePosition = ( ( this.currentIndex ) * ( this.sliderContainerWidth + this.gap ) ) + this.sliderWrapper.getBoundingClientRect().left;
+         this._pointerMove();
+      }
    }
 
    _pointerMove()  {
@@ -161,11 +204,11 @@ class JsSlider  {
 
       if( !this.isFirstMove )  {
          this.isFirstMove = true;
-         this.dragTime = new Date().getTime();
+         this.firstDragTime = new Date().getTime();
       }
 
-      ///if positive then the slide going to previous slide otherwise next slide
-      this.translate = pointerPosition - this.pointerStartingPosition;
+      ///if positive then going to previous slide otherwise to the next slide
+      this.translate = ( __JscCurrentPointerPosition - this.pointerStartingPosition ) + ( this._pointerPausePosition );
 
       ///slider width plus gap
       const sliderWidthPlusGap = this.sliderContainerWidth + this.gap;
@@ -182,11 +225,13 @@ class JsSlider  {
          return
       }
 
-      ///restore the slide previous position if slide not going to left or right either
+      ///move the slider
       this.sliderWrapper.style.transform = `translateX(${this.translate - ( this.currentIndex * sliderWidthPlusGap )}px)`;
    }
 
    _pointerLeave()  {
+      ///if the slider was clicked without moving
+      ///then we don't have to do anything after that
       if( !this.isFirstMove )  {
          this.isClicked = false;
          return
@@ -196,21 +241,21 @@ class JsSlider  {
       const currentDragPercent = ( 100 * Math.abs( this.translate ) ) / this.sliderContainerWidth;
 
       ///if the drag distance is greater than percentThreshold of the container
-      ///or pointer leaving time minus the drag start time is lower than the time threshold
+      ///or currentTime - dragStartTime is lower than the time threshold
       ///increase or decrease the index based on the translate value
-      if( this.isClicked && ( ( new Date().getTime() - this.dragTime ) < this.timeThreshold || currentDragPercent > this.percentThreshold ) )  {
+      if( this.isClicked && ( ( new Date().getTime() - this.firstDragTime ) < this.timeThreshold || currentDragPercent > this.percentThreshold ) )  {
 
-         ///slide going to the right
-         if( this.translate > 0 && this.currentIndex > 0  ) --this.currentIndex;
+         ///going to previous slide
+         if( this.translate > 0 && this.currentIndex > 0 )  this.prevSlide();
 
-         ///slide going to the left
-         if( this.translate < 0 && this.currentIndex < ( this.totalSlidesPerView - 1 ) ) ++this.currentIndex;
+         ///going to next slide
+         if( this.translate < 0 && this.currentIndex < ( this.totalSlidesPerView - 1 ) )  this.nextSlide();
       }
 
       this._reset();
    }
 
-   _onWindowResize()  {
+   _resize()  {
       this._applyResponsiveness();
       this.sliderContainerWidth = this.container.getBoundingClientRect().width;
       this._reset();
@@ -222,14 +267,24 @@ class JsSlider  {
 
    nextSlide()  {
       if( this.currentIndex >= ( this.totalSlidesPerView - 1 ) ) return false;
-      this.currentIndex++;
+      this._tempIndex = this.currentIndex + 1;
+      clearTimeout( this._transitionTimeoutId );
+      this._transitionTimeoutId = setTimeout( () =>  {
+         this.currentIndex++;
+      }, 200 );
+
       this._reset();
       return true;
    }
 
    prevSlide()  {
       if( this.currentIndex <= 0 ) return false;
-      this.currentIndex--;
+      this._tempIndex = this.currentIndex - 1;
+      clearTimeout( this._transitionTimeoutId );
+      this._transitionTimeoutId = setTimeout( () =>  {
+         this.currentIndex--;
+      }, 200 );
+
       this._reset();
       return true;
    }
@@ -241,10 +296,9 @@ class JsSlider  {
    _applyResponsiveness()  {
       const windowWidth = window.innerWidth;
       const prevPerView = this.slidesPerView;
-      const prevSlidePosition = ( this.currentIndex + 1 ) * prevPerView;
 
       this.breakPointWidths.forEach( width =>  {
-         if( windowWidth < width )  return
+         if( width > windowWidth )  return
 
          ///slidesPerView
          if( +( this.breakPoints[width].slidesPerView ) > 0 )  {
@@ -260,17 +314,23 @@ class JsSlider  {
          }
       });
 
-      ///change current slide index to closest slides per view
-      if( this.currentIndex > 0 )  {
-         const currentSlideRatio = Math.floor( prevSlidePosition / this.slidesPerView );
-
-         ///i am not sure which slide to show when slidePerView changes so this is a temporary "solution"
-         if( this.currentIndex === ( this.slidesLength / prevPerView ) - 1 )  {
-            this.currentIndex = Math.abs( ( this.slidesLength / this.slidesPerView ) ) - 1;
-         } else if( currentSlideRatio <= 0 )  {
-            this.currentIndex = 0;
-         }  else if( currentSlideRatio > 0 )  {
-            this.currentIndex = currentSlideRatio;
+      ///adjust slide index based on current slidesPerView
+      if( this.currentIndex > 0 && prevPerView !== this.slidesPerView )  {
+         if( this.slidesPerView < prevPerView )  {
+            /**
+            * Suppose we have total of 6 slides and we want to find out the nearest index,
+            * so the current value of slidesPreView = 3 and the currentIndex = 1 (2nd slide)
+            * and we are changing slidesPreView to 1 so the currentIndex should be 3 (4th slide)
+            * prevSlidePreView x currentIndex = 3
+            */
+            this.currentIndex = ( prevPerView * this.currentIndex ) / this.slidesPerView;
+         } else if( this.slidesPerView > prevPerView )  {
+            /**
+            * prevView = 1, prevIndex = 4, currentView = 3
+            * prevIndex / currentView = 1.3333333
+            * round it to 1
+            */
+            this.currentIndex = Math.floor( this.currentIndex / this.slidesPerView );
          }
       }
 
@@ -278,18 +338,19 @@ class JsSlider  {
    }
 
    _calcSlidesDimensions()  {
-      let perViewWidth: number | null = null;
+      let slideWidth: number | null = null;
 
       if( this.slidesPerView > 1 )  {
-         ///calculate slides per view gap
-         perViewWidth = ( this.sliderContainerWidth - ( this.gap * ( this.slidesPerView - 1 ) ) ) / this.slidesPerView;
+         ///calculate slide width
+         slideWidth = ( this.sliderContainerWidth - ( this.gap * ( this.slidesPerView - 1 ) ) ) / this.slidesPerView;
       }
 
       this.slides.forEach( ( slide, i ) =>  {
-         if( perViewWidth !== null && perViewWidth )  {
-            slide.style.width = perViewWidth + 'px';
+         if( slideWidth )  slide.style.width = slideWidth + 'px';
 
-         } else if( perViewWidth === null )  {
+         ///have to do this because the previous slidePerView slide width can be
+         ///different, so we have to remove the previous width it
+         if( slideWidth === null )  {
             ///if slidePerView is 1 no need to add any width to slide
             slide.style.width = '';
          }
@@ -303,10 +364,18 @@ class JsSlider  {
 
    _reset()  {
       this.sliderWrapper.style.transitionDuration = "300ms";
-      this.sliderWrapper.style.transform = `translateX(${-( this.currentIndex * ( this.sliderContainerWidth + this.gap ) )}px)`; 
-      setTimeout( () => {
+      ///restore slide position
+      ///using tempIndex for mimicking translate
+      this.sliderWrapper.style.transform = `translateX(${-( this._tempIndex * ( this.sliderContainerWidth + this.gap ) )}px)`;
+      this._isTransitioning = true;
+
+      setTimeout( () =>  {
          this.sliderWrapper.style.transitionDuration = '';
       }, 300 );
+
+      setTimeout( () =>  {
+         this._isTransitioning = false;
+      }, 200 );
 
       ///recalculate slides width
       this._calcSlidesDimensions();
@@ -316,61 +385,70 @@ class JsSlider  {
       this.isPointerMoved = false;
       this.pointerStartingPosition = 0;
       this.isFirstMove = false;
-      this.dragTime = 0;
+      this.firstDragTime = 0;
       this.translate = 0;
+      this._pointerPausePosition = 0;
    }
 
    /** End Utilities Functions */
 }
 
-/** global events */
 
-document.addEventListener( 'pointermove', ( e ) =>  {
-   const target = e.target as HTMLElement;
-   let slider: null | JsSliderElement = null;
-   pointerPosition = getPointerPosition( e );
+///using IIFE so activeSlider variable can't be alter by anyone
+(() =>  {
+   ///current active slider
+   let activeSlider: null | JscSliderElement = null;
 
-   if( typeof target.closest === 'function' && activeSlider === null )  {
-      slider = target?.closest( '.jsc-slider-container' ) as JsSliderElement;
+   /** global events */
+
+   document.addEventListener( 'pointermove', ( e ) =>  {
+      const target = e.target;
+      __JscCurrentPointerPosition = getPointerPosition( e );
+
+      ///checking if the target is not a HTMLdocument because HTMLdocument don't have any nearset element
+      ///so there is no point of assigning new activeSlider, same goes to if the previous activeSlider
+      ///is equal to current target slider container
+      if( target instanceof HTMLElement )  {
+         const closestSlider = target.closest( '.jsc-slider-container' ) as JscSliderElement;
+         if( closestSlider !== activeSlider )  activeSlider = closestSlider;
+      }
+
+      ///if slider isClicked is false then don't move current activeSlider
+      if( !activeSlider || !( activeSlider.jscSlider instanceof JscSlider ) || !activeSlider.jscSlider.isClicked )  {
+         activeSlider = null
+         return
+      }
+
+      ///move slider
+      activeSlider.jscSlider._pointerMove();
+   });
+
+
+   function sliderLeave( e: Event, isBlurEvent: boolean = false )  {
+      const target = e.target;
+      if( activeSlider === null || !( activeSlider.jscSlider instanceof JscSlider ) ) return
+
+      /**
+      * if closest element is equal to current active slider don't need to reset the slider.
+      * Doing this because if the pointer pointing at the slider gap which is margin then this event
+      * will occur so which means slider is still moving so there is no need to rest the slider
+      * P.S don't need to worry about how slider will actually leave when the closest slider is activeSlider
+      * because it's directly implamented in the slider class itself
+      */
+      if( !isBlurEvent && !( target instanceof HTMLElement && ( target.closest( '.jsc-slider-container' ) !== activeSlider ) ) )  return
+
+      activeSlider.jscSlider._pointerLeave();
+      activeSlider = null;
    }
 
-   if( activeSlider )  {
-      slider = activeSlider;
-   }
+   ///pointer leave events
+   document.addEventListener( 'pointerup', sliderLeave );
+   document.addEventListener( 'pointerout', sliderLeave );
 
-   if( slider && typeof slider.jsSlide !== 'undefined' )  {
-      if( !activeSlider )  activeSlider = slider;
+   ///this event will happen when browser tab changes
+   document.addEventListener( 'visibilitychange', ( e ) =>  {
+      sliderLeave( e, true );
+   });
 
-      slider.jsSlide._pointerMove();
-   }
-});
-
-document.addEventListener( 'pointerup', () =>  {
-   if( !activeSlider ) return
-
-   activeSlider.jsSlide?._pointerLeave();
-
-   activeSlider = null;
-});
-
-/** End global events */
-
-const sliderContainer = document.querySelector( '.jsc-slider-container' ) as HTMLElement;
-const slider = new JsSlider({
-   // container: sliderContainer,
-   container: '.jsc-slider-container',
-   slidesPerView: 1,
-   gap: 5,
-   prevEl: '.prev',
-   nextEl: '.next',
-   breakPoints: {
-      480: {
-         slidesPerView: 2,
-         gap: 10,
-      },
-      768: {
-         slidesPerView: 3,
-         gap: 15,
-      },
-   }
-});
+   /** End global events */
+})();
