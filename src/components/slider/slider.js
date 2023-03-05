@@ -57,12 +57,14 @@ class JscSlider {
             prevBtn = this.container.querySelector(prevBtn) ? this.container.querySelector(prevBtn) : document.querySelector(prevBtn);
         }
         if (prevBtn instanceof HTMLElement) {
+            prevBtn.setAttribute('aria-label', 'Previous slide');
             prevBtn.addEventListener('click', this.prevSlide.bind(this));
         }
         if (typeof nextBtn === 'string') {
             nextBtn = this.container.querySelector(nextBtn) ? this.container.querySelector(nextBtn) : document.querySelector(nextBtn);
         }
         if (nextBtn instanceof HTMLElement) {
+            nextBtn.setAttribute('aria-label', 'Next slide');
             nextBtn.addEventListener('click', this.nextSlide.bind(this));
         }
         if (typeof args.breakPoints === 'object')
@@ -77,6 +79,8 @@ class JscSlider {
         this.slides = this.container.querySelectorAll('.slide');
         if (!this.sliderWrapper || !this.slides)
             return;
+        ///this will be change when autoplay option going to introduce but for now it's hardcoded
+        this.sliderWrapper.setAttribute('aria-live', 'polite');
         ///https://developer.mozilla.org/en-US/docs/Glossary/Expando
         ///add current instance to the container element for futher use likely for event bubbling
         this.container.jscSlider = this;
@@ -92,6 +96,12 @@ class JscSlider {
         this.breakPointWidths = breakPointWidths.sort();
         ///saving slides length
         this.slidesLength = this.slides.length;
+        ///A11Y
+        this.slides.forEach((slide, i) => {
+            slide.setAttribute('role', 'group');
+            slide.setAttribute('aria-roledescription', 'slide');
+            slide.setAttribute('aria-label', `${i + 1} / ${this.slidesLength}`);
+        });
         ///apply all the responsive options to the slides
         this._applyResponsiveness();
         /** end initialization of breakpoints */
