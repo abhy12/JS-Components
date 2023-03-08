@@ -49,7 +49,7 @@ class JscSlider  {
    currentBreakPoint: number | null = null;
    currentActiveWidth: number = 0;
    _isTransitioning: boolean = false;
-   _transitionTimeoutId: number = 0;
+   _transitionTimeoutId: ReturnType<typeof setTimeout>;
    _tempIndex: number = 0;
    _pointerPausePosition: number = 0;
 

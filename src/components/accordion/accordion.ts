@@ -1,6 +1,6 @@
 const PREFIX = 'jsc';
 const ACCORDIONSELECTOR = `[data-${PREFIX}-accCon]`;
-let toggleTimeoutId: number;
+let toggleTimeoutId: ReturnType<typeof setTimeout>;
 
 ///credit https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 function randmoId( length: number = 8 )  {
@@ -82,7 +82,7 @@ class JscAccordion  {
 
       ///set accordion data
       if( this.container.getAttribute( `data-${PREFIX}-accCon` ) === null || this.container.getAttribute( `data-${PREFIX}-accCon` ) !== 'false' )  {
-         this.container.setAttribute( `data-${PREFIX}-accCon`, 'true' );  
+         this.container.setAttribute( `data-${PREFIX}-accCon`, 'true' );
       }
 
       ///if collapsed value is undefined change the value to html collapse value default is true
@@ -198,7 +198,7 @@ function accordionToggle( accordion: HTMLElement )  {
    ///add a class to accordion
    accordion.classList.add( 'colexping' );
 
-   ///just a measure for unkown transition bugs won't happen 
+   ///just a measure for unkown transition bugs won't happen
    ///when previous setTimeout is not happend already
    ///see below setTimeout for more
    clearTimeout( toggleTimeoutId );
@@ -312,7 +312,7 @@ window.onload = () =>  {
       const accId = item.id;
 
       if( accId === '' )  {
-         ///not selecting all the triggerer elements 
+         ///not selecting all the triggerer elements
          ///because of nested accordion under the container
          triggerer = item.closest( '.jsc-accordion' )?.querySelector( `[data-${PREFIX}-target]` ) as HTMLElement;
       } else if( accId !== '' )  {
