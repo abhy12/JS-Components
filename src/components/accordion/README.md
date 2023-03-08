@@ -2,9 +2,10 @@
 
 ## Usage
 
-Download the "accordion.js" file from [here](https://github.com/abhy12/JS-Components/tree/master/src/components/accordion) and after downloading, link the end of the body.  
-
-CDN: (I will soon add CDN links)  
+**CDN:**
+```
+https://cdn.jsdelivr.net/gh/abhy12/JS-Components@master/dist/accordion/accordion.min.js
+```
 
 ### Get started
 After linking the accordion file you can use accordion with [HTML way](#html-way) or [class based way](#class-based-way) (either way is good but class based way give you more control over "accordion").
