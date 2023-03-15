@@ -1,3 +1,5 @@
+import './slider.css';
+
 ///resize observer for slider
 const __JscSliderResizeObserver = new ResizeObserver( ( entries =>  {
    entries.forEach( entry =>  {
