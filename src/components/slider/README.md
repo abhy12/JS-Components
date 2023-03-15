@@ -2,9 +2,14 @@
 
 ## Get Started
 
-### CDN Link
+### CDN Links
 
-**Add this to bottom of the body**
+**Link css to the head**
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/abhy12/JS-Components@master/dist/slider/slider.css">
+```
+
+**Add script to bottom of the body**
 ```html
 <script src="https://cdn.jsdelivr.net/gh/abhy12/JS-Components@master/dist/accordion/accordion.min.js"></script>
 ```
