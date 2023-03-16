@@ -1,0 +1,21 @@
+{
+  "name": "@js-components/accordion",
+  "version": "1.0.0",
+  "description": "a web based accordion javascript library",
+  "main": "accordion.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhy12/JS-Components.git#master"
+  },
+  "keywords": [
+    "accordion",
+    "web"
+  ],
+  "author": "Abhishek",
+  "license": "SEE LICENSE IN LICENSE",
+  "types": "./accordion.d.ts",
+  "bugs": {
+    "url": "https://github.com/abhy12/JS-Components/issues"
+  },
+  "homepage": "https://github.com/abhy12/JS-Components/tree/master#readme"
+}

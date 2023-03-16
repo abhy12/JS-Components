@@ -1,0 +1,21 @@
+{
+  "name": "@js-components/slider",
+  "version": "0.1.0",
+  "description": "a web slider library",
+  "main": "slider.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhy12/JS-Components.git"
+  },
+  "keywords": [
+    "slider",
+    "touch-slider"
+  ],
+  "author": "Abhishek",
+  "license": "SEE LICENSE IN LICENSE",
+  "types": "./slider.d.ts",
+  "bugs": {
+    "url": "https://github.com/abhy12/JS-Components/issues"
+  },
+  "homepage": "https://github.com/abhy12/JS-Components/tree/master/src/components/slider#readme"
+}
