@@ -6,12 +6,12 @@
 
 **Link css to the head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/abhy12/JS-Components@master/dist/slider/slider.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@js-components/slider/slider.min.css">
 ```
 
 **Add script to bottom of the body**
 ```html
-<script src="https://cdn.jsdelivr.net/gh/abhy12/JS-Components@master/dist/accordion/accordion.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@js-components/slider/slider.min.js"></script>
 ```
 
 ### Basic HTML layout

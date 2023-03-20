@@ -3,8 +3,8 @@
 ## Usage
 
 **CDN:**
-```
-https://cdn.jsdelivr.net/gh/abhy12/JS-Components@master/dist/accordion/accordion.min.js
+```html
+<script src="https://cdn.jsdelivr.net/npm/@js-components/accordion/accordion.min.js"></script>
 ```
 
 ### Get started
