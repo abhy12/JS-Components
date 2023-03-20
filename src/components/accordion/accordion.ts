@@ -23,7 +23,7 @@ interface AccordionArgs  {
    expendText?: string | undefined,
 }
 
-class JscAccordion  {
+export default class JscAccordion  {
    container: HTMLElement | null = null;
    collapsed: boolean;
    button: AccordionArgs['button'];

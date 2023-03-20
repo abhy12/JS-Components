@@ -30,7 +30,7 @@ function getPointerPosition( e: MouseEvent | TouchEvent )  {
    return ( e instanceof MouseEvent ) ? e.clientX : e.touches[0].clientX;
 }
 
-class JscSlider  {
+export default class JscSlider  {
    ///core variables
    container: JscSliderElement;
    sliderWrapper: HTMLElement;
