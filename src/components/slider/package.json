@@ -1,11 +1,12 @@
 {
   "name": "@js-components/slider",
-  "version": "0.1.1",
-  "description": "a web slider library",
+  "version": "0.1.2",
+  "description": "Web Slider library",
   "main": "slider.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/abhy12/JS-Components.git"
+    "url": "git+https://github.com/abhy12/JS-Components.git",
+    "directory": "src/components/slider"
   },
   "keywords": [
     "slider",

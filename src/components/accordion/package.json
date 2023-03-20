@@ -1,11 +1,12 @@
 {
   "name": "@js-components/accordion",
-  "version": "1.0.1",
-  "description": "a web based accordion javascript library",
+  "version": "1.0.2",
+  "description": "Web Accordion library",
   "main": "accordion.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/abhy12/JS-Components.git#master"
+    "url": "git+https://github.com/abhy12/JS-Components.git#master",
+    "directory": "src/components/accordion"
   },
   "keywords": [
     "accordion",
@@ -17,5 +18,5 @@
   "bugs": {
     "url": "https://github.com/abhy12/JS-Components/issues"
   },
-  "homepage": "https://github.com/abhy12/JS-Components/tree/master#readme"
+  "homepage": "https://github.com/abhy12/JS-Components/blob/master/src/components/accordion#readme"
 }
