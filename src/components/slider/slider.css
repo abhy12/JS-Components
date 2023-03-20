@@ -1,6 +1,6 @@
 .jsc-slider-container{
-  overflow-x: hidden;
-  position: relative;
+   overflow-x: hidden;
+   position: relative;
 }
 .jsc-slider-container .jsc-slider-wrapper{
    display: flex;
