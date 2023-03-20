@@ -30,12 +30,12 @@ module.exports = {
                MiniCssExtractPlugin.loader,
                "css-loader"
             ],
-          },
+         },
       ],
    },
    plugins: [
       new MiniCssExtractPlugin({
-         filename: './[name]/[name].css',
+         filename: './[name]/[name].min.css',
       }),
    ],
    resolve: {
@@ -43,9 +43,9 @@ module.exports = {
    },
    output: {
       // filename: '[name]/[name].min.js',
-      path: path.resolve( __dirname, 'dist' ),
+      path: path.resolve( __dirname, 'src/components' ),
       iife: false,
-      clean: true,
+      clean: false,
    },
    devtool: 'source-map',
    optimization: {
