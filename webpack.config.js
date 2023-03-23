@@ -49,7 +49,7 @@ module.exports = {
    },
    devtool: 'source-map',
    optimization: {
-      minimize: true,
+      // minimize: true,
       minimizer: [
          new EsbuildPlugin({
             // target: 'esnext',
