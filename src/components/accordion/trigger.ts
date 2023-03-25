@@ -101,12 +101,20 @@ export function accordionToggle( accordion: HTMLElement )  {
 
 
 export function accordionToggleEventHandler( e: Event )  {
-   const target = e.target as HTMLElement;
-   const acID: any = target.dataset[`${PREFIX}Target`];
+   if( !( e.target instanceof HTMLElement ) )  return
 
-   if( acID === null || acID === '' ) return
+   ///find the closest accordion trigger
+   ///so if button has some nested element(s) it will find the trigger
+   const trigger = e.target.closest( `[data-${PREFIX}-target]` );
 
-   const accordion = ( document.querySelector( `${ACCORDIONSELECTOR}#${acID}` ) as HTMLElement );
+   ///don't wanna repeate it :(
+   if( !( trigger instanceof HTMLElement ) )  return
+
+   const accordionId: undefined | string = trigger.dataset[`${PREFIX}Target`];
+
+   if( !accordionId )  return
+
+   const accordion = ( document.querySelector( `${ACCORDIONSELECTOR}#${accordionId}` ) as HTMLElement );
 
    if( !accordion || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || accordion.classList.contains( 'colexping' ) ) return
 
