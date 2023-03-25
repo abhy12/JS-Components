@@ -1,5 +1,6 @@
-import { accordionToggle, accordionToggleEventHandler } from "./core";
-import { randomIdGenerator, PREFIX, ACCORDIONSELECTOR } from "./utilities";
+import { convertHTMLToAccordion } from "./browser";
+import { randomIdGenerator, PREFIX } from "./utilities";
+import { accordionToggle } from "./trigger";
 
 interface AccordionArgs  {
    container: string | HTMLElement,
@@ -172,30 +173,5 @@ export default class JscAccordion  {
 }
 
 
-///Run necessary "things" when DOM loaded
-window.onload = () =>  {
-   ///add click event of accordion trigger to body for event Bubbling
-   document.body.addEventListener( 'click', accordionToggleEventHandler );
-
-   ///get all the accordion content container
-   const allAccordion = document.querySelectorAll( ACCORDIONSELECTOR ) as NodeListOf<HTMLElement>;
-
-   ///convert accordion container to "accordion"
-   allAccordion.forEach( item =>  {
-      let triggerer;
-      const accId = item.id;
-
-      if( accId === '' )  {
-         ///not selecting all the triggerer elements
-         ///because of nested accordion under the container
-         triggerer = item.closest( '.jsc-accordion' )?.querySelector( `[data-${PREFIX}-target]` ) as HTMLElement;
-      } else if( accId !== '' )  {
-         triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${item.id}"]` ) as NodeListOf<HTMLElement>;
-      }
-
-      new JscAccordion({
-         container: item,
-         button: triggerer,
-      });
-   });
-}
+///convert all exisiting accordion html to accordion
+window.onload = () => convertHTMLToAccordion();
