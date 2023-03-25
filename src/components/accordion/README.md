@@ -161,6 +161,21 @@ const newAccordion = new JscAccordion({
 </td>
 <td>If accordion is expended then the text of button can be replace by this property value.</td>
 </tr>
+<tr>
+<td> buttonPreventDefault </td>
+<td>
+
+```javascript
+{
+   //boolean
+   //default "true"
+   buttonPreventDefault: true
+}
+```
+</td>
+<td>Whether if you want the accordion 'button' to PreventDefault.
+Default value is true.</td>
+</tr>
 </table>  
 
 ## Methods
