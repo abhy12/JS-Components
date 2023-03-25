@@ -8,6 +8,7 @@ interface AccordionArgs  {
    collapsed?: boolean | undefined,
    collapseText?: string | undefined,
    expendText?: string | undefined,
+   buttonPreventDefault?: boolean
 }
 
 export default class JscAccordion  {
@@ -16,6 +17,7 @@ export default class JscAccordion  {
    button: AccordionArgs['button'];
    collapseText: AccordionArgs['collapseText'];
    expendText: AccordionArgs['expendText'];
+   buttonPreventDefault: AccordionArgs['buttonPreventDefault'] = true;
 
    constructor( args: AccordionArgs )  {
       let tempCon: HTMLElement | string = args.container;
@@ -32,6 +34,8 @@ export default class JscAccordion  {
 
       ///trigger
       if( args.button ) this.button = args.button;
+
+      if( args.buttonPreventDefault === false )  this.buttonPreventDefault = false
 
       ///if collapsed argument is defined and have boolean a value then change the collapsed value
       ///otherwise it can be change via html.
@@ -87,13 +91,13 @@ export default class JscAccordion  {
       ///if the collapse value is true hide the element
       if( this.collapsed ) this.container.style.display = 'none';
 
-      this._init_target();
+      this._init_trigger();
    }
 
-   _init_target()  {
+   _init_trigger()  {
       if( !this.button ) return
 
-      let trigger: any = null;
+      let trigger: null | HTMLElement = null;
 
       if( this.button instanceof HTMLElement )  {
          trigger = this.button;
@@ -102,7 +106,7 @@ export default class JscAccordion  {
       }
 
       if( trigger )  {
-         this._finalizeTarget( trigger );
+         this._finalizeTrigger( trigger );
          return
       }
 
@@ -121,12 +125,12 @@ export default class JscAccordion  {
 
             if( !btn ) return
 
-            this._finalizeTarget( btn );
+            this._finalizeTrigger( btn );
          });
       }
    }
 
-   _finalizeTarget( target: HTMLElement )  {
+   _finalizeTrigger( target: HTMLElement )  {
       // @ts-ignore
       const containerId = this.container.id;
 
@@ -134,27 +138,29 @@ export default class JscAccordion  {
       target.setAttribute( 'aria-expanded', `${!this.collapsed}` );
       target.setAttribute( 'aria-controls', containerId );
 
-      let text: string | null;
+      if( this.buttonPreventDefault === false )  target.setAttribute( `data-${PREFIX}-preventdefault`, 'false' );
+
+      let collapseOrExpendText: string | null;
 
       if( this.collapsed )  {
 
          if( this.collapseText !== undefined )  {
-            text = this.collapseText;
+            collapseOrExpendText = this.collapseText;
          } else {
-            text = target.getAttribute( 'data-collapsetext' );
+            collapseOrExpendText = target.getAttribute( 'data-collapsetext' );
          }
 
          target.classList.add( 'collapsed' );
       } else {
 
          if( this.expendText !== undefined )  {
-            text = this.expendText;
+            collapseOrExpendText = this.expendText;
          } else {
-            text = target.getAttribute( 'data-expendtext' );
+            collapseOrExpendText = target.getAttribute( 'data-expendtext' );
          }
       }
 
-      if( text !== null ) target.innerText = text;
+      if( collapseOrExpendText !== null ) target.innerText = collapseOrExpendText;
    }
 
    enable()  {

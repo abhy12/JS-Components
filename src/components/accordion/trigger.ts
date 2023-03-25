@@ -114,6 +114,8 @@ export function accordionToggleEventHandler( e: Event )  {
 
    if( !accordionId )  return
 
+   if( trigger.dataset[`${PREFIX}Preventdefault`] !== "false" )  e.preventDefault();
+
    const accordion = ( document.querySelector( `${ACCORDIONSELECTOR}#${accordionId}` ) as HTMLElement );
 
    if( !accordion || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || accordion.classList.contains( 'colexping' ) ) return
