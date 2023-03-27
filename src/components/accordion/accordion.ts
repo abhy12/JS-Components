@@ -1,6 +1,7 @@
 import { convertHTMLToAccordion } from "./browser";
-import { randomIdGenerator, PREFIX } from "./utilities";
-import { accordionToggle } from "./trigger";
+import { randomIdGenerator } from "./utilities";
+import { PREFIX } from "./core";
+import { accordionToggle, accordionToggleEventHandler } from "./trigger";
 
 interface AccordionArgs  {
    container: string | HTMLElement,
@@ -178,6 +179,10 @@ export default class JscAccordion  {
    }
 }
 
+window.onload = () => {
+   ///convert all exisiting accordion html to working accordion
+   convertHTMLToAccordion();
 
-///convert all exisiting accordion html to accordion
-window.onload = () => convertHTMLToAccordion();
+   ///add click event for accordion trigger to the body for event Bubbling
+   document.body.addEventListener( 'click', accordionToggleEventHandler );
+}

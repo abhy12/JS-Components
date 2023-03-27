@@ -1,16 +1,19 @@
-import { PREFIX, ACCORDIONSELECTOR } from "./utilities";
-export let toggleTimeoutId: ReturnType<typeof setTimeout>;
+import { PREFIX, ACCORDIONSELECTOR } from "./core";
+
+let toggleTimeoutId: ReturnType<typeof setTimeout>;
 
 export function accordionToggle( accordion: HTMLElement )  {
    ///whether container is collapsed
-   let isCollapse = accordion.dataset.collapse === 'true' ? true : false;
+   let isCollapsed = accordion.dataset.collapse === 'true' ? true : false;
+   let accordionHeight = accordion.getBoundingClientRect().height;
    ///adding 60ms more for transition bug
    const transitionTime = 300 + 60;
-   ///save the height of futher use
-   let acHeight = accordion.offsetHeight;
 
-   if( accordion.classList.contains( 'colexping' ) ) return
-   ///add a class to accordion
+   ///accordion contains "colexping" class that means it's still
+   ///transitioning so don't need to do anything
+   if( accordion.classList.contains( 'colexping' ) )  return
+
+   ///add a class to accordion to let the "state" know that it's transitioning
    accordion.classList.add( 'colexping' );
 
    ///just a measure for unkown transition bugs won't happen
@@ -20,12 +23,12 @@ export function accordionToggle( accordion: HTMLElement )  {
 
    ///deducting 60ms for transition bug
    accordion.style.transition = `height ${transitionTime - 60}ms ease-in-out`;
-   toggleTimeoutId = setTimeout( () => {
-      accordion.style.transition = '';
-   },
-   transitionTime );
 
-   if( isCollapse )  {
+   toggleTimeoutId = setTimeout( () =>  {
+      accordion.style.transition = '';
+   }, transitionTime );
+
+   if( isCollapsed )  {
       //it will change the whatever display the element has before
       accordion.style.display = '';
 
@@ -38,14 +41,14 @@ export function accordionToggle( accordion: HTMLElement )  {
       ///update the height because if accordion is collapsed
       ///previous value has to be 0 and we need the current height
       ///of the accordion for further use
-      acHeight = accordion.offsetHeight;
+      accordionHeight = accordion.getBoundingClientRect().height;
 
       ///immediately change the element height to 0
       accordion.style.height = '0';
 
       ///wait just a little bit for animation to work properly
       setTimeout( () =>  {
-         accordion.style.height = acHeight + 'px';
+         accordion.style.height = accordionHeight + 'px';
       }, 0 );
 
       ///after animation change inline height to nothing
@@ -55,12 +58,11 @@ export function accordionToggle( accordion: HTMLElement )  {
       }, transitionTime );
 
       accordion.dataset.collapse = 'false';
+      isCollapsed = false;
 
-      isCollapse = false;
-
-   } else if( !isCollapse )  {
-
-      accordion.style.height = acHeight + 'px';
+   } else if( !isCollapsed )  {
+      ///set height for transition
+      accordion.style.height = accordionHeight + 'px';
 
       setTimeout( () =>  {
          accordion.style.height = '0';
@@ -73,32 +75,29 @@ export function accordionToggle( accordion: HTMLElement )  {
       }, transitionTime );
 
       accordion.dataset.collapse = 'true';
-
-      isCollapse = true;
+      isCollapsed = true;
    }
 
-   const triggerer = document.querySelectorAll( `[data-${PREFIX}-target="${accordion.id}"]` ) as NodeListOf<HTMLElement>;
+   const triggers = document.querySelectorAll( `[data-${PREFIX}-target="${accordion.id}"]` ) as NodeListOf<HTMLElement>;
 
-   triggerer.forEach( ( el: HTMLElement ) =>  {
+   triggers.forEach( ( trigger: HTMLElement ) =>  {
+      let collapseOrExpendText: undefined | string = undefined;
 
-      let text: undefined | string = undefined;
-
-      if( isCollapse )  {
-         text = el.dataset.collapsetext;
-         el.setAttribute( 'aria-expanded', 'false' );
-         el.classList.add( 'collapsed' );
+      if( isCollapsed )  {
+         collapseOrExpendText = trigger.dataset.collapsetext;
+         trigger.setAttribute( 'aria-expanded', 'false' );
+         trigger.classList.add( 'collapsed' );
       }
 
-      if( !isCollapse )  {
-         text = el.dataset.expendtext
-         el.setAttribute( 'aria-expanded', 'true' );
-         el.classList.remove( 'collapsed' );
+      if( !isCollapsed )  {
+         collapseOrExpendText = trigger.dataset.expendtext
+         trigger.setAttribute( 'aria-expanded', 'true' );
+         trigger.classList.remove( 'collapsed' );
       }
 
-      text !== undefined && ( el.innerText = text );
+      collapseOrExpendText !== undefined && ( trigger.innerText = collapseOrExpendText );
    });
 }
-
 
 export function accordionToggleEventHandler( e: Event )  {
    if( !( e.target instanceof HTMLElement ) )  return
@@ -118,7 +117,7 @@ export function accordionToggleEventHandler( e: Event )  {
 
    const accordion = ( document.querySelector( `${ACCORDIONSELECTOR}#${accordionId}` ) as HTMLElement );
 
-   if( !accordion || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || accordion.classList.contains( 'colexping' ) ) return
+   if( !accordion || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || accordion.classList.contains( 'colexping' ) )  return
 
    accordionToggle( accordion );
 }
