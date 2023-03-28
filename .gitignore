@@ -9,6 +9,13 @@ lerna-debug.log*
 # Distribution
 /dist
 
+# Examples files
+/examples/main.css
+/examples/**/*.css
+!/examples/tailwind.css
+/examples/**/*.map
+/examples/**/*.js
+
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
