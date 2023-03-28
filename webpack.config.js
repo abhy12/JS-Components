@@ -2,15 +2,20 @@ const path = require( "path" );
 const MiniCssExtractPlugin = require( "mini-css-extract-plugin" );
 const { EsbuildPlugin } = require( "esbuild-loader" );
 
+///ENVIRONMENT
+const environment = process.env.NODE_ENV.trim();
+const envOutputDir = environment === 'development' ? 'examples' : 'src/components';
+const isMin = environment === 'development' ? '' : '.min';
+
 module.exports = {
    entry: {
       accordion: {
          import : './src/components/accordion/accordion.ts',
-         filename: './accordion/accordion.min.js'
+         filename: './accordion/accordion' + isMin +'.js'
       },
       slider: {
          import: './src/components/slider/slider.ts',
-         filename: './slider/slider.min.js',
+         filename: './slider/slider' + isMin + '.js',
       },
    },
    module: {
@@ -35,7 +40,7 @@ module.exports = {
    },
    plugins: [
       new MiniCssExtractPlugin({
-         filename: './[name]/[name].min.css',
+         filename: './[name]/[name]' + isMin + '.css',
       }),
    ],
    resolve: {
@@ -43,8 +48,8 @@ module.exports = {
    },
    output: {
       // filename: '[name]/[name].min.js',
-      path: path.resolve( __dirname, 'src/components' ),
-      iife: false,
+      path: path.resolve( __dirname, envOutputDir ),
+      iife: true,
       clean: false,
    },
    devtool: 'source-map',
