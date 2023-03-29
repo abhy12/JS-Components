@@ -179,6 +179,10 @@ export default class JscAccordion  {
    }
 }
 
+//@ts-ignore
+///exposing class
+window.JscAccordion = JscAccordion
+
 window.onload = () => {
    ///convert all exisiting accordion html to working accordion
    convertHTMLToAccordion();

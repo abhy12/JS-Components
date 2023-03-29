@@ -454,3 +454,8 @@ export default class JscSlider  {
 
    /** End global events */
 })();
+
+
+//@ts-ignore
+///exposing class
+window.JscSlider = JscSlider
