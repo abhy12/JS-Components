@@ -183,10 +183,10 @@ export default class JscAccordion  {
 ///exposing class
 window.JscAccordion = JscAccordion
 
-window.onload = () => {
+document.addEventListener( "DOMContentLoaded", () =>  {
    ///convert all exisiting accordion html to working accordion
    convertHTMLToAccordion();
 
    ///add click event for accordion trigger to the body for event Bubbling
-   document.body.addEventListener( 'click', accordionToggleEventHandler );
-}
+   document.body.addEventListener( "click", accordionToggleEventHandler );
+});
