@@ -78,18 +78,22 @@ export function accordionToggle( accordion: HTMLElement )  {
       isCollapsed = true;
    }
 
-   const triggers = document.querySelectorAll( `[data-${PREFIX}-target="${accordion.id}"]` ) as NodeListOf<HTMLElement>;
+   updateTriggers( accordion.id, isCollapsed );
+}
+
+export function updateTriggers( accordionId: string, isAccordionCollapsed: boolean )  {
+   const triggers = document.querySelectorAll( `[data-${PREFIX}-target="${accordionId}"]` ) as NodeListOf<HTMLElement>;
 
    triggers.forEach( ( trigger: HTMLElement ) =>  {
       let collapseOrExpendText: undefined | string = undefined;
 
-      if( isCollapsed )  {
+      if( isAccordionCollapsed )  {
          collapseOrExpendText = trigger.dataset.collapsetext;
          trigger.setAttribute( 'aria-expanded', 'false' );
          trigger.classList.add( 'collapsed' );
       }
 
-      if( !isCollapsed )  {
+      if( !isAccordionCollapsed )  {
          collapseOrExpendText = trigger.dataset.expendtext
          trigger.setAttribute( 'aria-expanded', 'true' );
          trigger.classList.remove( 'collapsed' );
@@ -115,9 +119,9 @@ export function accordionToggleEventHandler( e: Event )  {
 
    if( trigger.dataset[`${PREFIX}Preventdefault`] !== "false" )  e.preventDefault();
 
-   const accordion = ( document.querySelector( `${ACCORDIONSELECTOR}#${accordionId}` ) as HTMLElement );
+   const accordion = document.querySelector( `${ACCORDIONSELECTOR}#${accordionId}` );
 
-   if( !accordion || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || accordion.classList.contains( 'colexping' ) )  return
+   if( !( accordion instanceof HTMLElement ) || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || accordion.classList.contains( 'colexping' ) )  return
 
    accordionToggle( accordion );
 }
