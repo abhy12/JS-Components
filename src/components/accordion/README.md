@@ -1,14 +1,14 @@
 # Light weight and Simple Accordion
 
-## Get started
+## Intro
+You can use this Accordion in **two ways or both ways** at same time.  
 
-### Intro
-You can use this Accordion in **two ways or both ways** at same time.
-**First way** is ***"automatically 'convert' your existing HTML to working Accordion"*** for this to work you have to follow certain html "structure" look [HTML Way](#html-way) to find out.  
+**First way** is [HTML Way](#html-way) which can ***"automatically convert your existing HTML to working Accordion"*** for this to work you have to follow certain html "structure", look [HTML Way](#html-way) to find out more.  
+
 **Second way** to create anything a Accordion see [Class based Accordion](#class-based-way).
 
 
-### Installation
+## Installation
 **CDN**
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@js-components/accordion/accordion.min.js"></script>
@@ -18,15 +18,19 @@ You can use this Accordion in **two ways or both ways** at same time.
 ```bash
 npm install @js-components/accordion
 ```
+**Import Accordion**
+```javascript
+import JscAccordion from "@js-components/accordion";
+```
 
-### HTML Way
+## HTML Way
 It will convert your existing HTML to working **"Accordion"**.  
 ***If you have not installed see [installation](#installation) section***
 
-#### Basic structure
+### Basic structure
 
 ```html
-<!-- Accordion wrapper -->
+<!-- Accordion wrapper P.S not necessary if you are going to add an appropriate ID -->
 <div class="jsc-accordion">
    <!-- Always wrap button to heading tag for accessibility -->
    <h1><button data-jsc-target="ACCORDION-ID">Lorem ipsum dolor sit amet.</button></h1>
@@ -40,7 +44,7 @@ You can replace your own ID to "ACCORDION-ID" or you can ommit the "ACCORDION-ID
 
 ***Note: If you are omitting "ACCORDION-ID" the downside of this is that it will not work perfectly in nested accordion and you have to add whole accordion and button to the "jsc-accordion" wrapper element this is important step of doing this way.***
 
-#### Change button text on collapse or expend state
+### Change button text on collapse or expend state
 ```html
 <h1>
    <button data-collapsetext="collapse" data-expendtext="Expend">Collapse</button>
@@ -84,7 +88,7 @@ const newAccordion = new JscAccordion({
 **Note: you can use any document query for selecting an accordion container but if that accordion container don't have an existing ID then this Accordion instance will generate a new ID for that accordion container.**  
 
 
-## APIs
+### APIs
 <table>
 <tr>
 <td> API </td> <td> Usage </td> <td> Description </td>
@@ -175,7 +179,7 @@ Default value is true.</td>
 </tr>
 </table>  
 
-## Methods
+### Methods
 <table>
 <tr>
 <td> Method </td> <td> Description </td>
