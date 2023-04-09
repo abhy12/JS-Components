@@ -1,65 +1,62 @@
 # Light weight and Simple Accordion
 
-## Usage
+## Get started
 
-**CDN:**
+### Intro
+You can use this Accordion in **two ways or both ways** at same time.
+**First way** is ***"automatically 'convert' your existing HTML to working Accordion"*** for this to work you have to follow certain html "structure" look [HTML Way](#html-way) to find out.  
+**Second way** to create anything a Accordion see [Class based Accordion](#class-based-way).
+
+
+### Installation
+**CDN**
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@js-components/accordion/accordion.min.js"></script>
 ```
 
-### Get started
-After linking the accordion file you can use accordion with [HTML way](#html-way) or [class based way](#class-based-way) (either way is good but class based way give you more control over "accordion").
+**NPM**
+```bash
+npm install @js-components/accordion
+```
 
-## HTML Way
+### HTML Way
+It will convert your existing HTML to working **"Accordion"**.  
+***If you have not installed see [installation](#installation) section***
 
-### HTML Example 1  
-
-Basic structure
+#### Basic structure
 
 ```html
 <!-- Accordion wrapper -->
 <div class="jsc-accordion">
    <!-- Always wrap button to heading tag for accessibility -->
-   <h1><button data-jsc-target="YOUR-ID">Lorem ipsum dolor sit amet.</button></h1>
+   <h1><button data-jsc-target="ACCORDION-ID">Lorem ipsum dolor sit amet.</button></h1>
    <!-- Accordion -->
-   <div id="YOUR-ID" data-jsc-accCon="true">
+   <div id="ACCORDION-ID" data-jsc-accCon="true">
       <!-- Your content -->
    </div>
 </div>
 ```
+You can replace your own ID to "ACCORDION-ID" or you can ommit the "ACCORDION-ID" to empty string.
 
-just replace "YOUR-ID" with your own same unique html ID(without "#") and that's it eveything will be working fine now 🎉.  
+***Note: If you are omitting "ACCORDION-ID" the downside of this is that it will not work perfectly in nested accordion and you have to add whole accordion and button to the "jsc-accordion" wrapper element this is important step of doing this way.***
 
-#### Change button text on collapse or expend
+#### Change button text on collapse or expend state
 ```html
 <h1>
    <button data-collapsetext="collapse" data-expendtext="Expend">Collapse</button>
 </h1>
 ```
 
-***Read More***  
-Add `data-jsc-target` dataset with the value of accordion id to any button you like to trigger accordion.  
-If you add `data-jsc-accCon=""` dataset with the value of "false" to the accordion then the accordion will not work.
+And that's it eveything will be working fine now 🎉.
 
-### HTML Example 2
-In this example you don't need to add any html ID to the container or in the button
-
-```html
-<div class="jsc-accordion">
-   <!-- Always wrap button to heading tag for accessibility -->
-   <h1><button data-jsc-target="">Lorem ipsum dolor sit amet.</button></h1>
-   <!-- Accordion content container -->
-   <div data-jsc-accCon="true">
-      <!-- Your content -->
-   </div>
-</div>
-```
-
-The "jsc-accordion" element has to wrap the whole accordion and the button this is important.  
-**Note: The downside of not adding ID to this is that it will not work perfectly in nested accordion.**  
+***Additional Notes:***
+* You can add `data-jsc-target` dataset with the value of accordion id to any button you like to trigger the accordion.
+* If you add `data-jsc-accCon=""` dataset with the value of "false" to the accordion then the accordion will not work.
+* Add ``data-jsc-preventDefault=""`` dataset to your trigger(s) or button(s) a value of false or empty if you want it to ``preventDefault`` or not.
 
 
 ## Class based way
+***If you have not installed see [installation](#installation) section***
 
 **Example HTML structure**
 
