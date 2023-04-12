@@ -1,52 +1,51 @@
 import { convertHTMLToAccordion } from "./browser";
-import { randomIdGenerator } from "./utilities";
 import { PREFIX } from "./core";
 import { accordionToggle, accordionToggleEventHandler } from "./trigger";
+import { assignNewIdToElement } from "./utilities";
 
-interface AccordionArgs  {
+interface AccordionInterace  {
    container: string | HTMLElement,
-   button?: string | Element | HTMLElement | HTMLCollectionOf<HTMLElement> | NodeListOf<HTMLElement> | (HTMLElement| string)[] | undefined | null,
+   button: string | Element | HTMLElement | HTMLCollectionOf<HTMLElement> | NodeListOf<HTMLElement> | (HTMLElement| string)[] | undefined | null,
    collapsed?: boolean | undefined,
    collapseText?: string | undefined,
    expendText?: string | undefined,
    buttonPreventDefault?: boolean
 }
 
-export default class JscAccordion  {
-   container: HTMLElement | null = null;
+export default class JscAccordion implements AccordionInterace {
+   container: HTMLElement;
    collapsed: boolean;
-   button: AccordionArgs['button'];
-   collapseText: AccordionArgs['collapseText'];
-   expendText: AccordionArgs['expendText'];
-   buttonPreventDefault: AccordionArgs['buttonPreventDefault'] = true;
+   button: AccordionInterace['button'];
+   collapseText: AccordionInterace['collapseText'];
+   expendText: string;
+   buttonPreventDefault: boolean = true;
 
-   constructor( args: AccordionArgs )  {
-      let tempCon: HTMLElement | string = args.container;
+   constructor( args: AccordionInterace )  {
+      let tempContainer: HTMLElement | string = args.container;
 
-      ///check if container value is htmlElement or some DOM query string
-      if( typeof tempCon === 'string' )  {
-         tempCon = ( document.querySelector( tempCon ) as HTMLElement );
+      if( typeof tempContainer === 'string' )  {
+         tempContainer = ( document.querySelector( tempContainer ) as HTMLElement );
       }
 
-      ///if container argument is falsey return
-      if( !tempCon || ( tempCon instanceof HTMLElement ) === false ) return
+      ///not an element
+      if( !( tempContainer instanceof HTMLElement ) )  return
 
-      this.container = tempCon;
+      this.container = tempContainer;
 
       ///trigger
       if( args.button ) this.button = args.button;
 
       if( args.buttonPreventDefault === false )  this.buttonPreventDefault = false
 
-      ///if collapsed argument is defined and have boolean a value then change the collapsed value
-      ///otherwise it can be change via html.
-      ///it will not overwrite the html value when you defined collapsed value argument.
-      if( args.collapsed !== undefined )  {
-         if( !args.collapsed )  {
-            this.collapsed = false;
-         } else if( args.collapsed === true )  {
-            this.collapsed = true;
-         }
+      const containerCollapseAttributeValue = this.container.getAttribute( 'data-collapse' );
+
+      ///if undefined check if html attribute has the value
+      ///attribute value needs to be exactly equal to "false" for changing the collapse value
+      if( ( args.collapsed === undefined && containerCollapseAttributeValue === "false" ) || args.collapsed === false )  {
+         this.collapsed = false;
+      } else {
+         ///default
+         this.collapsed = true;
       }
 
       this._init();
@@ -59,38 +58,18 @@ export default class JscAccordion  {
 
       ///set new id if the container don't have one
       if( this.container.id === '' )  {
-         let id = randomIdGenerator();
-
-         while( true )  {
-            if( document.getElementById( id ) )  {
-               id = randomIdGenerator();
-               continue
-            }
-            break
-         }
-
-         this.container.id = `${PREFIX}${id}`;
+        assignNewIdToElement( this.container );
       }
 
-      ///set accordion data
       if( this.container.getAttribute( `data-${PREFIX}-accCon` ) === null || this.container.getAttribute( `data-${PREFIX}-accCon` ) !== 'false' )  {
+         ///set accordion data
          this.container.setAttribute( `data-${PREFIX}-accCon`, 'true' );
-      }
-
-      ///if collapsed value is undefined change the value to html collapse value default is true
-      if( this.collapsed === undefined )  {
-         const collapseValue = this.container.getAttribute( 'data-collapse' );
-         if( collapseValue === 'false' )  {
-            this.collapsed = false;
-         } else {
-            this.collapsed = true;
-         }
       }
 
       this.container.setAttribute( 'data-collapse', this.collapsed + '' );
 
-      ///if the collapse value is true hide the element
-      if( this.collapsed ) this.container.style.display = 'none';
+      ///hide the element
+      if( this.collapsed )  this.container.style.display = 'none';
 
       this._init_trigger();
    }
@@ -132,7 +111,6 @@ export default class JscAccordion  {
    }
 
    _finalizeTrigger( target: HTMLElement )  {
-      // @ts-ignore
       const containerId = this.container.id;
 
       target.setAttribute( `data-${PREFIX}-target`, containerId );
