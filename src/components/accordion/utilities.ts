@@ -10,3 +10,16 @@ export function randomIdGenerator( length: number = 8 ): string  {
 
    return result;
 }
+
+export function assignNewIdToElement( element: HTMLElement )  {
+   let randomId = randomIdGenerator();
+
+   while( true )  {
+      ///no element found
+      if( !document.getElementById( randomId ) )  break
+
+      randomId = randomIdGenerator();
+   }
+
+   element.id = randomId;
+}
