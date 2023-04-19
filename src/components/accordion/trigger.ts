@@ -1,6 +1,42 @@
-import { PREFIX, ACCORDIONSELECTOR } from "./core";
+import { PREFIX, ACCORDION_SELECTOR, ACCORDION_ITEM_CONTAINER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION } from "./core";
 
 let toggleTimeoutId: ReturnType<typeof setTimeout>;
+
+export type Trigger = null | HTMLElement[] | NodeListOf<HTMLElement>;
+
+///get closest triggers inside accordion item container
+export function getClosestTriggers( accordion: HTMLElement, selector: string = TRIGGER_SELECTOR ): NodeListOf<HTMLElement> | null {
+   let accordionItemContainer: HTMLElement | null;
+
+   if( accordionItemContainer = accordion.closest( ACCORDION_ITEM_CONTAINER_SELECTOR ) )  {}
+
+   ///@deprecated
+   else if( accordionItemContainer = accordion.closest( '.jsc-accordion' ) )  {}
+
+   if( accordionItemContainer instanceof HTMLElement )  {
+      return accordionItemContainer.querySelectorAll( selector );
+   }
+
+   return null;
+}
+
+///get closest triggers inside accordion item container and all over the DOM
+export function getAllAssociateTriggers( accordion: HTMLElement, selector: string = TRIGGER_SELECTOR ):HTMLElement[]  {
+   const closestTriggers: Trigger = getClosestTriggers( accordion, selector );
+   const associateTriggers = document.querySelectorAll( SELECT_TRIGGER_ACCORDION( accordion.id ) ) as NodeListOf<HTMLElement>;
+   let triggers:HTMLElement[] = [];
+
+   if( closestTriggers instanceof NodeList )  {
+      closestTriggers.forEach( trigger => triggers.push( trigger ) );
+   }
+
+   if( associateTriggers.length > 0 )  {
+      associateTriggers.forEach( trigger => triggers.push( trigger ) );
+   }
+
+   return triggers;
+}
+
 
 export function accordionToggle( accordion: HTMLElement )  {
    ///whether container is collapsed
@@ -81,8 +117,9 @@ export function accordionToggle( accordion: HTMLElement )  {
    updateTriggers( accordion.id, isCollapsed );
 }
 
+
 export function updateTriggers( accordionId: string, isAccordionCollapsed: boolean )  {
-   const triggers = document.querySelectorAll( `[data-${PREFIX}-target="${accordionId}"]` ) as NodeListOf<HTMLElement>;
+   const triggers = document.querySelectorAll( SELECT_TRIGGER_ACCORDION( accordionId ) ) as NodeListOf<HTMLElement>;
 
    triggers.forEach( ( trigger: HTMLElement ) =>  {
       let collapseOrExpendText: undefined | string = undefined;
@@ -103,23 +140,24 @@ export function updateTriggers( accordionId: string, isAccordionCollapsed: boole
    });
 }
 
+
 export function accordionToggleEventHandler( e: Event )  {
    if( !( e.target instanceof HTMLElement ) )  return
 
    ///find the closest accordion trigger
    ///so if button has some nested element(s) it will find the trigger
-   const trigger = e.target.closest( `[data-${PREFIX}-target]` );
+   const trigger = e.target.closest( TRIGGER_SELECTOR );
 
    ///don't wanna repeate it :(
    if( !( trigger instanceof HTMLElement ) )  return
 
-   const accordionId: undefined | string = trigger.dataset[`${PREFIX}Target`];
+   const accordionId: null | string = trigger.getAttribute( TRIGGER_ATTR );
 
    if( !accordionId )  return
 
    if( trigger.dataset[`${PREFIX}Preventdefault`] !== "false" )  e.preventDefault();
 
-   const accordion = document.querySelector( `${ACCORDIONSELECTOR}#${accordionId}` );
+   const accordion = document.querySelector( `${ACCORDION_SELECTOR}#${accordionId}` );
 
    if( !( accordion instanceof HTMLElement ) || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || accordion.classList.contains( 'colexping' ) )  return
 
