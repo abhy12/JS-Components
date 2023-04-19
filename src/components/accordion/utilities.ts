@@ -1,6 +1,6 @@
 /// https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 export function randomIdGenerator( length: number = 8 ): string  {
-   const characters: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   const characters: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
    const charactersLength: number = characters.length;
    let result: string = '';
 
@@ -11,7 +11,7 @@ export function randomIdGenerator( length: number = 8 ): string  {
    return result;
 }
 
-export function assignNewIdToElement( element: HTMLElement )  {
+export function assignNewUniqueIdToElement( element: HTMLElement )  {
    let randomId = randomIdGenerator();
 
    while( true )  {
