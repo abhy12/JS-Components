@@ -1,4 +1,4 @@
-import { convertHTMLToAccordion } from "./browser";
+import { browserSetup } from "./browser";
 import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_CONTAINER_SELECTOR, ACCORDION_SELECTOR, TRIGGER_SELECTOR, ACCORDION_ITEM_CONTAINER_ATTR, initAccordion } from "./core";
 import { accordionToggle, accordionToggleEventHandler, getClosestTriggers, getAllAssociateTriggers, Trigger } from "./trigger";
 
@@ -215,10 +215,4 @@ export default class JscAccordion implements AccordionInterface {
 ///exposing class
 window.JscAccordion = JscAccordion
 
-document.addEventListener( "DOMContentLoaded", () =>  {
-   ///convert all exisiting accordion html to working accordion
-   convertHTMLToAccordion();
-
-   ///add click event for accordion trigger to the body for event Bubbling
-   document.body.addEventListener( "click", accordionToggleEventHandler );
-});
+browserSetup();

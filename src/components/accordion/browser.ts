@@ -1,6 +1,6 @@
 import { ACCORDION_SELECTOR, CONTAINER_SELECTOR, CONTAINER_ATTR, DEP_ACCORDION_SELECTOR } from "./core";
 import JscAccordion from "./accordion";
-import { getClosestTriggers, getAllAssociateTriggers } from "./trigger";
+import { getClosestTriggers, getAllAssociateTriggers, accordionToggleEventHandler } from "./trigger";
 
 function addNewAttributeToDeprecatedAccordion()  {
    const deprecatedAccordion = document.querySelectorAll( DEP_ACCORDION_SELECTOR );
@@ -61,4 +61,12 @@ export function convertHTMLToAccordion()  {
          });
       }
    });
+}
+
+export function browserSetup()  {
+   ///convert all exisiting accordion html to working accordion
+   convertHTMLToAccordion();
+
+   ///add click event for accordion trigger to the body for event Bubbling
+   document.body.addEventListener( "click", accordionToggleEventHandler );
 }
