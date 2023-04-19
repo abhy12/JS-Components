@@ -6,8 +6,12 @@ function addNewAttributeToDeprecatedAccordion()  {
    const deprecatedAccordion = document.querySelectorAll( DEP_ACCORDION_SELECTOR );
 
    deprecatedAccordion.forEach( accordion => {
+      let previousValue = "true";
+
       ///get previous attribute value then assign to new attribute value
-      accordion.setAttribute( CONTAINER_ATTR, 'true' );
+      if( accordion.getAttribute( DEP_ACCORDION_SELECTOR ) === "false" )  previousValue = "false"
+
+      accordion.setAttribute( CONTAINER_ATTR, previousValue );
    });
    ///P.S not removing the deprecated attribute because if user
    ///have set the style based on the attribute
