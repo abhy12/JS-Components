@@ -11,12 +11,12 @@ You can use this Accordion in **two ways or both ways** at same time.
 ## Installation
 **CDN**
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@js-components/accordion/accordion.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@js-components/accordion@1/accordion.min.js"></script>
 ```
 
 **NPM**
 ```bash
-npm install @js-components/accordion
+npm install @js-components/accordion@1
 ```
 **Import Accordion**
 ```javascript
@@ -30,19 +30,21 @@ It will convert your existing HTML to working **"Accordion"**.
 ### Basic structure
 
 ```html
-<!-- Accordion wrapper P.S not necessary if you are going to add an appropriate ID -->
-<div class="jsc-accordion">
-   <!-- Always wrap button to heading tag for accessibility -->
-   <h1><button data-jsc-target="ACCORDION-ID">Lorem ipsum dolor sit amet.</button></h1>
-   <!-- Accordion -->
-   <div id="ACCORDION-ID" data-jsc-accCon="true">
-      <!-- Your content -->
+<div data-jsc-accordion-container=""><!-- container -->
+   <div data-jsc-accordion-item=""><!-- accordion item wrapper -->
+      <h1><button data-jsc-target="">Toggle Accordion</button></h1><!-- trigger -->
+      <div data-jsc-accordion=""><!-- accordion -->
+         <!-- content here -->
+      </div>
+   </div>
+   <div data-jsc-accordion-item=""><!-- accordion item wrapper -->
+      <h1><button data-jsc-target="">Toggle Accordion</button></h1><!-- trigger -->
+      <div data-jsc-accordion=""><!-- accordion -->
+         <!-- content here -->
+      </div>
    </div>
 </div>
 ```
-You can replace your own ID to "ACCORDION-ID" or you can ommit the "ACCORDION-ID" to empty string.
-
-***Note: If you are omitting "ACCORDION-ID" the downside of this is that it will not work perfectly in nested accordion and you have to add whole accordion and button to the "jsc-accordion" wrapper element this is important step of doing this way.***
 
 ### Change button text on collapse or expend state
 ```html
@@ -55,7 +57,7 @@ And that's it eveything will be working fine now 🎉.
 
 ***Additional Notes:***
 * You can add `data-jsc-target` dataset with the value of accordion id to any button you like to trigger the accordion.
-* If you add `data-jsc-accCon=""` dataset with the value of "false" to the accordion then the accordion will not work.
+* If you add `data-jsc-accordion=""` dataset with the value of "false" to the accordion then the accordion will not work.
 * Add ``data-jsc-preventDefault=""`` dataset to your trigger(s) or button(s) a value of false or empty if you want it to ``preventDefault`` or not.
 
 
@@ -65,9 +67,19 @@ And that's it eveything will be working fine now 🎉.
 **Example HTML structure**
 
 ```html
-<button id="btn">Lorem ipsum dolor sit amet.</button>
-<div class="new-accordion">
-   <!-- Your content -->
+<div id="accordion-container"><!-- container -->
+   <div class="item"><!-- accordion item wrapper -->
+      <h1><button class="trigger">Toggle Accordion</button></h1><!-- trigger -->
+      <div class="accordion"><!-- accordion -->
+         <!-- content here -->
+      </div>
+   </div>
+   <div class="item"><!-- accordion item wrapper -->
+      <h1><button class="trigger">Toggle Accordion</button></h1><!-- trigger -->
+      <div class="accordion"><!-- accordion -->
+         <!-- content here -->
+      </div>
+   </div>
 </div>
 ```
 
@@ -75,18 +87,14 @@ And that's it eveything will be working fine now 🎉.
 
 ```javascript
 const newAccordion = new JscAccordion({	
-   container: ".new-accordion",
-   button: "#btn",
-   collapsed: true, ///initial default
-
-   ///change button text on collapse or expend
-   collapseText: "Collapse",
-   expendText: "Expend",
+   container: "#accordion-container",
+   ///for backward compatibility
+   containerIsAccordion: false
+   item: ".item",
+   accordion: ".accordion",
+   button: ".trigger",
 });
 ```
-
-**Note: you can use any document query for selecting an accordion container but if that accordion container don't have an existing ID then this Accordion instance will generate a new ID for that accordion container.**  
-
 
 ### APIs
 <table>
@@ -100,12 +108,55 @@ const newAccordion = new JscAccordion({
 ```javascript
 {
    ///CSS selector or DOM element
-   container: ".new-accordion"
+   container: ".accordion-container"
 }
 ```
-<td>You can use CSS selector or any DOM element for selecting "accordion".</td>
+<td>Container which has all the accordions inside.</td>
 </td>
 </tr>  
+<tr>
+<td> containerIsAccordion </td>
+<td>
+
+```javascript
+{
+   ///Boolean
+   ///default "true"
+   ///for backward compatibility
+   container: false
+}
+```
+<td>If true then the whole container will be an Accordion.</td>
+</td>
+</tr>
+<tr>
+<td> item </td>
+<td>
+
+```javascript
+{
+   ///string
+   ///default [data-jsc-accordion-item]
+   item: ".accordion-item"
+}
+```
+<td>Accordion item wrapper selector. It has to wrap each accordion in it.</td>
+</td>
+</tr>
+<tr>
+<td> accordion </td>
+<td>
+
+```javascript
+{
+   ///string
+   ///default [data-jsc-accordion]
+   item: ".accordion"
+}
+```
+<td>Selector which will be an accordion.</td>
+</td>
+</tr>
 <tr>
 <td> button </td>
 <td>
