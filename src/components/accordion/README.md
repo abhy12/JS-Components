@@ -89,7 +89,7 @@ And that's it eveything will be working fine now 🎉.
 const newAccordion = new JscAccordion({	
    container: "#accordion-container",
    ///for backward compatibility
-   containerIsAccordion: false
+   containerIsAccordion: false,
    item: ".item",
    accordion: ".accordion",
    button: ".trigger",
