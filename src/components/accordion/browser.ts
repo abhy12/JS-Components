@@ -1,4 +1,4 @@
-import { ACCORDION_SELECTOR, CONTAINER_SELECTOR, CONTAINER_ATTR, DEP_ACCORDION_SELECTOR } from "./core";
+import { ACCORDION_SELECTOR, ACCORDION_ITEM_CONTAINER_SELECTOR, CONTAINER_SELECTOR, CONTAINER_ATTR, DEP_ACCORDION_SELECTOR } from "./core";
 import JscAccordion from "./accordion";
 import { getClosestTriggers, getAllAssociateTriggers, accordionToggleEventHandler } from "./trigger";
 
@@ -26,11 +26,14 @@ export function convertHTMLToAccordion()  {
    accordionContainers.forEach( container => {
       let trigger: null | NodeListOf<HTMLElement> | HTMLElement[] = null;
 
-      ///container accordions
-      const accordions = container.querySelectorAll( ACCORDION_SELECTOR ) as NodeListOf<HTMLElement>;
+      const accordionItemsWrapper = container.querySelectorAll( ACCORDION_ITEM_CONTAINER_SELECTOR ) as NodeListOf<HTMLElement>;
 
-      if( accordions.length > 0 )  {
-         accordions.forEach( accordion => {
+      if( accordionItemsWrapper.length > 0 )  {
+         accordionItemsWrapper.forEach( accordionItem => {
+            const accordion = accordionItem.querySelector( ACCORDION_SELECTOR );
+
+            if( !( accordion instanceof HTMLElement ) )  return
+
             const accordionId = accordion.id;
 
             ///accordion don't have ID that means it don't have any
@@ -42,7 +45,8 @@ export function convertHTMLToAccordion()  {
             }
 
             new JscAccordion({
-               container: accordion,
+               container: container,
+               containerIsAccordion: false,
                button: trigger,
             });
          });
@@ -50,7 +54,7 @@ export function convertHTMLToAccordion()  {
 
       ///make container an accordion,
       ///doing this because of backward compatibility
-      else if( accordions.length === 0 )  {
+      else if( accordionItemsWrapper.length === 0 )  {
          const containerId = container.id;
 
          if( containerId === '' )  {
