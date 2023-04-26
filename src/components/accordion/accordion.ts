@@ -1,6 +1,6 @@
 import { browserSetup } from "./browser";
-import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_CONTAINER_SELECTOR, ACCORDION_SELECTOR, TRIGGER_SELECTOR, ACCORDION_ITEM_CONTAINER_ATTR, initAccordion } from "./core";
-import { accordionToggle, accordionToggleEventHandler, getClosestTriggers, getAllAssociateTriggers, Trigger } from "./trigger";
+import { PREFIX, COLLAPSE_ATTR, CONTAINER_ATTR, ACCORDION_ITEM_CONTAINER_SELECTOR, ACCORDION_SELECTOR, TRIGGER_SELECTOR, ACCORDION_ITEM_CONTAINER_ATTR, initAccordion } from "./core";
+import { accordionToggle, getClosestTriggers, getAllAssociateTriggers, Trigger } from "./trigger";
 
 interface AccordionInterface {
    container: string | HTMLElement | null | undefined,
@@ -68,25 +68,26 @@ export default class JscAccordion implements AccordionInterface {
             ///default
             this.button = TRIGGER_SELECTOR;
          }
+
       } else {
          ///button can have any other valid values other than only string if
          ///the containerIsAccordion set to true
          if( args.button )  this.button = args.button;
+
+         const containerCollapseAttributeValue = this.container.getAttribute( COLLAPSE_ATTR );
+
+         ///if arg collapsed is undefined then check if html attribute has the value of "false" and
+         ///if it does then the collapsed will be false.
+         ///attribute value needs to be exactly equal to "false" for changing the collapse value
+         if( ( args.collapsed === undefined && containerCollapseAttributeValue === "false" ) || args.collapsed === false )  {
+            this.collapsed = false;
+         } else {
+            ///default
+            this.collapsed = true;
+         }
       }
 
       if( args.buttonPreventDefault === false )  this.buttonPreventDefault = false;
-
-      const containerCollapseAttributeValue = this.container.getAttribute( "data-collapse" );
-
-      ///if arg collapsed is undefined then check if html attribute has the value of "false" and
-      ///if it does then the collapsed will be false.
-      ///attribute value needs to be exactly equal to "false" for changing the collapse value
-      if( ( args.collapsed === undefined && containerCollapseAttributeValue === "false" ) || args.collapsed === false )  {
-         this.collapsed = false;
-      } else {
-         ///default
-         this.collapsed = true;
-      }
 
       this._init();
    }
@@ -215,4 +216,4 @@ export default class JscAccordion implements AccordionInterface {
 ///exposing class
 window.JscAccordion = JscAccordion
 
-browserSetup();
+browserSetup( JscAccordion );

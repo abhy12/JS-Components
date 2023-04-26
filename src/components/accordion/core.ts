@@ -11,6 +11,7 @@ export const ACCORDION_ATTR: string = `data-${PREFIX}-accordion`;
 export const ACCORDION_SELECTOR: string = `[${ACCORDION_ATTR}]`;
 export const TRIGGER_ATTR: string = `data-${PREFIX}-target`;
 export const TRIGGER_SELECTOR: string = `[${TRIGGER_ATTR}]`;
+export const COLLAPSE_ATTR: string = "data-collapse";
 
 export function SELECT_TRIGGER_ACCORDION( selector: string ): string  {
    return `[${TRIGGER_ATTR}="${selector}"]`;

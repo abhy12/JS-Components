@@ -1,4 +1,4 @@
-import { PREFIX, ACCORDION_SELECTOR, ACCORDION_ITEM_CONTAINER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION } from "./core";
+import { PREFIX, COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_CONTAINER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION } from "./core";
 
 let toggleTimeoutId: ReturnType<typeof setTimeout>;
 
@@ -6,12 +6,12 @@ export type Trigger = null | HTMLElement[] | NodeListOf<HTMLElement>;
 
 ///get closest triggers inside accordion item container
 export function getClosestTriggers( accordion: HTMLElement, selector: string = TRIGGER_SELECTOR ): NodeListOf<HTMLElement> | null {
-   let accordionItemContainer: HTMLElement | null;
-
-   if( accordionItemContainer = accordion.closest( ACCORDION_ITEM_CONTAINER_SELECTOR ) )  {}
+   let accordionItemContainer: HTMLElement | null = accordion.closest( ACCORDION_ITEM_CONTAINER_SELECTOR );
 
    ///@deprecated
-   else if( accordionItemContainer = accordion.closest( '.jsc-accordion' ) )  {}
+   if( accordionItemContainer === null )  {
+      accordionItemContainer = accordion.closest( '.jsc-accordion' );
+   }
 
    if( accordionItemContainer instanceof HTMLElement )  {
       return accordionItemContainer.querySelectorAll( selector );
@@ -93,7 +93,7 @@ export function accordionToggle( accordion: HTMLElement )  {
          accordion.classList.remove( 'colexping' );
       }, transitionTime );
 
-      accordion.dataset.collapse = 'false';
+      accordion.setAttribute( COLLAPSE_ATTR, "false" );
       isCollapsed = false;
 
    } else if( !isCollapsed )  {
@@ -110,7 +110,7 @@ export function accordionToggle( accordion: HTMLElement )  {
          accordion.classList.remove( 'colexping' );
       }, transitionTime );
 
-      accordion.dataset.collapse = 'true';
+      accordion.setAttribute( COLLAPSE_ATTR, "true" );
       isCollapsed = true;
    }
 

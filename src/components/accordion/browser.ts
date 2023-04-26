@@ -1,5 +1,4 @@
 import { ACCORDION_SELECTOR, ACCORDION_ITEM_CONTAINER_SELECTOR, CONTAINER_SELECTOR, CONTAINER_ATTR, DEP_ACCORDION_SELECTOR } from "./core";
-import JscAccordion from "./accordion";
 import { getClosestTriggers, getAllAssociateTriggers, accordionToggleEventHandler } from "./trigger";
 
 function addNewAttributeToDeprecatedAccordion()  {
@@ -17,7 +16,7 @@ function addNewAttributeToDeprecatedAccordion()  {
    ///have set the style based on the attribute
 }
 
-export function convertHTMLToAccordion()  {
+export function convertHTMLToAccordion( JscAccordion: any )  {
    ///for backward compatibility
    addNewAttributeToDeprecatedAccordion();
 
@@ -71,9 +70,9 @@ export function convertHTMLToAccordion()  {
    });
 }
 
-export function browserSetup()  {
+export function browserSetup( JscAccordion: any )  {
    ///convert all exisiting accordion html to working accordion
-   convertHTMLToAccordion();
+   convertHTMLToAccordion( JscAccordion );
 
    ///add click event for accordion trigger to the body for event Bubbling
    document.body.addEventListener( "click", accordionToggleEventHandler );
