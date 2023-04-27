@@ -229,37 +229,3 @@ const newAccordion = new JscAccordion({
 Default value is true.</td>
 </tr>
 </table>  
-
-### Methods
-<table>
-<tr>
-<td> Method </td> <td> Description </td>
-</tr>
-<tr>
-<td>
-   
-```javascript
-enable 
-```
-</td>
-<td>Enable the accordion.</td>
-</tr>
-<tr>
-<td>
-   
-```javascript
-disable 
-```
-</td>
-<td>Disable the accordion.</td>
-</tr>
-<tr>
-<td>
-   
-```javascript
-toggle
-```
- </td>
-<td>Toggle the accordion if accordion is collapsed then it will expend or vice versa.</td>
-</tr>
-</table>  
