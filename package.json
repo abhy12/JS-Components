@@ -6,7 +6,9 @@
   "scripts": {
     "start": "concurrently --kill-others \"tsc -watch\" \"npx tailwindcss -i ./tailwind.css -o ./style.css --watch --minify\"",
     "build": "set NODE_ENV=production && webpack --mode=production && tsc",
-    "dev": "set NODE_ENV=development && concurrently --kill-others \"webpack --mode=development --watch\" \"npx tailwindcss -i ./examples/tailwind.css -o ./examples/main.css --watch\""
+    "dev": "set NODE_ENV=development && concurrently --kill-others \"webpack --mode=development --watch\" \"npx tailwindcss -i ./examples/tailwind.css -o ./examples/main.css --watch\"",
+    "test": "jest",
+    "test-watch": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -19,15 +21,22 @@
   },
   "homepage": "https://github.com/abhy12/JS-Components#readme",
   "devDependencies": {
+    "@types/jest": "^29.5.0",
     "css-loader": "^6.7.3",
     "esbuild-loader": "^3.0.1",
+    "jest-environment-jsdom": "^29.5.0",
     "mini-css-extract-plugin": "^2.7.3",
     "tailwindcss": "^3.2.4",
+    "ts-jest": "^29.1.0",
     "typescript": "^4.9.4",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
     "concurrently": "^7.6.0"
-  }
+  },
+  "workspaces": [
+    "./src/components/accordion",
+    "./src/components/slider"
+  ]
 }
