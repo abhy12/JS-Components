@@ -73,18 +73,16 @@ export default class JscAccordion implements AccordionInterface {
          ///button can have any other valid values other than only string if
          ///the containerIsAccordion set to true
          if( args.button )  this.button = args.button;
+      }
 
-         const containerCollapseAttributeValue = this.container.getAttribute( COLLAPSE_ATTR );
+      const containerCollapseAttributeValue = this.container.getAttribute( COLLAPSE_ATTR );
 
-         ///if arg collapsed is undefined then check if html attribute has the value of "false" and
-         ///if it does then the collapsed will be false.
-         ///attribute value needs to be exactly equal to "false" for changing the collapse value
-         if( ( args.collapsed === undefined && containerCollapseAttributeValue === "false" ) || args.collapsed === false )  {
-            this.collapsed = false;
-         } else {
-            ///default
-            this.collapsed = true;
-         }
+      ///set collapsed to html attribute value if value is "false" and collapsed arg is undefined
+      if( ( args.collapsed === undefined && containerCollapseAttributeValue === "false" ) || args.collapsed === false )  {
+         this.collapsed = false;
+      } else {
+         ///default
+         this.collapsed = true;
       }
 
       if( args.buttonPreventDefault === false )  this.buttonPreventDefault = false;
