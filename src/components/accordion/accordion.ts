@@ -7,6 +7,7 @@ interface AccordionInterface {
    containerIsAccordion?: boolean,
    accordionItemContainer?: string,
    accordionEl?: string,
+   firstElExpend?: boolean,
    button: string | Element | HTMLElement | HTMLCollectionOf<HTMLElement> | NodeListOf<HTMLElement> | (HTMLElement | string)[] | undefined | null,
    collapsed?: boolean,
    collapseText?: string | undefined,
@@ -25,6 +26,7 @@ export default class JscAccordion implements AccordionInterface {
    collapseText: AccordionInterface['collapseText'];
    expendText: string;
    buttonPreventDefault: boolean = true;
+   firstElExpend: boolean = true;
 
    constructor( args: AccordionInterface )  {
       //return if falsy value
@@ -68,6 +70,8 @@ export default class JscAccordion implements AccordionInterface {
             ///default
             this.button = TRIGGER_SELECTOR;
          }
+
+         if( args.firstElExpend === false )  this.firstElExpend = false;
 
       } else {
          ///button can have any other valid values other than only string if
@@ -131,17 +135,27 @@ export default class JscAccordion implements AccordionInterface {
                this._initTrigger( btn, containerId );
             });
          }
+
       } else {
-         ///find all the accordion inside item container
          const accordionItemsContainer = this.container.querySelectorAll( `${this.accordionItemContainer}` ) as NodeListOf<HTMLElement>;
          const accordions = this.container.querySelectorAll( `${this.accordionItemContainer} ${this.accordionEl}` ) as NodeListOf<HTMLElement>;
 
-         ///add accordion item attribute to every accordion item container
+         ///add attribute to accordion item container
          accordionItemsContainer.forEach( itemContainer =>  itemContainer.setAttribute( ACCORDION_ITEM_CONTAINER_ATTR, "true" ) );
 
          ///init each accordion and trigger
-         accordions.forEach( ( accordion ) => {
-            initAccordion( accordion );
+         accordions.forEach( ( accordion, i ) => {
+            let collapsed: boolean;
+
+            if( i !== 0 )  {
+               collapsed = true;
+            } else {
+               ///first element should be expended depending on the arguments
+               ///default true
+               collapsed = !this.firstElExpend;
+            }
+
+            initAccordion( accordion, collapsed );
 
             let trigger: Trigger = null;
 
@@ -158,23 +172,23 @@ export default class JscAccordion implements AccordionInterface {
 
             if( trigger )  {
                trigger.forEach( trigger =>  {
-                  this._initTrigger( trigger, accordion.id );
+                  this._initTrigger( trigger, accordion.id, collapsed );
                });
             }
          });
       }
    }
 
-   _initTrigger( trigger: HTMLElement, targetId: string )  {
+   _initTrigger( trigger: HTMLElement, targetId: string, collapsed: boolean = this.collapsed )  {
       trigger.setAttribute( `data-${PREFIX}-target`, targetId );
-      trigger.setAttribute( 'aria-expanded', `${!this.collapsed}` );
+      trigger.setAttribute( 'aria-expanded', `${!collapsed}` );
       trigger.setAttribute( 'aria-controls', targetId );
 
       if( this.buttonPreventDefault === false )  trigger.setAttribute( `data-${PREFIX}-preventdefault`, 'false' );
 
       let collapseOrExpendText: string | null;
 
-      if( this.collapsed )  {
+      if( collapsed )  {
 
          if( this.collapseText !== undefined )  {
             collapseOrExpendText = this.collapseText;
