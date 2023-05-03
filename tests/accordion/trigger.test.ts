@@ -25,6 +25,10 @@ const customStruture = `
       <h1><button>Lorem ipsum dolor sit amet.</button></h1>
       <div class="accordion">Lorem ipsum dolor sit amet consect</div>
    </div>
+   <div class="item">
+      <h1><button>Lorem ipsum dolor sit amet.</button></h1>
+      <div class="accordion">Lorem ipsum dolor sit amet consect</div>
+   </div>
 </div>`;
 
 describe( "accordion trigger", () => {
@@ -33,7 +37,7 @@ describe( "accordion trigger", () => {
    });
 
    describe( "checks if trigger has 'collapsed' class when accordion is collapsed initially", () => {
-      it( "browser", () => {
+      test( "browser", () => {
          document.body.insertAdjacentHTML( "afterbegin", accordionBrowserStructure );
 
          convertHTMLToAccordion( JscAccordion );
@@ -49,7 +53,7 @@ describe( "accordion trigger", () => {
          });
       });
 
-      it( "class", () => {
+      test( "class", () => {
          document.body.insertAdjacentHTML( "afterbegin", customStruture );
 
          new JscAccordion({
@@ -60,7 +64,7 @@ describe( "accordion trigger", () => {
             containerIsAccordion: false
          });
 
-         expect( document.querySelector( ".item button" )?.classList.contains( "collapsed" ) ).toBe( true );
+         expect( document.querySelectorAll( "#eg-1 .item button" )[1]?.classList.contains( "collapsed" ) ).toBe( true );
       });
    });
 });

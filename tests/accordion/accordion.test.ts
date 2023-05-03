@@ -1,7 +1,7 @@
 import JscAccordion from "@js-components/accordion/accordion";
 import { convertHTMLToAccordion } from "@js-components/accordion/browser";
-import { CONTAINER_ATTR, ACCORDION_ITEM_CONTAINER_ATTR, ACCORDION_ATTR, TRIGGER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_CONTAINER_SELECTOR, ACCORDION_SELECTOR, COLLAPSE_ATTR } from "@js-components/accordion/core";
-import { accordionToggleEventHandler } from "@js-components/accordion/trigger";
+import { CONTAINER_ATTR, ACCORDION_ITEM_CONTAINER_ATTR, ACCORDION_ATTR, TRIGGER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_CONTAINER_SELECTOR, ACCORDION_SELECTOR, COLLAPSE_ATTR, CONTAINER_SELECTOR } from "@js-components/accordion/core";
+import { getClosestTriggers } from "@js-components/accordion/trigger";
 
 const accordionStructure = `
 <div id="basic" data-jsc-accordion-container="">
@@ -19,16 +19,28 @@ const accordionStructure = `
    </div>
 </div>`;
 
+const customStruture = `
+<div id="eg-1">
+   <div class="item">
+      <h1><button>Lorem ipsum dolor sit amet.</button></h1>
+      <div class="accordion">Lorem ipsum dolor sit amet consect</div>
+   </div>
+   <div class="item">
+      <h1><button>Lorem ipsum dolor sit amet.</button></h1>
+      <div class="accordion">Lorem ipsum dolor sit amet consect</div>
+   </div>
+</div>`;
+
+
 describe( "JscAccordion", () => {
    beforeEach(() =>  {
       document.body.innerHTML = '';
+      document.body.insertAdjacentHTML( "afterbegin", accordionStructure );
+      document.body.insertAdjacentHTML( "afterbegin", customStruture );
+      convertHTMLToAccordion( JscAccordion );
    });
 
    it( "convert all DOM accordion struture to working accordion", async () => {
-      document.body.insertAdjacentHTML( "afterbegin", accordionStructure );
-
-      convertHTMLToAccordion( JscAccordion );
-
       const accordionItem = document.querySelectorAll( `#basic ${ACCORDION_ITEM_CONTAINER_SELECTOR}` )[1] as HTMLElement;
       const accordion = accordionItem?.querySelector( ACCORDION_SELECTOR ) as HTMLElement;
       const trigger = accordionItem?.querySelector( TRIGGER_SELECTOR ) as HTMLElement;
@@ -37,26 +49,11 @@ describe( "JscAccordion", () => {
 
       trigger.click();
 
-      await new Promise( r => setTimeout( r, 100 ) );
-
       expect( accordion?.getAttribute( COLLAPSE_ATTR ) ).toEqual( "false" );
    });
 
    it( "properly run accordion function without any interruption of DOM 'accordion' converter", () => {
-      const customStruture = `
-      <div id="eg-1">
-         <div class="item">
-            <h1><button>Lorem ipsum dolor sit amet.</button></h1>
-            <div class="accordion">Lorem ipsum dolor sit amet consect</div>
-         </div>
-      </div>`;
-
-      document.body.insertAdjacentHTML( "afterbegin", customStruture );
-      document.body.insertAdjacentHTML( "afterbegin", accordionStructure );
-
-      // convertHTMLToAccordion();
-
-      const newAccordion = new JscAccordion({
+      new JscAccordion({
          container: '#eg-1',
          accordionItemContainer: '.item',
          accordionEl: '.accordion',
@@ -64,10 +61,78 @@ describe( "JscAccordion", () => {
          containerIsAccordion: false
       });
 
-      expect( document.querySelector( "#eg-1" ) ).not.toBeNull();
-      expect( document.querySelector( "#eg-1" )?.getAttribute( CONTAINER_ATTR ) ).not.toBeNull();
-      expect( document.querySelector( "#eg-1 .item" )?.getAttribute( ACCORDION_ITEM_CONTAINER_ATTR ) ).not.toBeNull();
-      expect( document.querySelector( "#eg-1 .item .accordion" )?.getAttribute( ACCORDION_ATTR ) ).not.toBeNull();
-      expect( document.querySelector( "#eg-1 .item h1 button" )?.getAttribute( TRIGGER_ATTR ) ).not.toBeNull();
+      const accordionContainer = document.querySelector( "#eg-1" );
+
+      expect( accordionContainer ).not.toBeNull();
+
+      if( accordionContainer )  {
+         expect( accordionContainer.getAttribute( CONTAINER_ATTR ) ).not.toBeNull();
+         expect( accordionContainer.getAttribute( ACCORDION_ITEM_CONTAINER_ATTR ) ).toBeNull();
+         expect( accordionContainer.getAttribute( ACCORDION_ATTR ) ).toBeNull();
+
+         expect( accordionContainer.querySelector( ".item" )?.getAttribute( ACCORDION_ITEM_CONTAINER_ATTR ) ).not.toBeNull();
+         expect( accordionContainer.querySelector( ".item .accordion" )?.getAttribute( ACCORDION_ATTR ) ).not.toBeNull();
+         expect( accordionContainer.querySelector( ".item h1 button" )?.getAttribute( TRIGGER_ATTR ) ).not.toBeNull();
+      }
+   });
+
+   describe( "checks if first accordion is expended or not", () => {
+      test( "browser", () => {
+         const accordion = document.querySelector( CONTAINER_SELECTOR + " " + ACCORDION_SELECTOR ) as HTMLElement | null;
+
+         expect( accordion?.getAttribute( COLLAPSE_ATTR ) ).toEqual( "false" );
+
+         if( accordion )  {
+            const triggers = getClosestTriggers( accordion );
+            triggers?.forEach( trigger => {
+               expect( trigger.classList.contains( "collapsed" ) ).toBeFalsy();
+            });
+         }
+      });
+
+      describe( "class", () => {
+         it( "checks if first accordion expended which is default behavior", () =>  {
+            new JscAccordion({
+               container: '#eg-1',
+               accordionItemContainer: '.item',
+               accordionEl: '.accordion',
+               button: '.item button',
+               containerIsAccordion: false,
+            });
+
+            const accordion = document.querySelector( "#eg-1 .item .accordion" ) as HTMLElement | null;
+
+            expect( accordion?.getAttribute( COLLAPSE_ATTR ) ).toEqual( "false" );
+
+            if( accordion )  {
+               const triggers = getClosestTriggers( accordion );
+               triggers?.forEach( trigger => {
+                  expect( trigger.classList.contains( "collapsed" ) ).toBeFalsy();
+               });
+            }
+         });
+
+         it( "checks if first accordion collapsed", () =>  {
+            new JscAccordion({
+               container: '#eg-1',
+               accordionItemContainer: '.item',
+               accordionEl: '.accordion',
+               firstElExpend: false,
+               button: '.item button',
+               containerIsAccordion: false,
+            });
+
+            const accordion = document.querySelector( "#eg-1 .item .accordion" ) as HTMLElement | null;
+
+            expect( accordion?.getAttribute( COLLAPSE_ATTR ) ).toEqual( "true" );
+
+            if( accordion )  {
+               const triggers = getClosestTriggers( accordion );
+               triggers?.forEach( trigger => {
+                  expect( trigger.classList.contains( "collapsed" ) ).toBeTruthy();
+               });
+            }
+         });
+      });
    });
 });
