@@ -1,5 +1,5 @@
 import { browserSetup } from "./browser";
-import { PREFIX, COLLAPSE_ATTR, CONTAINER_ATTR, ACCORDION_ITEM_CONTAINER_SELECTOR, ACCORDION_SELECTOR, TRIGGER_SELECTOR, ACCORDION_ITEM_CONTAINER_ATTR, initAccordion } from "./core";
+import { PREFIX, COLLAPSE_ATTR, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_SELECTOR, ACCORDION_SELECTOR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion } from "./core";
 import { accordionToggle, getClosestTriggers, getAllAssociateTriggers, Trigger } from "./trigger";
 
 interface AccordionInterface {
@@ -50,7 +50,7 @@ export default class JscAccordion implements AccordionInterface {
             this.accordionItemContainer = args.accordionItemContainer;
          } else {
             ///default
-            this.accordionItemContainer = ACCORDION_ITEM_CONTAINER_SELECTOR;
+            this.accordionItemContainer = ACCORDION_ITEM_WRAPPER_SELECTOR;
          }
 
          ///accordionEl can only be string if it's something else don't do anything,
@@ -137,11 +137,11 @@ export default class JscAccordion implements AccordionInterface {
          }
 
       } else {
-         const accordionItemsContainer = this.container.querySelectorAll( `${this.accordionItemContainer}` ) as NodeListOf<HTMLElement>;
+         const accordionItemWrappers = this.container.querySelectorAll( `${this.accordionItemContainer}` ) as NodeListOf<HTMLElement>;
          const accordions = this.container.querySelectorAll( `${this.accordionItemContainer} ${this.accordionEl}` ) as NodeListOf<HTMLElement>;
 
          ///add attribute to accordion item container
-         accordionItemsContainer.forEach( itemContainer =>  itemContainer.setAttribute( ACCORDION_ITEM_CONTAINER_ATTR, "true" ) );
+         accordionItemWrappers.forEach( itemContainer =>  itemContainer.setAttribute( ACCORDION_ITEM_WRAPPER_ATTR, "true" ) );
 
          ///init each accordion and trigger
          accordions.forEach( ( accordion, i ) => {

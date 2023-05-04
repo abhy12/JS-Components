@@ -1,6 +1,6 @@
 import JscAccordion from "@js-components/accordion/accordion";
 import { convertHTMLToAccordion } from "@js-components/accordion/browser";
-import { CONTAINER_ATTR, ACCORDION_ITEM_CONTAINER_ATTR, ACCORDION_ATTR, TRIGGER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_CONTAINER_SELECTOR, ACCORDION_SELECTOR, COLLAPSE_ATTR, CONTAINER_SELECTOR } from "@js-components/accordion/core";
+import { CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, ACCORDION_ATTR, TRIGGER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, ACCORDION_SELECTOR, COLLAPSE_ATTR, CONTAINER_SELECTOR } from "@js-components/accordion/core";
 import { getClosestTriggers } from "@js-components/accordion/trigger";
 
 const accordionStructure = `
@@ -41,7 +41,7 @@ describe( "JscAccordion", () => {
    });
 
    it( "convert all DOM accordion struture to working accordion", async () => {
-      const accordionItem = document.querySelectorAll( `#basic ${ACCORDION_ITEM_CONTAINER_SELECTOR}` )[1] as HTMLElement;
+      const accordionItem = document.querySelectorAll( `#basic ${ACCORDION_ITEM_WRAPPER_SELECTOR}` )[1] as HTMLElement;
       const accordion = accordionItem?.querySelector( ACCORDION_SELECTOR ) as HTMLElement;
       const trigger = accordionItem?.querySelector( TRIGGER_SELECTOR ) as HTMLElement;
 
@@ -67,10 +67,10 @@ describe( "JscAccordion", () => {
 
       if( accordionContainer )  {
          expect( accordionContainer.getAttribute( CONTAINER_ATTR ) ).not.toBeNull();
-         expect( accordionContainer.getAttribute( ACCORDION_ITEM_CONTAINER_ATTR ) ).toBeNull();
+         expect( accordionContainer.getAttribute( ACCORDION_ITEM_WRAPPER_ATTR ) ).toBeNull();
          expect( accordionContainer.getAttribute( ACCORDION_ATTR ) ).toBeNull();
 
-         expect( accordionContainer.querySelector( ".item" )?.getAttribute( ACCORDION_ITEM_CONTAINER_ATTR ) ).not.toBeNull();
+         expect( accordionContainer.querySelector( ".item" )?.getAttribute( ACCORDION_ITEM_WRAPPER_ATTR ) ).not.toBeNull();
          expect( accordionContainer.querySelector( ".item .accordion" )?.getAttribute( ACCORDION_ATTR ) ).not.toBeNull();
          expect( accordionContainer.querySelector( ".item h1 button" )?.getAttribute( TRIGGER_ATTR ) ).not.toBeNull();
       }

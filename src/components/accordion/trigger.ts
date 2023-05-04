@@ -1,4 +1,4 @@
-import { PREFIX, COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_CONTAINER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION } from "./core";
+import { PREFIX, COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION } from "./core";
 
 let toggleTimeoutId: ReturnType<typeof setTimeout>;
 
@@ -6,15 +6,15 @@ export type Trigger = null | HTMLElement[] | NodeListOf<HTMLElement>;
 
 ///get closest triggers inside accordion item container
 export function getClosestTriggers( accordion: HTMLElement, selector: string = TRIGGER_SELECTOR ): NodeListOf<HTMLElement> | null {
-   let accordionItemContainer: HTMLElement | null = accordion.closest( ACCORDION_ITEM_CONTAINER_SELECTOR );
+   let accordionItemWrapper: HTMLElement | null = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
 
    ///@deprecated
-   if( accordionItemContainer === null )  {
-      accordionItemContainer = accordion.closest( '.jsc-accordion' );
+   if( accordionItemWrapper === null )  {
+      accordionItemWrapper = accordion.closest( '.jsc-accordion' );
    }
 
-   if( accordionItemContainer instanceof HTMLElement )  {
-      return accordionItemContainer.querySelectorAll( selector );
+   if( accordionItemWrapper instanceof HTMLElement )  {
+      return accordionItemWrapper.querySelectorAll( selector );
    }
 
    return null;

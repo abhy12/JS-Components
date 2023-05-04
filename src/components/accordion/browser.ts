@@ -1,4 +1,4 @@
-import { ACCORDION_SELECTOR, ACCORDION_ITEM_CONTAINER_SELECTOR, CONTAINER_SELECTOR, CONTAINER_ATTR, DEP_ACCORDION_SELECTOR } from "./core";
+import { ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, CONTAINER_SELECTOR, CONTAINER_ATTR, DEP_ACCORDION_SELECTOR } from "./core";
 import { getClosestTriggers, getAllAssociateTriggers, accordionToggleEventHandler } from "./trigger";
 
 function addNewAttributeToDeprecatedAccordion()  {
@@ -25,10 +25,10 @@ export function convertHTMLToAccordion( JscAccordion: any )  {
    accordionContainers.forEach( container => {
       let trigger: null | NodeListOf<HTMLElement> | HTMLElement[] = null;
 
-      const accordionItemsWrapper = container.querySelectorAll( ACCORDION_ITEM_CONTAINER_SELECTOR ) as NodeListOf<HTMLElement>;
+      const accordionItemWrappers = container.querySelectorAll( ACCORDION_ITEM_WRAPPER_SELECTOR ) as NodeListOf<HTMLElement>;
 
-      if( accordionItemsWrapper.length > 0 )  {
-         accordionItemsWrapper.forEach( accordionItem => {
+      if( accordionItemWrappers.length > 0 )  {
+         accordionItemWrappers.forEach( accordionItem => {
             const accordion = accordionItem.querySelector( ACCORDION_SELECTOR );
 
             if( !( accordion instanceof HTMLElement ) )  return
@@ -53,7 +53,7 @@ export function convertHTMLToAccordion( JscAccordion: any )  {
 
       ///make container an accordion,
       ///doing this because of backward compatibility
-      else if( accordionItemsWrapper.length === 0 )  {
+      else if( accordionItemWrappers.length === 0 )  {
          const containerId = container.id;
 
          if( containerId === '' )  {
