@@ -120,7 +120,7 @@ const newAccordion = new JscAccordion({
 
 ```javascript
 {
-   ///Boolean
+   ///boolean
    ///default "true"
    ///for backward compatibility
    container: false
@@ -144,18 +144,33 @@ const newAccordion = new JscAccordion({
 </td>
 </tr>
 <tr>
-<td> accordion </td>
+<td> accordionEl </td>
 <td>
 
 ```javascript
 {
    ///string
    ///default [data-jsc-accordion]
-   item: ".accordion"
+   accordionEl: ".accordion"
 }
 ```
 <td>Selector which will be an accordion.</td>
 </td>
+</tr>
+<tr>
+<td> firstElExpend </td>
+<td>
+
+```javascript
+{
+   //boolean
+   //default "true"
+   firstElExpend: true
+}
+```
+</td>
+<td>Whether first accordion will be expended initially.
+Default value is true.</td>
 </tr>
 <tr>
 <td> button </td>
