@@ -174,46 +174,6 @@ const newAccordion = new JscAccordion({
 **Note**: you can use either multiple values of DOM query string selector or DOM elements nodes, not both at same time as button property value.</td>
 </tr>
 <tr>
-<td> collapsed </td>
-<td>
-   
-```javascript
-{
-   //boolean
-   //default "true"
-   collapsed: true
-}
-```
-</td>
-<td>Whether you want accordion to be collapsed or not, default is true.</td>
-</tr>
-<tr>
-<td> collapseText </td>
-<td>
-   
-```javascript
-{
-   //string
-   collapseText: "Expend"
-}
-```
-</td>
-<td>If accordion is collapsed then the text of button can be replace by this property value.</td>
-</tr>
-<tr>
-<td> expendText </td>
-<td>
-   
-```javascript
-{
-   //string
-   expendText: 'Collapse'
-}
-```
-</td>
-<td>If accordion is expended then the text of button can be replace by this property value.</td>
-</tr>
-<tr>
 <td> buttonPreventDefault </td>
 <td>
 
