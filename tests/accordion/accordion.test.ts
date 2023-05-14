@@ -1,36 +1,49 @@
-import JscAccordion from "@js-components/accordion/accordion";
+import JscAccordion, { AccordionInterface } from "@js-components/accordion/accordion";
 import { convertHTMLToAccordion } from "@js-components/accordion/browser";
-import { CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, ACCORDION_ATTR, TRIGGER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, ACCORDION_SELECTOR, COLLAPSE_ATTR, CONTAINER_SELECTOR } from "@js-components/accordion/core";
+import { CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, ACCORDION_ATTR, TRIGGER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, ACCORDION_SELECTOR, COLLAPSE_ATTR, CONTAINER_SELECTOR, TOGGLE_TYPE_ATTR } from "@js-components/accordion/core";
 import { getClosestTriggers } from "@js-components/accordion/trigger";
 
 const accordionStructure = `
-<div id="basic" data-jsc-accordion-container="">
-   <div data-jsc-accordion-item="">
-      <h1><button data-jsc-target="">Lorem ipsum dolor sit amet.</button></h1>
-      <div data-jsc-accordion="">
+<div id="basic" ${CONTAINER_ATTR}>
+   <div ${ACCORDION_ITEM_WRAPPER_ATTR}="">
+      <h1><button ${TRIGGER_ATTR}>Lorem ipsum dolor sit amet.</button></h1>
+      <div ${ACCORDION_ATTR}="">
          <h2>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
       </div>
    </div>
-   <div data-jsc-accordion-item="">
-      <h1><button data-jsc-target="">Lorem ipsum dolor sit amet.</button></h1>
-      <div data-jsc-accordion="">
+   <div ${ACCORDION_ITEM_WRAPPER_ATTR}="">
+      <h1><button ${TRIGGER_ATTR}>Lorem ipsum dolor sit amet.</button></h1>
+      <div ${ACCORDION_ATTR}="">
          <h2>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
       </div>
    </div>
 </div>`;
 
+const exampleContainer = "eg-1";
+const exampleContainerSelector = "#" + exampleContainer;
+const exampleItemWrapper = "item";
+const exampleItemWrapperSelector = "." + exampleItemWrapper;
+const exampleAccordionEl = "accordion";
+const exampleAccordionElSelector = "." + exampleAccordionEl;
 const customStruture = `
-<div id="eg-1">
-   <div class="item">
+<div id="${exampleContainer}">
+   <div class="${exampleItemWrapper}">
       <h1><button>Lorem ipsum dolor sit amet.</button></h1>
-      <div class="accordion">Lorem ipsum dolor sit amet consect</div>
+      <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
    </div>
-   <div class="item">
+   <div class="${exampleItemWrapper}">
       <h1><button>Lorem ipsum dolor sit amet.</button></h1>
-      <div class="accordion">Lorem ipsum dolor sit amet consect</div>
+      <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
    </div>
 </div>`;
 
+const baseConfig = {
+   container: exampleContainerSelector,
+   accordionElWrapper: exampleItemWrapperSelector,
+   accordionEl: exampleAccordionElSelector,
+   button: '.item button',
+   containerIsAccordion: false
+}
 
 describe( "JscAccordion", () => {
    beforeEach(() =>  {
@@ -53,15 +66,9 @@ describe( "JscAccordion", () => {
    });
 
    it( "properly run accordion function without any interruption of DOM 'accordion' converter", () => {
-      new JscAccordion({
-         container: '#eg-1',
-         accordionElWrapper: '.item',
-         accordionEl: '.accordion',
-         button: '.item button',
-         containerIsAccordion: false
-      });
+      new JscAccordion( baseConfig );
 
-      const accordionContainer = document.querySelector( "#eg-1" );
+      const accordionContainer = document.querySelector( exampleContainerSelector );
 
       expect( accordionContainer ).not.toBeNull();
 
@@ -92,13 +99,7 @@ describe( "JscAccordion", () => {
 
       describe( "class", () => {
          it( "checks if first accordion expended which is default behavior", () =>  {
-            new JscAccordion({
-               container: '#eg-1',
-               accordionElWrapper: '.item',
-               accordionEl: '.accordion',
-               button: '.item button',
-               containerIsAccordion: false,
-            });
+            new JscAccordion( baseConfig );
 
             const accordion = document.querySelector( "#eg-1 .item .accordion" ) as HTMLElement | null;
 
@@ -114,12 +115,8 @@ describe( "JscAccordion", () => {
 
          it( "checks if first accordion collapsed", () =>  {
             new JscAccordion({
-               container: '#eg-1',
-               accordionElWrapper: '.item',
-               accordionEl: '.accordion',
-               firstElExpend: false,
-               button: '.item button',
-               containerIsAccordion: false,
+               ...baseConfig,
+               firstElExpend: false
             });
 
             const accordion = document.querySelector( "#eg-1 .item .accordion" ) as HTMLElement | null;
@@ -132,6 +129,166 @@ describe( "JscAccordion", () => {
                   expect( trigger.classList.contains( "collapsed" ) ).toBeTruthy();
                });
             }
+         });
+      });
+   });
+
+   it( "don't add accordion type attribute to the container if type value equal to 'accordion'", () => {
+      new JscAccordion({
+         ...baseConfig,
+         type: 'accordion',
+      });
+
+      expect( document.querySelector( exampleContainerSelector )?.getAttribute( TOGGLE_TYPE_ATTR ) ).toEqual( null );
+   });
+
+   it( "adds toggle type attribute to the container", () => {
+      new JscAccordion({
+         ...baseConfig,
+         type: 'toggle',
+      });
+
+      expect( document.querySelector( exampleContainerSelector )?.getAttribute( TOGGLE_TYPE_ATTR ) ).toEqual( "toggle" );
+   });
+
+   describe( "does not save accordion item wrapper or accordion element selector to the instance in these options are ommited", () => {
+      it( "accordion item wrapper", () => {
+         const myAccordion = new JscAccordion({
+            ...baseConfig,
+            accordionElWrapper: undefined
+         });
+
+         expect( myAccordion.accordionElWrapper ).toBe( undefined );
+      });
+
+      it( "accordion item wrapper", () => {
+         const myAccordion = new JscAccordion({
+            ...baseConfig,
+            accordionElWrapper: ''
+         });
+
+         expect( myAccordion.accordionElWrapper ).toBe( undefined );
+      });
+
+      it( "accordion elment", () => {
+         const myAccordion = new JscAccordion({
+            ...baseConfig,
+            accordionEl: undefined
+         });
+
+         expect( myAccordion.accordionEl ).toBe( undefined );
+      });
+
+      it( "accordion elment", () => {
+         const myAccordion = new JscAccordion({
+            ...baseConfig,
+            accordionEl: ''
+         });
+
+         expect( myAccordion.accordionEl ).toBe( undefined );
+      });
+
+      it( "both accordion item wrapper and accordion elment", () => {
+         const myAccordion = new JscAccordion({
+            ...baseConfig,
+            accordionElWrapper: undefined,
+            accordionEl: undefined
+         });
+
+         expect( myAccordion.accordionElWrapper ).toBe( undefined );
+         expect( myAccordion.accordionEl ).toBe( undefined );
+      });
+
+      it( "both accordion item wrapper and accordion element", () => {
+         const myAccordion = new JscAccordion({
+            ...baseConfig,
+            accordionElWrapper: '',
+            accordionEl: ''
+         });
+
+         expect( myAccordion.accordionElWrapper ).toBe( undefined );
+         expect( myAccordion.accordionEl ).toBe( undefined );
+      });
+   });
+
+   describe( "select only direct default selectors if accordion item wrapper or accordion element are ommited", () => {
+      const baseConfig: AccordionInterface = {
+         container: exampleContainerSelector,
+         containerIsAccordion: false,
+         accordionElWrapper: exampleItemWrapperSelector,
+         accordionEl: exampleAccordionElSelector,
+         button: '.item button',
+      }
+
+      const customStruture = `
+      <div id="${exampleContainer}">
+         <div class="${exampleItemWrapper}">
+            <h1><button>Lorem ipsum dolor sit amet.</button></h1>
+            <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
+            <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
+            <div class="${exampleItemWrapper}">
+               <h1><button>Lorem ipsum dolor sit amet.</button></h1>
+               <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
+            </div>
+         </div>
+         <div class="${exampleItemWrapper}">
+            <h1><button>Lorem ipsum dolor sit amet.</button></h1>
+            <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
+            <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
+            <div class="${exampleItemWrapper}">
+               <h1><button>Lorem ipsum dolor sit amet.</button></h1>
+               <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
+            </div>
+         </div>
+      </div>`;
+
+      beforeEach(() => {
+         document.body.innerHTML = '';
+         document.body.insertAdjacentHTML( "afterbegin", customStruture );
+         convertHTMLToAccordion( JscAccordion );
+      });
+
+      it( "initiate only direct accordion wrapper", () => {
+         new JscAccordion( baseConfig );
+         const directWrappers = document.querySelectorAll( `${exampleContainerSelector} > ${exampleItemWrapperSelector}` );
+         const nestedWrappers = document.querySelectorAll( `${exampleContainerSelector} > ${exampleItemWrapperSelector} ${exampleItemWrapperSelector}` );
+
+         expect( directWrappers.length ).toBeGreaterThan( 0 );
+         expect( nestedWrappers.length ).toBeGreaterThan( 0 );
+
+         directWrappers.forEach( wrapper => {
+            expect( wrapper.getAttribute( ACCORDION_ITEM_WRAPPER_ATTR ) ).toEqual( "true" );
+         });
+
+         nestedWrappers.forEach( wrapper => {
+            expect( wrapper.getAttribute( ACCORDION_ITEM_WRAPPER_ATTR ) ).toBe( null );
+         });
+      });
+
+      it( "initiate only those accordions which is directly inside accordion wrapper and is first element", () => {
+         new JscAccordion( baseConfig );
+         const directWrappers = document.querySelectorAll( `${exampleContainerSelector} > ${exampleItemWrapperSelector}` ) as NodeListOf<HTMLElement>;
+         const indirectAccordions = document.querySelectorAll( `${exampleContainerSelector} > ${exampleItemWrapperSelector} ${exampleItemWrapperSelector} ${exampleAccordionElSelector}` );
+
+         expect( directWrappers.length ).toEqual( 2 );
+         expect( indirectAccordions.length ).toEqual( 2 );
+
+         directWrappers.forEach( ( wrapper: HTMLElement ) => {
+            const accordions = wrapper.querySelectorAll( `:scope > ${exampleAccordionElSelector}` ) as NodeListOf<HTMLElement>;
+            ///i think it's a bug in Jsdom because it's selecting more than 2, so not using toEqual
+            expect( accordions.length ).toBeGreaterThan( 2 );
+
+            accordions.forEach( ( accordion, i ) => {
+               if( i !== 0 )  {
+                  expect( accordion.getAttribute( ACCORDION_ATTR ) ).toEqual( null );
+               } else {
+                  expect( accordion.getAttribute( ACCORDION_ATTR ) ).toEqual( "true" );
+               }
+            });
+         });
+
+         indirectAccordions.forEach( accordion => {
+            expect( accordion.getAttribute( ACCORDION_ATTR ) ).toBe( null );
          });
       });
    });

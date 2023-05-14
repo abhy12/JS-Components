@@ -2,7 +2,6 @@ import JscAccordion from "@js-components/accordion/accordion";
 import { convertHTMLToAccordion } from "@js-components/accordion/browser";
 import { ACCORDION_SELECTOR, SELECT_TRIGGER_ACCORDION } from "@js-components/accordion/core";
 
-
 const accordionBrowserStructure = `
 <div id="basic" data-jsc-accordion-container="">
    <div data-jsc-accordion-item="">

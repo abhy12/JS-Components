@@ -46,6 +46,8 @@ export function convertHTMLToAccordion( JscAccordion: any )  {
             new JscAccordion({
                container: container,
                containerIsAccordion: false,
+               accordionElWrapper: ACCORDION_ITEM_WRAPPER_SELECTOR,
+               accordionEl: ACCORDION_SELECTOR,
                button: trigger,
             });
          });
@@ -64,6 +66,8 @@ export function convertHTMLToAccordion( JscAccordion: any )  {
 
          new JscAccordion({
             container: container,
+            accordionElWrapper: ACCORDION_ITEM_WRAPPER_SELECTOR,
+            accordionEl: ACCORDION_SELECTOR,
             button: trigger,
          });
       }
