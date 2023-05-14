@@ -5,7 +5,8 @@ import { accordionToggle, getClosestTriggers, getAllAssociateTriggers, Trigger }
 interface AccordionInterface {
    container: string | HTMLElement | null | undefined,
    containerIsAccordion?: boolean,
-   accordionItemContainer?: string,
+   item?: string | undefined;
+   accordionElWrapper?: string,
    accordionEl?: string,
    firstElExpend?: boolean,
    button: string | Element | HTMLElement | HTMLCollectionOf<HTMLElement> | NodeListOf<HTMLElement> | (HTMLElement | string)[] | undefined | null,
@@ -19,7 +20,9 @@ export default class JscAccordion implements AccordionInterface {
    container: HTMLElement;
    ///for backward compatibility
    containerIsAccordion: boolean | undefined;
-   accordionItemContainer: string;
+   ///deprecated
+   item?: string | undefined;
+   accordionElWrapper: string;
    accordionEl: string | undefined;
    collapsed: boolean;
    button: AccordionInterface['button'];
@@ -46,11 +49,11 @@ export default class JscAccordion implements AccordionInterface {
 
       if( this.containerIsAccordion === false )  {
          ///needs to be string for searching accordion item container
-         if( typeof args.accordionItemContainer === "string" )  {
-            this.accordionItemContainer = args.accordionItemContainer;
+         if( typeof args.accordionElWrapper === "string" )  {
+            this.accordionElWrapper = args.accordionElWrapper;
          } else {
             ///default
-            this.accordionItemContainer = ACCORDION_ITEM_WRAPPER_SELECTOR;
+            this.accordionElWrapper = ACCORDION_ITEM_WRAPPER_SELECTOR;
          }
 
          ///accordionEl can only be string if it's something else don't do anything,
@@ -137,8 +140,8 @@ export default class JscAccordion implements AccordionInterface {
          }
 
       } else {
-         const accordionItemWrappers = this.container.querySelectorAll( `${this.accordionItemContainer}` ) as NodeListOf<HTMLElement>;
-         const accordions = this.container.querySelectorAll( `${this.accordionItemContainer} ${this.accordionEl}` ) as NodeListOf<HTMLElement>;
+         const accordionItemWrappers = this.container.querySelectorAll( `${this.accordionElWrapper}` ) as NodeListOf<HTMLElement>;
+         const accordions = this.container.querySelectorAll( `${this.accordionElWrapper} ${this.accordionEl}` ) as NodeListOf<HTMLElement>;
 
          ///add attribute to accordion item container
          accordionItemWrappers.forEach( itemContainer =>  itemContainer.setAttribute( ACCORDION_ITEM_WRAPPER_ATTR, "true" ) );

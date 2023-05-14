@@ -55,7 +55,7 @@ describe( "JscAccordion", () => {
    it( "properly run accordion function without any interruption of DOM 'accordion' converter", () => {
       new JscAccordion({
          container: '#eg-1',
-         accordionItemContainer: '.item',
+         accordionElWrapper: '.item',
          accordionEl: '.accordion',
          button: '.item button',
          containerIsAccordion: false
@@ -94,7 +94,7 @@ describe( "JscAccordion", () => {
          it( "checks if first accordion expended which is default behavior", () =>  {
             new JscAccordion({
                container: '#eg-1',
-               accordionItemContainer: '.item',
+               accordionElWrapper: '.item',
                accordionEl: '.accordion',
                button: '.item button',
                containerIsAccordion: false,
@@ -115,7 +115,7 @@ describe( "JscAccordion", () => {
          it( "checks if first accordion collapsed", () =>  {
             new JscAccordion({
                container: '#eg-1',
-               accordionItemContainer: '.item',
+               accordionElWrapper: '.item',
                accordionEl: '.accordion',
                firstElExpend: false,
                button: '.item button',

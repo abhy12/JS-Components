@@ -58,7 +58,7 @@ describe( "accordion trigger", () => {
 
          new JscAccordion({
             container: '#eg-1',
-            accordionItemContainer: '.item',
+            accordionElWrapper: '.item',
             accordionEl: '.accordion',
             button: '.item button',
             containerIsAccordion: false
