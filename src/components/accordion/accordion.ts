@@ -67,9 +67,6 @@ export default class JscAccordion implements AccordionInterface {
          ///it has be a string for searching the trigger inside the container
          if( typeof args.button === "string" )  {
             this.button = args.button;
-         } else {
-            ///default
-            this.button = TRIGGER_SELECTOR;
          }
 
          if( args.firstElExpend === false )  this.firstElExpend = false;
@@ -149,9 +146,10 @@ export default class JscAccordion implements AccordionInterface {
 
          for( let i = 0; i < accordionElWrappers.length; i++ )  {
             const accordion = accordionElWrappers[i].querySelector( `:scope > ${this.accordionEl}` ) as HTMLElement | null;
-            ///don't have accordion so current element is not an accordion wrapper
+
             if( !accordion )  continue
 
+            ///if accordion is found have then this element is an accordion wrapper
             accordionElWrappers[i].setAttribute( ACCORDION_ITEM_WRAPPER_ATTR, "true" );
 
             ///// start initialization of accordion and trigger(s) /////
@@ -167,20 +165,21 @@ export default class JscAccordion implements AccordionInterface {
                collapsed = !this.firstElExpend;
             }
 
-            initAccordion( accordion, collapsed );
-
             let trigger: TriggerInterface = null;
 
             if( typeof this.button === "string" )  {
-               ///if set then find all the associate triggers
+               ///if ID is set then find all the associate triggers
                if( accordion.id )  {
-                  trigger = getAllAssociateTriggers( accordion, this.button );
+                  trigger = getAllAssociateTriggers( accordion, this.accordionElWrapper, this.button );
                }
                ///if not get all the closest triggers
                else {
-                  trigger = getClosestTriggers( accordion, this.button );
+                  trigger = getClosestTriggers( accordion, this.accordionElWrapper, this.button );
                }
             }
+
+            ///it has to be done after selecting trigger
+            initAccordion( accordion, collapsed );
 
             if( trigger )  {
                trigger.forEach( trigger =>  {

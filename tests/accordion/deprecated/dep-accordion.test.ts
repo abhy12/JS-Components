@@ -1,5 +1,5 @@
 import JscAccordion from "@js-components/accordion/accordion";
-import { DEP_ACCORDION_SELECTOR, CONTAINER_ATTR, ACCORDION_ATTR } from "@js-components/accordion/core";
+import { DEP_ACCORDION_SELECTOR, CONTAINER_ATTR, ACCORDION_ATTR, SELECT_TRIGGER_ACCORDION } from "@js-components/accordion/core";
 import { convertHTMLToAccordion } from "@js-components/accordion/browser";
 
 const depAccordionStructure = `
@@ -33,14 +33,12 @@ const depAccordionStructure = `
 describe( "JscAccordion DOM", () => {
    beforeEach(() =>  {
       document.body.innerHTML = '';
+      document.body.insertAdjacentHTML( "afterbegin", depAccordionStructure );
+      convertHTMLToAccordion( JscAccordion );
    });
 
    it( "convert all the exisiting HTML accordion structure to Accordion", () => {
-      document.body.insertAdjacentHTML( "afterbegin", depAccordionStructure );
-
       let allAccordionHasNewAttribute = false;
-
-      convertHTMLToAccordion( JscAccordion );
 
       const accordions = Array.from( document.querySelectorAll( DEP_ACCORDION_SELECTOR ) as NodeListOf<HTMLElement> );
 
@@ -54,5 +52,12 @@ describe( "JscAccordion DOM", () => {
       }
 
       expect( allAccordionHasNewAttribute ).toBe( true );
+   });
+
+   it( "checks every accordion has relative or associated triggers", () => {
+      const accordions = document.querySelectorAll( DEP_ACCORDION_SELECTOR ) as NodeListOf<HTMLElement>;
+      accordions.forEach( accordion => {
+         expect( document.querySelectorAll( `${SELECT_TRIGGER_ACCORDION( accordion.id )}` ).length ).toBeGreaterThan( 0 );
+      });
    });
 });

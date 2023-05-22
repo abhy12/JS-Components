@@ -25,14 +25,16 @@ const exampleItemWrapper = "item";
 const exampleItemWrapperSelector = "." + exampleItemWrapper;
 const exampleAccordionEl = "accordion";
 const exampleAccordionElSelector = "." + exampleAccordionEl;
+const exampleTrigger = "trigger";
+const exampleTriggerSelector = "." + exampleTrigger;
 const customStruture = `
 <div id="${exampleContainer}">
    <div class="${exampleItemWrapper}">
-      <h1><button>Lorem ipsum dolor sit amet.</button></h1>
+      <h1><button class="${exampleTrigger}">Lorem ipsum dolor sit amet.</button></h1>
       <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
    </div>
    <div class="${exampleItemWrapper}">
-      <h1><button>Lorem ipsum dolor sit amet.</button></h1>
+      <h1><button class="${exampleTrigger}">Lorem ipsum dolor sit amet.</button></h1>
       <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
    </div>
 </div>`;
@@ -41,7 +43,7 @@ const baseConfig = {
    container: exampleContainerSelector,
    accordionElWrapper: exampleItemWrapperSelector,
    accordionEl: exampleAccordionElSelector,
-   button: '.item button',
+   button: exampleTriggerSelector,
    containerIsAccordion: false
 }
 
@@ -211,32 +213,32 @@ describe( "JscAccordion", () => {
       });
    });
 
-   describe( "select only direct default selectors if accordion item wrapper or accordion element are ommited", () => {
+   describe( "select only direct or relative elements", () => {
       const baseConfig: AccordionInterface = {
          container: exampleContainerSelector,
          containerIsAccordion: false,
          accordionElWrapper: exampleItemWrapperSelector,
          accordionEl: exampleAccordionElSelector,
-         button: '.item button',
+         button: exampleTriggerSelector,
       }
 
       const customStruture = `
       <div id="${exampleContainer}">
          <div class="${exampleItemWrapper}">
-            <h1><button>Lorem ipsum dolor sit amet.</button></h1>
+            <h1><button class="${exampleTrigger}">Lorem ipsum dolor sit amet.</button></h1>
             <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
             <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
             <div class="${exampleItemWrapper}">
-               <h1><button>Lorem ipsum dolor sit amet.</button></h1>
+               <h1><button class="${exampleTrigger}">Lorem ipsum dolor sit amet.</button></h1>
                <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
             </div>
          </div>
          <div class="${exampleItemWrapper}">
-            <h1><button>Lorem ipsum dolor sit amet.</button></h1>
+            <h1><button class="${exampleTrigger}">Lorem ipsum dolor sit amet.</button></h1>
             <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
             <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
             <div class="${exampleItemWrapper}">
-               <h1><button>Lorem ipsum dolor sit amet.</button></h1>
+               <h1><button class="${exampleTrigger}">Lorem ipsum dolor sit amet.</button></h1>
                <div class="${exampleAccordionEl}">Lorem ipsum dolor sit amet consect</div>
             </div>
          </div>
@@ -289,6 +291,18 @@ describe( "JscAccordion", () => {
 
          indirectAccordions.forEach( accordion => {
             expect( accordion.getAttribute( ACCORDION_ATTR ) ).toBe( null );
+         });
+      });
+
+      it( "select all the triggers inside the accordion wrapper not in nested accordion", () => {
+         new JscAccordion( baseConfig );
+         const wrappers = document.querySelectorAll( `${exampleContainerSelector} > ${exampleItemWrapperSelector}` ) as NodeListOf<HTMLElement>;
+
+         wrappers.forEach( wrapper => {
+            const triggers = wrapper.querySelectorAll( TRIGGER_SELECTOR );
+            triggers.forEach( trigger => {
+               expect( trigger.closest( exampleItemWrapperSelector ) === wrapper ).toBe( true );
+            });
          });
       });
    });

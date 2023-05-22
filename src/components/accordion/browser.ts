@@ -1,4 +1,4 @@
-import { ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, CONTAINER_SELECTOR, CONTAINER_ATTR, DEP_ACCORDION_SELECTOR } from "./core";
+import { ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, CONTAINER_SELECTOR, CONTAINER_ATTR, DEP_ACCORDION_SELECTOR, TRIGGER_SELECTOR } from "./core";
 import { getClosestTriggers, getAllAssociateTriggers, accordionToggleEventHandler } from "./trigger";
 
 function addNewAttributeToDeprecatedAccordion()  {
@@ -28,33 +28,16 @@ export function convertHTMLToAccordion( JscAccordion: any )  {
       const accordionItemWrappers = container.querySelectorAll( ACCORDION_ITEM_WRAPPER_SELECTOR ) as NodeListOf<HTMLElement>;
 
       if( accordionItemWrappers.length > 0 )  {
-         accordionItemWrappers.forEach( accordionItem => {
-            const accordion = accordionItem.querySelector( ACCORDION_SELECTOR );
-
-            if( !( accordion instanceof HTMLElement ) )  return
-
-            const accordionId = accordion.id;
-
-            ///accordion don't have ID that means it don't have any
-            ///trigger outside the item container
-            if( accordionId === '' )  {
-               trigger = getClosestTriggers( accordion );
-            } else if( accordionId !== '' )  {
-               trigger = getAllAssociateTriggers( accordion );
-            }
-
-            new JscAccordion({
-               container: container,
-               containerIsAccordion: false,
-               accordionElWrapper: ACCORDION_ITEM_WRAPPER_SELECTOR,
-               accordionEl: ACCORDION_SELECTOR,
-               button: trigger,
-            });
+         new JscAccordion({
+            container: container,
+            containerIsAccordion: false,
+            accordionElWrapper: ACCORDION_ITEM_WRAPPER_SELECTOR,
+            accordionEl: ACCORDION_SELECTOR,
+            button: TRIGGER_SELECTOR,
          });
       }
-
       ///make container an accordion,
-      ///doing this because of backward compatibility
+      ///for backward compatibility
       else if( accordionItemWrappers.length === 0 )  {
          const containerId = container.id;
 
