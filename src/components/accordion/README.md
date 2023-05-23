@@ -88,10 +88,9 @@ And that's it eveything will be working fine now 🎉.
 ```javascript
 const newAccordion = new JscAccordion({	
    container: "#accordion-container",
-   ///for backward compatibility
-   containerIsAccordion: false,
-   item: ".item",
-   accordion: ".accordion",
+   containerIsAccordion: false,  ///for backward compatibility
+   accordionElWrapper: ".item",
+   accordionEl: ".accordion",
    button: ".trigger",
 });
 ```
@@ -107,6 +106,7 @@ const newAccordion = new JscAccordion({
    
 ```javascript
 {
+   ///(required*)
    ///CSS selector or DOM element
    container: ".accordion-container"
 }
@@ -120,27 +120,27 @@ const newAccordion = new JscAccordion({
 
 ```javascript
 {
+   ///(optional)
    ///boolean
    ///default "true"
-   ///for backward compatibility
-   container: false
+   containerIsAccordion: false
 }
 ```
 <td>If true then the whole container will be an Accordion.</td>
 </td>
 </tr>
 <tr>
-<td> item </td>
+<td> accordionElWrapper </td>
 <td>
 
 ```javascript
 {
+   ///(optional)
    ///string
-   ///default [data-jsc-accordion-item]
-   item: ".accordion-item"
+   accordionElWrapper: ".accordion-item"
 }
 ```
-<td>Accordion item wrapper selector. It has to wrap each accordion in it.</td>
+<td>The elements needs to direct children of the container. If ommited then all direct elements will be selected which has an accordion element in it.</td>
 </td>
 </tr>
 <tr>
@@ -149,12 +149,12 @@ const newAccordion = new JscAccordion({
 
 ```javascript
 {
+   ///(required*)
    ///string
-   ///default [data-jsc-accordion]
    accordionEl: ".accordion"
 }
 ```
-<td>Selector which will be an accordion.</td>
+<td>It needs to be direct child of the accordion wrapper.</td>
 </td>
 </tr>
 <tr>
