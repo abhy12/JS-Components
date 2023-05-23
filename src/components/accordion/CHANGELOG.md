@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.0] - 2023-05-23
+
+### Added
+
+- Toggle type options, which expand only one accordion at a time or multiple
+
+### Fixed
+
+- Selecting elements
+
+### Deprecated
+
+- ``item`` API with ``accordionElWrapper``
+
+
 ## 1.1.1 - 2023-05-01
 
 ### Fixed
@@ -20,3 +35,6 @@
 ### Added
 
 - Everything
+
+
+[1.2.0]: https://github.com/abhy12/JS-Components/compare/v1.1.1...v1.2.0
