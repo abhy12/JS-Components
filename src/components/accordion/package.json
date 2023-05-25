@@ -1,7 +1,7 @@
 {
   "name": "@js-components/accordion",
-  "version": "1.2.0",
-  "description": "Web Accordion library",
+  "version": "1.2.1",
+  "description": "Web Accordion Component",
   "main": "accordion.js",
   "repository": {
     "type": "git",
