@@ -43,5 +43,5 @@
 - Everything
 
 
-[1.2.1]: https://github.com/abhy12/JS-Components/compare/accordion...accordion-1.2.0/
-[1.2.0]: https://github.com/abhy12/JS-Components/compare/accordion...accordion-1.2.1
+[1.2.1]: https://github.com/abhy12/JS-Components/compare/accordion-1.2.0...accordion-1.2.1/
+[1.2.0]: https://github.com/abhy12/JS-Components/compare/accordion...accordion-1.2.0
