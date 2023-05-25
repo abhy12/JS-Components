@@ -11,12 +11,12 @@ You can use this Accordion in **two ways or both ways** at same time.
 ## Installation
 **CDN**
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@js-components/accordion@1/accordion.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@js-components/accordion@1.2/accordion.min.js"></script>
 ```
 
 **NPM**
 ```bash
-npm install @js-components/accordion@1
+npm install @js-components/accordion@2
 ```
 **Import Accordion**
 ```javascript
