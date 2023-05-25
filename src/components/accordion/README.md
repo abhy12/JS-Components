@@ -16,7 +16,7 @@ You can use this Accordion in **two ways or both ways** at same time.
 
 **NPM**
 ```bash
-npm install @js-components/accordion@2
+npm install @js-components/accordion@1.2
 ```
 **Import Accordion**
 ```javascript
