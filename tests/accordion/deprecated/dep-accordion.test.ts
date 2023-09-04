@@ -1,4 +1,4 @@
-import JscAccordion from "@js-components/accordion/accordion";
+import JscAccordion from "@js-components/accordion/";
 import { DEP_ACCORDION_SELECTOR, CONTAINER_ATTR, ACCORDION_ATTR, SELECT_TRIGGER_ACCORDION } from "@js-components/accordion/core";
 import { convertHTMLToAccordion } from "@js-components/accordion/browser";
 

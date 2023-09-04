@@ -456,6 +456,4 @@ export default class JscSlider  {
 })();
 
 
-//@ts-ignore
-///exposing class
-window.JscSlider = JscSlider
+

@@ -11,11 +11,11 @@ module.exports = ( _, argv ) => {
    return  {
       entry: {
          accordion: {
-            import: './src/components/accordion/accordion.ts',
+            import: './src/components/accordion/index.ts',
             filename: './accordion/accordion' + isMin + '.js'
          },
          slider: {
-            import: './src/components/slider/slider.ts',
+            import: './src/components/slider/index.ts',
             filename: './slider/slider' + isMin + '.js',
          },
       },

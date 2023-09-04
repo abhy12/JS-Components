@@ -1,4 +1,4 @@
-import JscAccordion, { AccordionInterface } from "@js-components/accordion/accordion";
+import JscAccordion, { AccordionInterface } from "@js-components/accordion/";
 import { convertHTMLToAccordion } from "@js-components/accordion/browser";
 import { CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, ACCORDION_ATTR, TRIGGER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, ACCORDION_SELECTOR, COLLAPSE_ATTR, CONTAINER_SELECTOR, TOGGLE_TYPE_ATTR } from "@js-components/accordion/core";
 import { getClosestTriggers } from "@js-components/accordion/trigger";

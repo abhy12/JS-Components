@@ -234,9 +234,3 @@ export default class JscAccordion implements AccordionInterface {
       toggleAccordion( this.container );
    }
 }
-
-//@ts-ignore
-///exposing class
-window.JscAccordion = JscAccordion
-
-browserSetup( JscAccordion );

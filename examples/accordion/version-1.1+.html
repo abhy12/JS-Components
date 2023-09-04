@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/ico" href="../favicon.ico">
+    <link rel="stylesheet" href="../main.css">
+    <title>Accordion 1.2+</title>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap');
+    *{
+        font-family: 'Playfair Display', serif;
+    }
+    html,
+    body{
+        height: 100%;
+        margin: 0;
+        max-width: 960px;
+        margin: 60px auto;
+    }
+    .accordion-btn{
+        position: relative;
+        padding-right: 25px;
+    }
+    .accordion-btn::after,
+    .accordion-btn::before{
+        content: '';
+        height: 2px;
+        width: 25px;
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        line-height: 0;
+        background: currentColor;
+        transition: all 300ms ease-in-out;
+    }
+    .accordion-btn:not(.collapsed)::before{
+        transform: translateY(-50%)  rotate(-90deg);
+    }
+    </style>
+</head>
+
+<body>
+    <div class="eg-cl-1 mb-4">
+        <h2 class="text-3xl mb-4 font-bold">Class Way</h2>
+        <div class="text-3xl bg-gray-300 text-black p-4 font-medium accordion-item-wrapper">
+            <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0">Lorem ipsum dolor sit amet.</button></h1>
+            <div class="text-gray-600 accordion">
+                <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+            </div>
+            <div class="text-3xl bg-gray-300 text-black p-4 font-medium accordion-item-wrapper">
+                <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0">Lorem ipsum dolor sit amet.</button></h1>
+                <div class="text-gray-600 accordion">
+                    <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+                </div>
+            </div>
+        </div>
+        <div class="text-3xl bg-green-300 text-black p-4 font-medium accordion-item-wrapper">
+            <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0">Lorem ipsum dolor sit amet.</button></h1>
+            <div class="text-neutral-700 accordion">
+                <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+            </div>
+        </div>
+        <div class="text-3xl bg-[#000] text-white p-4 font-medium accordion-item-wrapper">
+            <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0">Lorem ipsum dolor sit amet.</button></h1>
+            <div class="text-gray-300 accordion">
+                <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+            </div>
+        </div>
+        <div class="text-3xl bg-[#60b7e5] text-black p-4 font-medium accordion-item-wrapper">
+            <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0">Lorem ipsum dolor sit amet.</button></h1>
+            <div class="text-gray-300 accordion">
+                <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+            </div>
+        </div>
+        <div class="text-3xl bg-[#20f394] text-black p-4 font-medium accordion-item-wrapper">
+            <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0">Lorem ipsum dolor sit amet.</button></h1>
+            <div class="text-gray-700 accordion">
+                <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+            </div>
+        </div>
+    </div>
+    <div class="mb-4" data-jsc-accordion-container="">
+        <h2 class="text-3xl mb-4 font-bold">Prexist HTML Struture</h2>
+        <div class="text-3xl bg-gray-300 text-black p-4 font-medium" data-jsc-accordion-item="">
+            <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0" data-jsc-target="">Lorem ipsum dolor sit amet.</button></h1>
+            <div class="text-gray-600" data-jsc-accordion="">
+                <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+            </div>
+        </div>
+        <div class="text-3xl bg-green-300 text-black p-4 font-medium" data-jsc-accordion-item="">
+            <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0" data-jsc-target="">Lorem ipsum dolor sit amet.</button></h1>
+            <div class="text-neutral-700" data-jsc-accordion="" data-collapse="false">
+                <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+            </div>
+        </div>
+        <div class="text-3xl bg-[#000] text-white p-4 font-medium" data-jsc-accordion-item="">
+            <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0" data-jsc-target="">Lorem ipsum dolor sit amet.</button></h1>
+            <div class="text-gray-300" data-jsc-accordion="">
+                <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+            </div>
+        </div>
+        <div class="text-3xl bg-[#60b7e5] text-black p-4 font-medium" data-jsc-accordion-item="">
+            <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0" data-jsc-target="">Lorem ipsum dolor sit amet.</button></h1>
+            <div class="text-gray-300" data-jsc-accordion="">
+                <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+            </div>
+        </div>
+        <div class="text-3xl bg-[#20f394] text-black p-4 font-medium" data-jsc-accordion-item="">
+            <h1><button class="accordion-btn w-full bg-transparent border-0 text-left p-0" data-jsc-target="">Lorem ipsum dolor sit amet.</button></h1>
+            <div class="text-gray-700" data-jsc-accordion="">
+                <h2 class="mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
+            </div>
+        </div>
+    </div>
+    <!-- Accordion wrapper P.S not necessary if you are going to add an appropriate ID -->
+    <div class="jsc-accordion">
+        <h2 class="text-3xl mb-4 font-bold">Deprecated HTML Struture</h2>
+        <!-- Always wrap button to heading tag for accessibility -->
+        <h1><button data-jsc-target="ACCORDION-ID">Lorem ipsum dolor sit amet.</button></h1>
+        <!-- Accordion -->
+        <div id="ACCORDION-ID" data-jsc-accCon="true">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat enim cumque quibusdam porro minima neque consequuntur eum recusandae! Neque accusantium beatae inventore rem dignissimos pariatur quasi in! Cumque, nostrum possimus!
+        </div>
+    </div>
+
+    <!-- <script src="./accordion.js"></script> -->
+    <!-- <script src="../../src/components/accordion/accordion.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/@js-components/accordion@1/accordion.min.js"></script>
+    <script>
+        const newAccordion = new JscAccordion({
+            container: '.eg-cl-1',
+            containerIsAccordion: false,
+            accordionElWrapper: '.accordion-item-wrapper',
+            accordionEl: '.accordion',
+            button: '.accordion-item-wrapper button',
+            // type: 'toggle'
+        });
+        // console.log( newAccordion );
+    </script>
+</body>
+
+</html>
