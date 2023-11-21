@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/ico" href="../favicon.ico">
+    <link rel="stylesheet" href="../main.css">
+    <link rel="stylesheet" href="./accordion.css">
+    <title>Class Constructor Accordion</title>
+</head>
+
+<body>
+    <div class="eg-1 jsc-accordion-style">
+        <h1>Basic Example</h1>
+        <div class="accordion-item-wrapper">
+            <h2><button class="accordion-btn">Lorem ipsum dolor sit amet.</button></h2>
+            <div class="accordion">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quaerat ab inventore rem amet impedit in aut praesentium animi,
+                    facere nostrum eaque iste. Placeat, quo? Libero natus veniam incidunt, quaerat, quisquam sed vero similique ratione neque odit
+                    dicta laboriosam sequi dolores, est culpa delectus? Perferendis cum quia in tempora facere laborum?
+                </p>
+            </div>
+        </div>
+        <div class="accordion-item-wrapper">
+            <h2><button class="accordion-btn">Lorem ipsum dolor sit amet.</button></h2>
+            <div class="accordion">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quaerat ab inventore rem amet impedit in aut praesentium animi,
+                    facere nostrum eaque iste. Placeat, quo? Libero natus veniam incidunt, quaerat, quisquam sed vero similique ratione neque odit
+                    dicta laboriosam sequi dolores, est culpa delectus? Perferendis cum quia in tempora facere laborum?
+                </p>
+            </div>
+        </div>
+        <div class="accordion-item-wrapper">
+            <h2><button class="accordion-btn">Lorem ipsum dolor sit amet.</button></h2>
+            <div class="accordion">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quaerat ab inventore rem amet impedit in aut praesentium animi,
+                    facere nostrum eaque iste. Placeat, quo? Libero natus veniam incidunt, quaerat, quisquam sed vero similique ratione neque odit
+                    dicta laboriosam sequi dolores, est culpa delectus? Perferendis cum quia in tempora facere laborum?
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="eg-2 jsc-accordion-style">
+        <h1>Expend any Accordion at the same time.</h1>
+        <div class="accordion-item-wrapper">
+            <h2><button class="accordion-btn">Lorem ipsum dolor sit amet.</button></h2>
+            <div class="accordion">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quaerat ab inventore rem amet impedit in aut praesentium animi,
+                    facere nostrum eaque iste. Placeat, quo? Libero natus veniam incidunt, quaerat, quisquam sed vero similique ratione neque odit
+                    dicta laboriosam sequi dolores, est culpa delectus? Perferendis cum quia in tempora facere laborum?
+                </p>
+            </div>
+        </div>
+        <div class="accordion-item-wrapper">
+            <h2><button class="accordion-btn">Lorem ipsum dolor sit amet.</button></h2>
+            <div class="accordion">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quaerat ab inventore rem amet impedit in aut praesentium animi,
+                    facere nostrum eaque iste. Placeat, quo? Libero natus veniam incidunt, quaerat, quisquam sed vero similique ratione neque odit
+                    dicta laboriosam sequi dolores, est culpa delectus? Perferendis cum quia in tempora facere laborum?
+                </p>
+            </div>
+        </div>
+        <div class="accordion-item-wrapper">
+            <h2><button class="accordion-btn">Lorem ipsum dolor sit amet.</button></h2>
+            <div class="accordion">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quaerat ab inventore rem amet impedit in aut praesentium animi,
+                    facere nostrum eaque iste. Placeat, quo? Libero natus veniam incidunt, quaerat, quisquam sed vero similique ratione neque odit
+                    dicta laboriosam sequi dolores, est culpa delectus? Perferendis cum quia in tempora facere laborum?
+                </p>
+            </div>
+        </div>
+    </div>
+    <script src="./accordion.js"></script>
+    <!-- <script src="../../src/components/accordion/accordion.min.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@js-components/accordion@1/accordion.min.js"></script> -->
+    <script>
+        const eg1 = new JscAccordion({
+            container: '.eg-1',
+            containerIsAccordion: false,
+            accordionElWrapper: '.accordion-item-wrapper',
+            accordionEl: '.accordion',
+            button: '.accordion-item-wrapper button',
+        });
+
+        const eg2 = new JscAccordion({
+            container: '.eg-2',
+            containerIsAccordion: false,
+            accordionElWrapper: '.accordion-item-wrapper',
+            accordionEl: '.accordion',
+            button: '.accordion-item-wrapper button',
+            type: 'toggle',
+        });
+        // console.log( newAccordion );
+    </script>
+</body>
+
+</html>
