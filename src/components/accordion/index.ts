@@ -1,3 +1,4 @@
+import "./accordion.css";
 import JscAccordion from "./accordion";
 import { browserSetup } from "./browser";
 
