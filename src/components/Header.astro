@@ -1,9 +1,12 @@
+---
+const siteUrl = Astro.site ? Astro.site : "/";
+---
 <header class="bg-black/20">
    <nav class="max-w-5xl mx-auto p-2 flex justify-between text-lg">
-      <a href="./">JS Components</a>
+      <a href={siteUrl}>JS Components</a>
       <ul class="flex gap-3">
-         <li><a href="./accordion">Accordion</a></li>
-         <li><a href="./slider">Slider</a></li>
+         <li><a href=`${siteUrl}accordion`>Accordion</a></li>
+         <li><a href=`${siteUrl}slider`>Slider</a></li>
       </ul>
    </nav>
 </header>
