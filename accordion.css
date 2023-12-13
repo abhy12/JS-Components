@@ -1,0 +1,68 @@
+:root {
+  --jsc-accordion-icon-size: 20px;
+}
+
+h1 {
+  @apply text-xl md:text-3xl my-3 pb-2 md:pb-3 border-b-2 border-black/30;
+}
+
+[data-jsc-accordion-container].jsc-accordion-style [data-jsc-accordion-item] {
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, .1);
+}
+
+[data-jsc-accordion-container].jsc-accordion-style [data-jsc-accordion-item] .accordion-btn {
+  background-color: rgba(0, 0, 0, .1);
+  transition: height 300ms ease-in-out;
+  overflow: hidden;
+  padding: 8px 5px;
+}
+
+[data-jsc-accordion-container].jsc-accordion-style [data-jsc-accordion-item] .accordion-btn.collapsed {
+  background-color: transparent;
+}
+
+[data-jsc-accordion-container].jsc-accordion-style [data-jsc-accordion-item] .accordion-btn:not(.collapsed)::before {
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+[data-jsc-accordion-container].jsc-accordion-style [data-jsc-accordion-item] [data-jsc-accordion]>* {
+  padding: 8px;
+}
+
+[data-jsc-accordion-container].jsc-accordion-style>[data-jsc-accordion-item]:not(:first-child) {
+  margin-top: 8px;
+}
+
+[data-jsc-accordion-container].jsc-accordion-style [data-jsc-accordion-item] .accordion-btn {
+  width: 100%;
+  text-align: left;
+}
+
+/*
+    removing if any margin or padding is applied
+    to the accordion because it will get glitchy effect
+  */
+[data-jsc-accordion] {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+[data-jsc-accordion-container].jsc-accordion-style [data-jsc-accordion-item] .accordion-btn {
+  position: relative;
+  padding-right: calc(var(--jsc-accordion-icon-size, 0px) + 10px);
+}
+
+[data-jsc-accordion-container].jsc-accordion-style [data-jsc-accordion-item] .accordion-btn::after,
+[data-jsc-accordion-container].jsc-accordion-style [data-jsc-accordion-item] .accordion-btn::before {
+  content: '';
+  height: 2px;
+  width: var(--jsc-accordion-icon-size);
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  line-height: 0;
+  background: currentColor;
+  transition: all 300ms ease-in-out;
+}

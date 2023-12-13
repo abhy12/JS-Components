@@ -1,0 +1,21 @@
+{
+  "name": "astro-exp",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.3.2",
+    "@astrojs/tailwind": "^5.0.3",
+    "@js-components/accordion": "1.2",
+    "@js-components/slider": "^0.1.2",
+    "astro": "^4.0.4",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5.3.3"
+  }
+}
