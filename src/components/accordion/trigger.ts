@@ -32,7 +32,7 @@ export function getAllAssociateTriggers( accordion: HTMLElement, wrapperSelector
    const associateTriggers = document.querySelectorAll( SELECT_TRIGGER_ACCORDION( accordion.id ) ) as NodeListOf<HTMLElement>;
    let triggers:HTMLElement[] = [];
 
-   if( closestTriggers instanceof NodeList )  {
+   if( closestTriggers )  {
       closestTriggers.forEach( trigger => triggers.push( trigger ) );
    }
 
