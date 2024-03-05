@@ -1,5 +1,5 @@
 import { browserSetup } from "./browser";
-import { PREFIX, COLLAPSE_ATTR, CONTAINER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR } from "./core";
+import { PREFIX, COLLAPSE_ATTR, CONTAINER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR } from "./core";
 import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, TriggerInterface } from "./trigger";
 
 export interface AccordionInterface {
@@ -15,6 +15,7 @@ export interface AccordionInterface {
    expendText?: string | undefined,
    buttonPreventDefault?: boolean,
    type?: 'accordion' | 'toggle',
+   duration?: number,
 }
 
 export default class JscAccordion implements AccordionInterface {
@@ -32,6 +33,7 @@ export default class JscAccordion implements AccordionInterface {
    buttonPreventDefault: boolean = true;
    firstElExpend: boolean = true;
    type?: 'accordion' | 'toggle' = 'accordion';
+   duration: number;
 
    constructor( args: AccordionInterface )  {
       //return if falsy value
@@ -91,11 +93,26 @@ export default class JscAccordion implements AccordionInterface {
 
       if( args.buttonPreventDefault === false )  this.buttonPreventDefault = false;
 
+      /// duration
+      if( !args.duration ) {
+         const containerDuration = getTransitionDuration( this.container );
+
+         if( containerDuration ) {
+            this.duration = containerDuration;
+         } else {
+            this.duration = TRANSITION_TIME;
+         }
+
+      } else if( typeof args.duration === "number" && args.duration > 0 ) {
+         this.duration = args.duration;
+      }
+
       this._init();
    }
 
    _init()  {
       this.container.setAttribute( CONTAINER_ATTR, "true" );
+      this.container.setAttribute( DURATION_ATTR, '' + this.duration );
 
       ///make container an accordion
       if( this.containerIsAccordion !== false )  {

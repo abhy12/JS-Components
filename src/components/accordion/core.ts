@@ -3,7 +3,7 @@ import { assignNewUniqueIdToElement } from "./utilities";
 ///// CORE /////
 export const PREFIX: string = "jsc";
 export const EXTRA_TIME_FOR_TRANSITION = 60; //ms
-export const TRANSITION_TIME = 300 + EXTRA_TIME_FOR_TRANSITION; //ms
+export const TRANSITION_TIME = 300; //ms
 export const TRANSITION_STATE_CLASSNAME = 'colexping';
 
 //// ATTRIBUTE AND SELECTOR /////
@@ -18,6 +18,7 @@ export const TRIGGER_ATTR: string = `data-${PREFIX}-target`;
 export const TRIGGER_SELECTOR: string = `[${TRIGGER_ATTR}]`;
 export const COLLAPSE_ATTR: string = "data-collapse";
 export const TOGGLE_TYPE_ATTR = `data-accordion-${PREFIX}-type`;
+export const DURATION_ATTR = `data-${PREFIX}-duration`;
 
 export function SELECT_TRIGGER_ACCORDION( selector: string ): string  {
    return `[${TRIGGER_ATTR}="${selector}"]`;
@@ -48,6 +49,28 @@ export function initAccordion( accordion: HTMLElement, initCollapse: boolean = t
    if( initCollapse )  accordion.style.display = "none";
 }
 
+export function getContainer( accordion: HTMLElement ): HTMLElement | undefined {
+   const container = accordion.closest( CONTAINER_SELECTOR );
+
+   if( container instanceof HTMLElement ) return container
+
+   return undefined
+}
+
+export function getTransitionDuration( container: HTMLElement ): number | undefined {
+   let duration;
+
+   if( container ) {
+      const containerDuration = container.getAttribute( DURATION_ATTR );
+
+      if( containerDuration !== null && typeof +containerDuration === "number" && +containerDuration > 0 ) {
+         duration = +containerDuration;
+      }
+   }
+
+   return duration;
+}
+
 export function getRelativeAccordions( accordion: HTMLElement ): NodeListOf<HTMLElement> | null  {
    ///find closest container
    const accordionClosesetContainer = accordion.closest( CONTAINER_SELECTOR ) as HTMLElement | null;
@@ -72,17 +95,35 @@ export function beforeAccordionTransition( accordion: HTMLElement, callBackFunc?
    ///add a class to accordion to let the "state" know that it's transitioning
    accordion.classList.add( TRANSITION_STATE_CLASSNAME );
 
-   ///deducting for transition bug
-   accordion.style.transition = `height ${TRANSITION_TIME - EXTRA_TIME_FOR_TRANSITION}ms ease-in-out`;
+   let duration: number = TRANSITION_TIME;
+   const container = getContainer( accordion );
+
+   if( container ) {
+      const containerDuration = getTransitionDuration( container );
+      if( containerDuration ) duration = containerDuration;
+   }
+
+   accordion.style.transition = `height ${duration}ms ease-in-out`;
 }
 
 export function afterAccordionTransitionFinish( accordion: HTMLElement, callBackFunc?: Function )  {
+   let duration: number = TRANSITION_TIME;
+   const container = getContainer( accordion );
+
+   if( container ) {
+      const containerDuration = getTransitionDuration( container );
+      if( containerDuration ) duration = containerDuration;
+   }
+
+   // adding extra time because sometimes accordion will not transition properly
+   duration += EXTRA_TIME_FOR_TRANSITION;
+
    setTimeout( () =>  {
       if( typeof callBackFunc === 'function' )  callBackFunc();
       accordion.style.transition = '';
       accordion.style.height = '';
       accordion.classList.remove( TRANSITION_STATE_CLASSNAME );
-   }, TRANSITION_TIME );
+   }, duration );
 }
 
 export function isAccordionsTransitioning( accordion: HTMLElement ): boolean  {
