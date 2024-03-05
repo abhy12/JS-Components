@@ -1,51 +1,10 @@
 import JscAccordion from "@js-components/accordion/";
 import { convertHTMLToAccordion } from "@js-components/accordion/browser";
-import { ACCORDION_SELECTOR, SELECT_TRIGGER_ACCORDION, COLLAPSE_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR } from "@js-components/accordion/core";
+import { ACCORDION_SELECTOR, SELECT_TRIGGER_ACCORDION, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR } from "@js-components/accordion/core";
+import { accordionStructure, accordionContainerId, customStruture, customContainerId } from "./structure";
 
 jest.useFakeTimers();
 jest.spyOn( global, 'setTimeout' );
-
-const HtmlContainerId = 'basic-html-container',
-accordionBrowserStructure = `
-<div id="${HtmlContainerId}" data-jsc-accordion-container="">
-   <div data-jsc-accordion-item="">
-      <h1><button data-jsc-target="">Accordion #1</button></h1>
-      <div data-jsc-accordion="">
-         <h2>Accordion #1 Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
-      </div>
-   </div>
-   <div data-jsc-accordion-item="">
-      <h1><button data-jsc-target="">Accordion #2</button></h1>
-      <div data-jsc-accordion="">
-         <h2>Accordion #2 Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
-      </div>
-   </div>
-   <div data-jsc-accordion-item="">
-      <h1><button data-jsc-target="">Accordion #3</button></h1>
-      <div id="test-ac-btn" data-jsc-accordion="">
-         <h2>Accordion #3 Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, cupiditate sed. Illo itaque eligendi eius.</h2>
-      </div>
-   </div>
-   <button data-jsc-target="test-ac-btn">Click to Trigger last accordion</button>
-</div>`;
-
-const customStrutureContainerId = "eg-1",
-customStruture = `
-<div id="${customStrutureContainerId}">
-   <div class="item">
-      <h1><button>Lorem ipsum dolor sit amet.</button></h1>
-      <div class="accordion">Lorem ipsum dolor sit amet consect</div>
-   </div>
-   <div class="item">
-      <h1><button>Lorem ipsum dolor sit amet.</button></h1>
-      <div class="accordion">Lorem ipsum dolor sit amet consect</div>
-   </div>
-   <div class="item">
-      <h1><button>Lorem ipsum dolor sit amet.</button></h1>
-      <div id="test-ac" class="accordion">Lorem ipsum dolor sit amet consect</div>
-   </div>
-</div>
-`;
 
 describe( "accordion trigger", () => {
    beforeEach(() =>  {
@@ -54,7 +13,7 @@ describe( "accordion trigger", () => {
 
    describe( "checks if trigger has 'collapsed' class when accordion is collapsed initially", () => {
       test( "browser", () => {
-         document.body.insertAdjacentHTML( "afterbegin", accordionBrowserStructure );
+         document.body.insertAdjacentHTML( "afterbegin", accordionStructure );
 
          convertHTMLToAccordion( JscAccordion );
 
@@ -86,10 +45,10 @@ describe( "accordion trigger", () => {
 
    describe( "expending and collapsing", () => {
       test( "html", () => {
-         document.body.insertAdjacentHTML( "afterbegin", accordionBrowserStructure );
+         document.body.insertAdjacentHTML( "afterbegin", accordionStructure );
          convertHTMLToAccordion( JscAccordion );
 
-         document.getElementById( HtmlContainerId )?.querySelectorAll( ACCORDION_ITEM_WRAPPER_SELECTOR ).forEach( accordionItem => {
+         document.getElementById( accordionContainerId )?.querySelectorAll( ACCORDION_ITEM_WRAPPER_SELECTOR ).forEach( accordionItem => {
             if( !( accordionItem instanceof HTMLElement ) ) return
 
             const trigger = accordionItem.querySelector( TRIGGER_SELECTOR );
@@ -124,7 +83,7 @@ describe( "accordion trigger", () => {
             containerIsAccordion: false
          });
 
-         document.getElementById( customStrutureContainerId )?.querySelectorAll( ACCORDION_ITEM_WRAPPER_SELECTOR ).forEach( accordionItem => {
+         document.getElementById( customContainerId )?.querySelectorAll( ACCORDION_ITEM_WRAPPER_SELECTOR ).forEach( accordionItem => {
             if( !( accordionItem instanceof HTMLElement ) ) return
 
             const trigger = accordionItem.querySelector( TRIGGER_SELECTOR );
