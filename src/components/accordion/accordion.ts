@@ -1,5 +1,4 @@
-import { browserSetup } from "./browser";
-import { PREFIX, COLLAPSE_ATTR, CONTAINER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR } from "./core";
+import { PREFIX, COLLAPSE_ATTR, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR } from "./core";
 import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, TriggerInterface } from "./trigger";
 
 export interface AccordionInterface {
