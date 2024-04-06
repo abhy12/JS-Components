@@ -32,15 +32,25 @@ It will convert your existing HTML to working **"Accordion"**.
 ```html
 <div data-jsc-accordion-container=""><!-- container -->
    <div data-jsc-accordion-item=""><!-- accordion item wrapper -->
-      <h1><button data-jsc-target="">Toggle Accordion</button></h1><!-- trigger -->
+      <h1 class="accordion-header">
+         <button class="accordion-button" data-jsc-target="">Accordion Example #1</button><!-- trigger -->
+      </h1>
       <div data-jsc-accordion=""><!-- accordion -->
-         <!-- content here -->
+         <div class="accordion-content"><!-- content here -->
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+            industry's standard dummy text ever
+         </div>
       </div>
    </div>
-   <div data-jsc-accordion-item=""><!-- accordion item wrapper -->
-      <h1><button data-jsc-target="">Toggle Accordion</button></h1><!-- trigger -->
-      <div data-jsc-accordion=""><!-- accordion -->
-         <!-- content here -->
+   <div data-jsc-accordion-item="">
+      <h1 class="accordion-header">
+         <button class="accordion-button" data-jsc-target="">Accordion Example #2</button>
+      </h1>
+      <div data-jsc-accordion="">
+         <div class="accordion-content">
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+            industry's standard dummy text ever
+         </div>
       </div>
    </div>
 </div>
