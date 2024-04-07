@@ -10,10 +10,22 @@ You can use this Accordion in **two ways or both ways** at same time.
 
 ## Installation
 **CDN**
+
+JavaScript (add it to end of the body)
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@js-components/accordion@1.2/accordion.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@js-components/accordion@1.2.2/accordion.min.js"></script>
+```
+```
+https://cdn.jsdelivr.net/npm/@js-components/accordion@1.2.2/accordion.min.js
 ```
 
+CSS (optional) for basic styling
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@js-components/accordion@1.2.2/accordion.min.css">
+```
+```
+https://cdn.jsdelivr.net/npm/@js-components/accordion@1.2.2/accordion.min.css
+```
 **NPM**
 ```bash
 npm install @js-components/accordion@1.2
