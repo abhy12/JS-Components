@@ -225,4 +225,18 @@ Default value is true.</td>
 <td>Whether if you want the accordion 'button' to PreventDefault.
 Default value is true.</td>
 </tr>
+<tr>
+<td>duration</td>
+<td>
+
+```javascript
+{
+   //number
+   //default 300(ms)
+   duration: 500
+}
+```
+</td>
+<td>Duration of accordion transition in milisecond (ms).</td>
+</tr>
 </table>  
