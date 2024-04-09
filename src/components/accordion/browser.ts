@@ -57,10 +57,11 @@ export function convertHTMLToAccordion( JscAccordion: any )  {
    });
 }
 
-export function browserSetup( JscAccordion: any )  {
-   ///convert all exisiting accordion html to working accordion
-   convertHTMLToAccordion( JscAccordion );
-
-   ///add click event for accordion trigger to the body for event Bubbling
+export function addAccordionEvents() {
+   ///for event Bubbling
    document.body.addEventListener( "click", accordionToggleEventHandler );
+}
+
+export function removeAccordionEvents() {
+   document.body.removeEventListener( "click", accordionToggleEventHandler, false );
 }
