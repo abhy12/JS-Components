@@ -134,21 +134,15 @@ export function updateTriggers( accordionId: string, isAccordionCollapsed: boole
    const triggers = document.querySelectorAll( SELECT_TRIGGER_ACCORDION( accordionId ) ) as NodeListOf<HTMLElement>;
 
    triggers.forEach( ( trigger: HTMLElement ) =>  {
-      let collapseOrExpendText: undefined | string = undefined;
-
       if( isAccordionCollapsed )  {
-         collapseOrExpendText = trigger.dataset.collapsetext;
          trigger.setAttribute( 'aria-expanded', 'false' );
          trigger.classList.add( 'collapsed' );
       }
 
       if( !isAccordionCollapsed )  {
-         collapseOrExpendText = trigger.dataset.expendtext
          trigger.setAttribute( 'aria-expanded', 'true' );
          trigger.classList.remove( 'collapsed' );
       }
-
-      collapseOrExpendText !== undefined && ( trigger.innerText = collapseOrExpendText );
    });
 }
 
@@ -165,8 +159,6 @@ export function accordionToggleEventHandler( e: Event )  {
    const accordionId: null | string = trigger.getAttribute( TRIGGER_ATTR );
 
    if( !accordionId )  return
-
-   if( trigger.dataset[`${PREFIX}Preventdefault`] !== "false" )  e.preventDefault();
 
    const accordion = document.querySelector( `${ACCORDION_SELECTOR}#${accordionId}` );
 

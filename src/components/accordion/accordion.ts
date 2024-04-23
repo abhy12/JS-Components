@@ -10,9 +10,6 @@ export interface AccordionInterface {
    firstElExpend?: boolean,
    button: string | Element | HTMLElement | HTMLCollectionOf<HTMLElement> | NodeListOf<HTMLElement> | ( HTMLElement | string )[] | undefined | null,
    collapsed?: boolean,
-   collapseText?: string | undefined,
-   expendText?: string | undefined,
-   buttonPreventDefault?: boolean,
    type?: 'accordion' | 'toggle',
    duration?: number,
 }
@@ -27,8 +24,6 @@ export default class JscAccordion implements AccordionInterface {
    accordionEl: string | undefined;
    collapsed: boolean;
    button: AccordionInterface['button'];
-   collapseText: AccordionInterface['collapseText'];
-   expendText: string;
    buttonPreventDefault: boolean = true;
    firstElExpend: boolean = true;
    type?: 'accordion' | 'toggle' = 'accordion';
@@ -89,8 +84,6 @@ export default class JscAccordion implements AccordionInterface {
          ///default
          this.collapsed = true;
       }
-
-      if( args.buttonPreventDefault === false )  this.buttonPreventDefault = false;
 
       /// duration
       if( !args.duration ) {
@@ -211,29 +204,7 @@ export default class JscAccordion implements AccordionInterface {
       trigger.setAttribute( 'aria-expanded', `${!collapsed}` );
       trigger.setAttribute( 'aria-controls', targetId );
 
-      if( this.buttonPreventDefault === false )  trigger.setAttribute( `data-${PREFIX}-preventdefault`, 'false' );
-
-      let collapseOrExpendText: string | null;
-
-      if( collapsed )  {
-
-         if( this.collapseText !== undefined )  {
-            collapseOrExpendText = this.collapseText;
-         } else {
-            collapseOrExpendText = trigger.getAttribute( 'data-collapsetext' );
-         }
-
-         trigger.classList.add( 'collapsed' );
-
-      } else {
-         if( this.expendText !== undefined )  {
-            collapseOrExpendText = this.expendText;
-         } else {
-            collapseOrExpendText = trigger.getAttribute( 'data-expendtext' );
-         }
-      }
-
-      if( collapseOrExpendText !== null )  trigger.innerText = collapseOrExpendText;
+      if( collapsed ) trigger.classList.add( 'collapsed' );
    }
 
    enable()  {
