@@ -24,7 +24,6 @@ export default class JscAccordion implements AccordionInterface {
    accordionEl: string | undefined;
    collapsed: boolean;
    button: AccordionInterface['button'];
-   buttonPreventDefault: boolean = true;
    firstElExpend: boolean = true;
    type?: 'accordion' | 'toggle' = 'accordion';
    duration: number;
