@@ -1,5 +1,5 @@
 import { PREFIX, COLLAPSE_ATTR, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR } from "./core";
-import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, TriggerInterface } from "./trigger";
+import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, TriggerInterface, initTrigger } from "./trigger";
 
 export interface AccordionInterface {
    container: string | HTMLElement | null | undefined,
@@ -121,7 +121,7 @@ export default class JscAccordion implements AccordionInterface {
          }
 
          if( trigger )  {
-            this._initTrigger( trigger, containerId );
+            initTrigger( trigger, containerId, this.collapsed );
             return
          }
 
@@ -140,7 +140,7 @@ export default class JscAccordion implements AccordionInterface {
 
                if( !btn )  return
 
-               this._initTrigger( btn, containerId );
+               initTrigger( btn, containerId, this.collapsed );
             });
          }
       }
@@ -191,19 +191,11 @@ export default class JscAccordion implements AccordionInterface {
 
             if( trigger )  {
                trigger.forEach( trigger =>  {
-                  this._initTrigger( trigger, accordion.id, collapsed );
+                  initTrigger( trigger, accordion.id, collapsed );
                });
             }
          }
       }
-   }
-
-   _initTrigger( trigger: HTMLElement, targetId: string, collapsed: boolean = this.collapsed )  {
-      trigger.setAttribute( `data-${PREFIX}-target`, targetId );
-      trigger.setAttribute( 'aria-expanded', `${!collapsed}` );
-      trigger.setAttribute( 'aria-controls', targetId );
-
-      if( collapsed ) trigger.classList.add( 'collapsed' );
    }
 
    enable()  {

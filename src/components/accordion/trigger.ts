@@ -2,6 +2,14 @@ import { PREFIX, COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELEC
 
 export type TriggerInterface = null | HTMLElement[] | NodeListOf<HTMLElement>;
 
+export function initTrigger( trigger: HTMLElement, targetId: string, collapsed: boolean )  {
+   trigger.setAttribute( TRIGGER_ATTR, targetId );
+   trigger.setAttribute( 'aria-expanded', `${!collapsed}` );
+   trigger.setAttribute( 'aria-controls', targetId );
+
+   if( collapsed ) trigger.classList.add( 'collapsed' );
+}
+
 /**
  * get all the triggers relative to the accordion's wrapper but not inside nested wrapper
  */
