@@ -7,7 +7,6 @@ export const TRANSITION_TIME = 300; //ms
 export const TRANSITION_STATE_CLASSNAME = 'colexping';
 
 //// ATTRIBUTE AND SELECTOR /////
-export const DEP_ACCORDION_SELECTOR: string = `[data-${PREFIX}-acccon]`; ///@deprecated
 export const CONTAINER_ATTR: string = `data-${PREFIX}-accordion-container`;
 export const CONTAINER_SELECTOR: string = `[${CONTAINER_ATTR}]`;
 export const ACCORDION_ITEM_WRAPPER_ATTR: string = `data-${PREFIX}-accordion-item`;
@@ -38,8 +37,6 @@ export function initAccordion( accordion: HTMLElement, initCollapse: boolean = t
    ///accordion still be initilized but it will not work, user will have to use
    ///method "enable" or setting it's attribute value to anything other than 'false'.
    if( accordion.getAttribute( ACCORDION_ATTR ) !== "false" )  {
-      ///doing this because if any developer will see this attribute in a DOM
-      ///they will be curious that what will the "false" will do
       accordion.setAttribute( ACCORDION_ATTR, "true" );
    }
 

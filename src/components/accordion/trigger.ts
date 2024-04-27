@@ -16,12 +16,6 @@ export function initTrigger( trigger: HTMLElement, targetId: string, collapsed: 
 export function getClosestTriggers( accordion: HTMLElement, wrapperSelector: string = ACCORDION_ITEM_WRAPPER_SELECTOR, triggerSelector: string = TRIGGER_SELECTOR ): null | HTMLElement[] {
    let accordionElWrapper: HTMLElement | null = accordion.closest( wrapperSelector );
 
-   ///@deprecated
-   if( accordionElWrapper === null )  {
-      wrapperSelector = '.jsc-accordion';
-      accordionElWrapper = accordion.closest( wrapperSelector );
-   }
-
    if( accordionElWrapper instanceof HTMLElement )  {
       let triggers: HTMLElement[] = Array.from( accordionElWrapper.querySelectorAll( triggerSelector ) ) as HTMLElement[];
 
