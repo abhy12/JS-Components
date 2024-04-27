@@ -1,4 +1,4 @@
-import { PREFIX, COLLAPSE_ATTR, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR } from "./core";
+import { PREFIX, COLLAPSE_ATTR, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, ACCORDION_SELECTOR } from "./core";
 import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, TriggerInterface, initTrigger } from "./trigger";
 
 export interface AccordionInterface {
@@ -8,25 +8,23 @@ export interface AccordionInterface {
    accordionElWrapper?: string,
    accordionEl?: string,
    firstElExpend?: boolean,
-   button: string | Element | HTMLElement | HTMLCollectionOf<HTMLElement> | NodeListOf<HTMLElement> | ( HTMLElement | string )[] | undefined | null,
+   button?: string | Element | HTMLElement | HTMLCollectionOf<HTMLElement> | NodeListOf<HTMLElement> | ( HTMLElement | string )[] | undefined | null,
    collapsed?: boolean,
    type?: 'accordion' | 'toggle',
    duration?: number,
 }
 
 export default class JscAccordion implements AccordionInterface {
-   container: HTMLElement;
-   ///for backward compatibility
-   containerIsAccordion: boolean | undefined;
-   ///deprecated
-   item?: string | undefined;
-   accordionElWrapper: string;
-   accordionEl: string | undefined;
-   collapsed: boolean;
-   button: AccordionInterface['button'];
-   firstElExpend: boolean = true;
-   type?: 'accordion' | 'toggle' = 'accordion';
-   duration: number;
+   container: HTMLElement
+   containerIsAccordion ///for backward compatibility
+   item: string | undefined ///deprecated
+   collapsed = true
+   firstElExpend = true
+   accordionElWrapper
+   accordionEl
+   type: AccordionInterface['type'] = 'accordion';
+   button
+   duration
 
    constructor( args: AccordionInterface )  {
       //return if falsy value
@@ -52,10 +50,7 @@ export default class JscAccordion implements AccordionInterface {
             this.accordionElWrapper = args.accordionElWrapper;
          }
 
-         ///accordion element is required if container is not an accordion
-         if( typeof args.accordionEl !== "string" || args.accordionEl === '' )  {
-            return
-         } else {
+         if( typeof args.accordionEl === "string" && args.accordionEl !== '' ) {
             this.accordionEl = args.accordionEl;
          }
 
@@ -110,22 +105,21 @@ export default class JscAccordion implements AccordionInterface {
          initAccordion( this.container, this.collapsed );
          const containerId = this.container.id;
 
-         if( !this.button )  return
-
          let trigger: null | HTMLElement = null;
 
          if( this.button instanceof HTMLElement )  {
             trigger = this.button;
          } else if( typeof this.button === "string" )  {
             trigger = document.querySelector( this.button );
+         } else if( this.button === undefined ) {
+            trigger = document.querySelector( TRIGGER_SELECTOR );
          }
 
          if( trigger )  {
             initTrigger( trigger, containerId, this.collapsed );
-            return
          }
 
-         if( this.button instanceof HTMLCollection || this.button instanceof NodeList || this.button instanceof Array )  {
+         if( !trigger && ( this.button instanceof HTMLCollection || this.button instanceof NodeList || this.button instanceof Array ) )  {
             ///@ts-ignore
             const btns = Array.from( this.button );
 
@@ -145,17 +139,15 @@ export default class JscAccordion implements AccordionInterface {
          }
       }
       else if( this.containerIsAccordion === false )  {
-         ///required
-         if( !this.accordionEl )  return
-
+         const accordionEl = this.accordionEl ? this.accordionEl : ACCORDION_SELECTOR;
          ///if accordion wrapper is not defined then select every direct children of the container
          const wrapperSelector = this.accordionElWrapper ? this.accordionElWrapper : '*';
          const accordionElWrappers = this.container.querySelectorAll( `:scope > ${wrapperSelector}` ) as NodeListOf<HTMLElement>;
 
          for( let i = 0; i < accordionElWrappers.length; i++ )  {
-            const accordion = accordionElWrappers[i].querySelector( `:scope > ${this.accordionEl}` ) as HTMLElement | null;
+            const accordion = accordionElWrappers[i].querySelector( `:scope > ${accordionEl}` );
 
-            if( !accordion )  continue
+            if( !( accordion instanceof HTMLElement ) ) continue
 
             ///if accordion is found have then this element is an accordion wrapper
             accordionElWrappers[i].setAttribute( ACCORDION_ITEM_WRAPPER_ATTR, "true" );
@@ -179,11 +171,11 @@ export default class JscAccordion implements AccordionInterface {
                ///if ID is set then find all the associate triggers
                if( accordion.id )  {
                   trigger = getAllAssociateTriggers( accordion, this.accordionElWrapper, this.button );
-               }
-               ///if not get all the closest triggers
-               else {
+               } else if( !accordion.id ) {
                   trigger = getClosestTriggers( accordion, this.accordionElWrapper, this.button );
                }
+            } else if( !this.button ) {
+               trigger = getClosestTriggers( accordion );
             }
 
             ///it has to be done after selecting trigger

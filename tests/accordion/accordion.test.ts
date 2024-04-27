@@ -320,4 +320,48 @@ describe( "JscAccordion", () => {
          expect( getTransitionDuration( container ) ).toEqual( duration );
       }
    });
+
+   it( "checks if accordion is working in class constructor when only container arg is provided", () => {
+      const container = document.querySelector( customContainerSelector );
+      expect( container ).not.toBeFalsy();
+
+      if( !( container instanceof HTMLElement ) ) return
+
+      const accordionWrapper = container.querySelectorAll( customItemWrapperSelector );
+      // adding default attributes
+      accordionWrapper.forEach( item => {
+         item.setAttribute( 'data-jsc-accordion-item', '' );
+         const accordion = item.querySelector( customAccordionElSelector );
+         const trigger = item.querySelector( customTriggerSelector );
+
+         expect( accordion ).toBeTruthy();
+         expect( trigger ).toBeTruthy();
+
+         if( accordion instanceof HTMLElement && trigger instanceof HTMLElement ) {
+            accordion.setAttribute( 'data-jsc-accordion', '' );
+            trigger.setAttribute( 'data-jsc-target', '' );
+         }
+      });
+
+      new JscAccordion({
+         container: customContainerSelector,
+         containerIsAccordion: false
+      });
+
+      const trigger = document.querySelector( `${customContainerSelector} ${customTriggerSelector}` );
+
+      console.log( container.innerHTML );
+      expect( trigger ).not.toBeFalsy();
+
+      if( !( trigger instanceof HTMLElement ) ) return
+
+      let isCollapseContain = trigger.classList.contains( 'collapse' );
+      trigger.click();
+
+      if( isCollapseContain ) {
+         expect( trigger.classList.contains( 'collapsed' ) ).toBeFalsy();
+      } else {
+         expect( trigger.classList.contains( 'collapsed' ) ).toBeTruthy();
+      }
+   });
 });
