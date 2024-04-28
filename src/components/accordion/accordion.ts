@@ -73,13 +73,13 @@ export default class JscAccordion implements AccordionInterface {
       this.container.setAttribute( CONTAINER_ATTR, "true" );
       this.container.setAttribute( DURATION_ATTR, '' + this.duration );
 
-      const accordionEl = this.accordionEl ? this.accordionEl : ACCORDION_SELECTOR;
       ///if accordion wrapper is not defined then select every direct children of the container
       const wrapperSelector = this.accordionElWrapper ? this.accordionElWrapper : '*';
-      const accordionElWrappers = this.container.querySelectorAll( `:scope > ${wrapperSelector}` ) as NodeListOf<HTMLElement>;
+      const accordionElWrappers = this.container.querySelectorAll( `:scope > ${wrapperSelector}` );
+      const accordionElSelector = this.accordionEl ? this.accordionEl : ACCORDION_SELECTOR;
 
       for( let i = 0; i < accordionElWrappers.length; i++ ) {
-         const accordion = accordionElWrappers[i].querySelector( `:scope > ${accordionEl}` );
+         const accordion = accordionElWrappers[i].querySelector( `:scope > ${accordionElSelector}` );
 
          if( !( accordion instanceof HTMLElement ) ) continue
 
@@ -88,16 +88,7 @@ export default class JscAccordion implements AccordionInterface {
 
          ///// start initialization of accordion and trigger(s) /////
 
-         let collapsed: boolean;
-
-         if( i !== 0 )  {
-            collapsed = true;
-         }
-         else {
-            ///first element should be expended depending on the arguments
-            ///default true
-            collapsed = !this.firstElExpend;
-         }
+         let collapsed = !( i === 0 && this.firstElExpend !== false );
 
          let trigger: TriggerInterface = null;
 
