@@ -36,7 +36,6 @@ describe( "accordion trigger", () => {
             accordionElWrapper: '.item',
             accordionEl: '.accordion',
             button: '.item button',
-            containerIsAccordion: false
          });
 
          expect( document.querySelectorAll( "#eg-1 .item button" )[1]?.classList.contains( "collapsed" ) ).toBe( true );
@@ -80,7 +79,6 @@ describe( "accordion trigger", () => {
             accordionElWrapper: '.item',
             accordionEl: '.accordion',
             button: '.item button',
-            containerIsAccordion: false
          });
 
          document.getElementById( customContainerId )?.querySelectorAll( ACCORDION_ITEM_WRAPPER_SELECTOR ).forEach( accordionItem => {
