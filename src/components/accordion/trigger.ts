@@ -1,7 +1,5 @@
 import { PREFIX, COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionsTransitioning, beforeAccordionTransition, afterAccordionTransitionFinish, TOGGLE_TYPE_ATTR, CONTAINER_SELECTOR } from "./core";
 
-export type TriggerInterface = null | HTMLElement[] | NodeListOf<HTMLElement>;
-
 export function initTrigger( trigger: HTMLElement, targetId: string, collapsed: boolean )  {
    trigger.setAttribute( TRIGGER_ATTR, targetId );
    trigger.setAttribute( 'aria-expanded', `${!collapsed}` );
@@ -13,24 +11,18 @@ export function initTrigger( trigger: HTMLElement, targetId: string, collapsed: 
 /**
  * get all the triggers relative to the accordion's wrapper but not inside nested wrapper
  */
-export function getClosestTriggers( accordion: HTMLElement, wrapperSelector: string = ACCORDION_ITEM_WRAPPER_SELECTOR, triggerSelector: string = TRIGGER_SELECTOR ): null | HTMLElement[] {
-   let accordionElWrapper: HTMLElement | null = accordion.closest( wrapperSelector );
+export function getClosestTriggers( wrapperEl: HTMLElement, wrapperSelector: string = ACCORDION_ITEM_WRAPPER_SELECTOR, triggerSelector: string = TRIGGER_SELECTOR ): HTMLElement[] {
+   let triggers: HTMLElement[] = Array.from( wrapperEl.querySelectorAll( triggerSelector ) );
 
-   if( accordionElWrapper instanceof HTMLElement )  {
-      let triggers: HTMLElement[] = Array.from( accordionElWrapper.querySelectorAll( triggerSelector ) ) as HTMLElement[];
+   ///filter only those triggers which in an accordion wrapper not in nested wrapper
+   triggers = triggers.filter( trigger => trigger.closest( wrapperSelector ) === wrapperEl );
 
-      ///filter only those triggers which in an accordion wrapper not in nested wrapper
-      triggers = triggers.filter( trigger => trigger.closest( wrapperSelector ) === accordionElWrapper );
-
-      if( triggers.length > 0 )  return triggers
-   }
-
-   return null
+   return triggers
 }
 
 ///get closest triggers inside accordion item container and all over the DOM
-export function getAllAssociateTriggers( accordion: HTMLElement, wrapperSelector: string = ACCORDION_ITEM_WRAPPER_SELECTOR, triggerSelector: string = TRIGGER_SELECTOR ): HTMLElement[] {
-   const closestTriggers: TriggerInterface = getClosestTriggers( accordion, wrapperSelector, triggerSelector );
+export function getAllAssociateTriggers( accordion: HTMLElement, wrapperEl: HTMLElement, wrapperSelector: string = ACCORDION_ITEM_WRAPPER_SELECTOR, triggerSelector: string = TRIGGER_SELECTOR ): HTMLElement[] {
+   const closestTriggers = getClosestTriggers( wrapperEl, wrapperSelector, triggerSelector );
    const associateTriggers = document.querySelectorAll( SELECT_TRIGGER_ACCORDION( accordion.id ) ) as NodeListOf<HTMLElement>;
    let triggers:HTMLElement[] = [];
 

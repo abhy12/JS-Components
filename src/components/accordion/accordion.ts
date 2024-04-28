@@ -1,5 +1,5 @@
 import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR } from "./core";
-import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, TriggerInterface, initTrigger } from "./trigger";
+import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, initTrigger } from "./trigger";
 
 export interface AccordionInterface {
    container: string | HTMLElement | null | undefined,
@@ -79,28 +79,29 @@ export default class JscAccordion implements AccordionInterface {
       const accordionElSelector = this.accordionEl ? this.accordionEl : ACCORDION_SELECTOR;
 
       for( let i = 0; i < accordionElWrappers.length; i++ ) {
-         const accordion = accordionElWrappers[i].querySelector( `:scope > ${accordionElSelector}` );
+         const wrapper = accordionElWrappers[i];
+         const accordion = wrapper.querySelector( `:scope > ${accordionElSelector}` );
 
-         if( !( accordion instanceof HTMLElement ) ) continue
+         if( !( accordion instanceof HTMLElement ) || !( wrapper instanceof HTMLElement ) ) continue
 
          ///if accordion is found have then this element is an accordion wrapper
-         accordionElWrappers[i].setAttribute( ACCORDION_ITEM_WRAPPER_ATTR, "true" );
+         wrapper.setAttribute( ACCORDION_ITEM_WRAPPER_ATTR, "true" );
 
          ///// start initialization of accordion and trigger(s) /////
 
          let collapsed = !( i === 0 && this.firstElExpend !== false );
 
-         let trigger: TriggerInterface = null;
+         let trigger;
 
-         if( typeof this.button === "string" )  {
+         if( typeof this.button === "string" ) {
             ///if ID is set then find all the associate triggers
             if( accordion.id )  {
-               trigger = getAllAssociateTriggers( accordion, this.accordionElWrapper, this.button );
+               trigger = getAllAssociateTriggers( accordion, wrapper, wrapperSelector, this.button );
             } else if( !accordion.id ) {
-               trigger = getClosestTriggers( accordion, this.accordionElWrapper, this.button );
+               trigger = getClosestTriggers( wrapper, wrapperSelector, this.button );
             }
          } else if( !this.button ) {
-            trigger = getClosestTriggers( accordion );
+            trigger = getClosestTriggers( wrapper );
          }
 
          ///it has to be done after selecting trigger
