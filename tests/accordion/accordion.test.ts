@@ -347,12 +347,11 @@ describe( "JscAccordion", () => {
 
       const trigger = document.querySelector( `${customContainerSelector} ${customTriggerSelector}` );
 
-      console.log( container.innerHTML );
       expect( trigger ).not.toBeFalsy();
 
       if( !( trigger instanceof HTMLElement ) ) return
 
-      let isCollapseContain = trigger.classList.contains( 'collapse' );
+      let isCollapseContain = trigger.classList.contains( 'collapsed' );
       trigger.click();
 
       if( isCollapseContain ) {
