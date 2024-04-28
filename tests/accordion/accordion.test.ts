@@ -9,7 +9,6 @@ const baseConfig = {
    accordionElWrapper: customItemWrapperSelector,
    accordionEl: customAccordionElSelector,
    button: customTriggerSelector,
-   containerIsAccordion: false
 }
 
 describe( "JscAccordion", () => {
@@ -181,7 +180,6 @@ describe( "JscAccordion", () => {
    describe( "select only direct or relative elements", () => {
       const baseConfig: AccordionInterface = {
          container: customContainerSelector,
-         containerIsAccordion: false,
          accordionElWrapper: customItemWrapperSelector,
          accordionEl: customAccordionElSelector,
          button: customTriggerSelector,
@@ -345,7 +343,6 @@ describe( "JscAccordion", () => {
 
       new JscAccordion({
          container: customContainerSelector,
-         containerIsAccordion: false
       });
 
       const trigger = document.querySelector( `${customContainerSelector} ${customTriggerSelector}` );
