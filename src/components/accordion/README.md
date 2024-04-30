@@ -110,7 +110,6 @@ And that's it eveything will be working fine now 🎉.
 ```javascript
 const newAccordion = new JscAccordion({	
    container: "#accordion-container",
-   containerIsAccordion: false,  ///for backward compatibility
    accordionElWrapper: ".item",
    accordionEl: ".accordion",
    button: ".trigger",
@@ -137,28 +136,15 @@ const newAccordion = new JscAccordion({
 </td>
 </tr>  
 <tr>
-<td> containerIsAccordion </td>
-<td>
-
-```javascript
-{
-   ///(optional)
-   ///boolean
-   ///default "true"
-   containerIsAccordion: false
-}
-```
-<td>If true then the whole container will be an Accordion.</td>
-</td>
-</tr>
-<tr>
 <td> accordionElWrapper </td>
 <td>
 
 ```javascript
 {
+
    ///(optional)
    ///string
+   // default (all the direct elements of the container)
    accordionElWrapper: ".accordion-item"
 }
 ```
@@ -171,8 +157,9 @@ const newAccordion = new JscAccordion({
 
 ```javascript
 {
-   ///(required*)
+   ///(optional)
    ///string
+   // default '[data-jsc-accordion]'
    accordionEl: ".accordion"
 }
 ```
@@ -209,21 +196,6 @@ Default value is true.</td>
 <td>You can use single selector as a accordion toggle button or collection of HTML element in array or DOM elements nodes.  
 
 **Note**: you can use either multiple values of DOM query string selector or DOM elements nodes, not both at same time as button property value.</td>
-</tr>
-<tr>
-<td> buttonPreventDefault </td>
-<td>
-
-```javascript
-{
-   //boolean
-   //default "true"
-   buttonPreventDefault: true
-}
-```
-</td>
-<td>Whether if you want the accordion 'button' to PreventDefault.
-Default value is true.</td>
 </tr>
 <tr>
 <td>duration</td>
