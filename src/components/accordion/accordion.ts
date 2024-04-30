@@ -6,7 +6,7 @@ export interface AccordionInterface {
    accordionElWrapper?: string,
    accordionEl?: string,
    firstElExpend?: boolean,
-   button?: string | Element | HTMLElement | HTMLCollectionOf<HTMLElement> | NodeListOf<HTMLElement> | ( HTMLElement | string )[] | undefined | null,
+   button?: string,
    type?: 'accordion' | 'toggle',
    duration?: number,
 }
