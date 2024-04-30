@@ -1,7 +1,7 @@
 import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR } from "./core";
 import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, initTrigger } from "./trigger";
 
-export interface AccordionInterface {
+export interface AccordionArgs {
    container: string | HTMLElement | null | undefined,
    accordionElWrapper?: string,
    accordionEl?: string,
@@ -9,6 +9,11 @@ export interface AccordionInterface {
    button?: string,
    type?: 'accordion' | 'toggle',
    duration?: number,
+   initiated?: boolean
+}
+
+export interface AccordionInterface {
+   initiated: boolean,
 }
 
 export default class JscAccordion implements AccordionInterface {
@@ -17,12 +22,13 @@ export default class JscAccordion implements AccordionInterface {
    accordionEl
    firstElExpend = true
    button
-   type: AccordionInterface['type'] = 'accordion';
+   type: AccordionArgs['type'] = 'accordion';
    duration
+   initiated = false
 
-   constructor( args: AccordionInterface )  {
+   constructor( args: AccordionArgs )  {
       //return if falsy value
-      if( !args.container )  return
+      if( !args.container ) return this
 
       let tempContainer: Element | string | null = args.container;
 
@@ -31,8 +37,7 @@ export default class JscAccordion implements AccordionInterface {
       }
 
       ///don't do anything if container is not an element
-      if( !( tempContainer instanceof HTMLElement ) )  return
-
+      if( !( tempContainer instanceof HTMLElement ) ) return this
       this.container = tempContainer;
 
       if( typeof args.accordionElWrapper === "string" && args.accordionElWrapper !== '' ) {
@@ -67,6 +72,8 @@ export default class JscAccordion implements AccordionInterface {
       }
 
       this._init();
+
+      this.initiated = true
    }
 
    _init()  {

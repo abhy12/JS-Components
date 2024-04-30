@@ -1,4 +1,4 @@
-import JscAccordion, { AccordionInterface } from "@js-components/accordion/";
+import JscAccordion, { AccordionArgs } from "@js-components/accordion/";
 import { convertHTMLToAccordion } from "@js-components/accordion/browser";
 import { CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, ACCORDION_ATTR, TRIGGER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, ACCORDION_SELECTOR, COLLAPSE_ATTR, CONTAINER_SELECTOR, TOGGLE_TYPE_ATTR, getTransitionDuration, TRANSITION_TIME, DURATION_ATTR } from "@js-components/accordion/core";
 import { getClosestTriggers } from "@js-components/accordion/trigger";
@@ -178,7 +178,7 @@ describe( "JscAccordion", () => {
    });
 
    describe( "select only direct or relative elements", () => {
-      const baseConfig: AccordionInterface = {
+      const baseConfig: AccordionArgs = {
          container: customContainerSelector,
          accordionElWrapper: customItemWrapperSelector,
          accordionEl: customAccordionElSelector,
@@ -359,5 +359,18 @@ describe( "JscAccordion", () => {
       } else {
          expect( trigger.classList.contains( 'collapsed' ) ).toBeTruthy();
       }
+   });
+
+   test( 'if accordion initiated or not', () => {
+      const eg1 = new JscAccordion({
+         container: '#containerDoesNotExist',
+      });
+
+      const eg2 = new JscAccordion({
+         container: customContainerSelector,
+      });
+
+      expect( eg1.initiated ).toBeFalsy();
+      expect( eg2.initiated ).not.toBeFalsy();
    });
 });
