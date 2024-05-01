@@ -24,9 +24,6 @@ export function SELECT_TRIGGER_ACCORDION( selector: string ): string  {
 }
 
 export function initAccordion( accordion: HTMLElement, initCollapse: boolean = true )  {
-   ///user can overwrite this with "important" css rule
-   accordion.style.overflow = "hidden";
-
    ///set new id if the container don't have one
    ///for assigning this id to trigger target
    if( accordion.id === '' )  {

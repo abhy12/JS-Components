@@ -33,8 +33,9 @@
   padding: 10px;
 }
 
-/* removing it because it will have some glitchy effect */
 [data-jsc-accordion]{
   padding: 0!important;
   margin: 0!important;
+  /* removing these because it will have some glitchy effect */
+  overflow: hidden;
 }
