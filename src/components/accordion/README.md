@@ -80,7 +80,6 @@ And that's it eveything will be working fine now 🎉.
 ***Additional Notes:***
 * You can add `data-jsc-target` dataset with the value of accordion id to any button you like to trigger the accordion.
 * If you add `data-jsc-accordion=""` dataset with the value of "false" to the accordion then the accordion will not work.
-* Add ``data-jsc-preventDefault=""`` dataset to your trigger(s) or button(s) a value of false or empty if you want it to ``preventDefault`` or not.
 
 
 ## Class based way
