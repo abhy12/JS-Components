@@ -6,7 +6,7 @@
 [data-jsc-accordion-container] [data-jsc-accordion-item] .accordion-button{
   display: block;
   width: 100%;
-  text-align: left;
+  text-align: inherit;
   border-radius: 0;
   border: 0;
 }
@@ -34,8 +34,8 @@
 }
 
 [data-jsc-accordion]{
+  /* removing these because it will have some glitchy effect */
   padding: 0!important;
   margin: 0!important;
-  /* removing these because it will have some glitchy effect */
   overflow: hidden;
 }
