@@ -91,15 +91,25 @@ And that's it eveything will be working fine now 🎉.
 ```html
 <div id="accordion-container"><!-- container -->
    <div class="item"><!-- accordion item wrapper -->
-      <h1><button class="trigger">Toggle Accordion</button></h1><!-- trigger -->
+      <h1 class="accordion-header">
+         <button class="accordion-button trigger">Accordion Example #1</button><!-- trigger -->
+      </h1>
       <div class="accordion"><!-- accordion -->
-         <!-- content here -->
+         <div class="accordion-content"><!-- content here -->
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+            industry's standard dummy text ever
+         </div>
       </div>
    </div>
-   <div class="item"><!-- accordion item wrapper -->
-      <h1><button class="trigger">Toggle Accordion</button></h1><!-- trigger -->
-      <div class="accordion"><!-- accordion -->
-         <!-- content here -->
+   <div class="item">
+      <h1 class="accordion-header">
+         <button class="accordion-button trigger">Accordion Example #2</button>
+      </h1>
+      <div class="accordion">
+         <div class="accordion-content">
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+            industry's standard dummy text ever
+         </div>
       </div>
    </div>
 </div>
