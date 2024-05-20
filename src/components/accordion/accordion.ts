@@ -9,7 +9,6 @@ export interface AccordionArgs {
    button?: string,
    type?: 'accordion' | 'toggle',
    duration?: number,
-   initiated?: boolean
 }
 
 export interface AccordionInterface {
