@@ -1,7 +1,11 @@
-import { getContainer, ACCORDION_SELECTOR, DURATION_ATTR, getTransitionDuration } from "@js-components/accordion/core";
+import { getContainer, ACCORDION_SELECTOR, DURATION_ATTR, getTransitionDuration, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_SELECTOR } from "@js-components/accordion/core";
 import { accordionStructure, accordionContainerId } from "./structure";
+import { convertHTMLToAccordion, addAccordionEvents } from "@js-components/accordion/browser";
+import JscAccordion from "@js-components/accordion";
 
 describe( "functions", () => {
+   addAccordionEvents();
+
    beforeEach(() =>  {
       document.body.innerHTML = '';
    });
@@ -35,5 +39,31 @@ describe( "functions", () => {
          container.setAttribute( DURATION_ATTR, '' + testDuration );
          expect( getTransitionDuration( container ) ).toEqual( 200 );
       }
+   });
+
+   describe( "convertHTMLToAccordion", () => {
+      it( "convert all not init accordion html to working accordion", () => {
+         document.body.insertAdjacentHTML( "afterbegin", accordionStructure );
+         convertHTMLToAccordion( JscAccordion );
+
+         expect( document.getElementById( accordionContainerId )?.classList.contains( INIT_CLASSNAME ) ).toBeTruthy();
+      });
+
+      it( "will not convert already init accordion", () => {
+         document.body.insertAdjacentHTML( "afterbegin", accordionStructure );
+         const container = document.getElementById( accordionContainerId );
+         container?.classList.add( INIT_CLASSNAME );
+
+         convertHTMLToAccordion( JscAccordion );
+         const wrapper = container?.querySelector( ACCORDION_ITEM_WRAPPER_SELECTOR );
+         const trigger = wrapper?.querySelector( TRIGGER_SELECTOR ) as HTMLElement | null;
+         const accordion = wrapper?.querySelector( ACCORDION_SELECTOR ) as HTMLElement | null;
+
+         const isCollapsed = accordion?.dataset['collapse'];
+
+         trigger?.click();
+
+         expect( accordion?.dataset['collapse'] ).toEqual( isCollapsed );
+      });
    });
 });

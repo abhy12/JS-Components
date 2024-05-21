@@ -1,4 +1,4 @@
-import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR } from "./core";
+import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME } from "./core";
 import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, initTrigger } from "./trigger";
 
 export interface AccordionArgs {
@@ -71,13 +71,13 @@ export default class JscAccordion implements AccordionInterface {
       }
 
       this._init();
-
-      this.initiated = true
    }
 
    _init()  {
+      this.initiated = true;
       this.container.setAttribute( CONTAINER_ATTR, "true" );
       this.container.setAttribute( DURATION_ATTR, '' + this.duration );
+      this.container.classList.add( INIT_CLASSNAME );
 
       ///if accordion wrapper is not defined then select every direct children of the container
       const wrapperSelector = this.accordionElWrapper ? this.accordionElWrapper : '*';

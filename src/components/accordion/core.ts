@@ -5,6 +5,7 @@ export const PREFIX: string = "jsc";
 export const EXTRA_TIME_FOR_TRANSITION = 60; //ms
 export const TRANSITION_TIME = 300; //ms
 export const TRANSITION_STATE_CLASSNAME = 'colexping';
+export const INIT_CLASSNAME = `${PREFIX}-initialized`;
 
 //// ATTRIBUTE AND SELECTOR /////
 export const CONTAINER_ATTR: string = `data-${PREFIX}-accordion-container`;

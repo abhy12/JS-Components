@@ -1,6 +1,6 @@
 import JscAccordion, { AccordionArgs } from "@js-components/accordion/";
 import { convertHTMLToAccordion } from "@js-components/accordion/browser";
-import { CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, ACCORDION_ATTR, TRIGGER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, ACCORDION_SELECTOR, COLLAPSE_ATTR, CONTAINER_SELECTOR, TOGGLE_TYPE_ATTR, getTransitionDuration, TRANSITION_TIME, DURATION_ATTR } from "@js-components/accordion/core";
+import { CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, ACCORDION_ATTR, TRIGGER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, ACCORDION_SELECTOR, COLLAPSE_ATTR, CONTAINER_SELECTOR, TOGGLE_TYPE_ATTR, getTransitionDuration, TRANSITION_TIME, DURATION_ATTR, INIT_CLASSNAME } from "@js-components/accordion/core";
 import { getClosestTriggers } from "@js-components/accordion/trigger";
 import { customStruture, accordionStructure, accordionContainerId, customContainerSelector, customItemWrapperSelector, customAccordionEl, customAccordionElSelector, customTriggerSelector, customContainerId, customItemWrapper, customTrigger } from "./structure";
 
@@ -372,5 +372,26 @@ describe( "JscAccordion", () => {
 
       expect( eg1.initiated ).toBeFalsy();
       expect( eg2.initiated ).not.toBeFalsy();
+   });
+
+   describe( "checks if accordion container has initated class", () => {
+      test( "html", () => {
+         const accordionContainer = document.getElementById( accordionContainerId );
+
+         expect( accordionContainer?.classList.contains( INIT_CLASSNAME ) ).toBeTruthy();
+      });
+
+      test( "class", () => {
+         const container = document.querySelector( customContainerSelector );
+         expect( container ).toBeTruthy();
+         if( !( container instanceof HTMLElement ) ) return
+
+         new JscAccordion({
+            container: container,
+         });
+
+         expect( container?.classList.contains( INIT_CLASSNAME ) ).toBeTruthy();
+      });
+
    });
 });
