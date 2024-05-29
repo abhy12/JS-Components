@@ -1,7 +1,8 @@
-import { getContainer, ACCORDION_SELECTOR, DURATION_ATTR, getTransitionDuration, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_SELECTOR } from "@js-components/accordion/core";
-import { accordionStructure, accordionContainerId } from "./structure";
+import { getContainer, ACCORDION_SELECTOR, DURATION_ATTR, getTransitionDuration, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_SELECTOR, getRelativeAccordions } from "@js-components/accordion/core";
+import { accordionStructure, accordionContainerId, customStruture, customContainerSelector, customItemWrapperSelector, customAccordionElSelector } from "./structure";
 import { convertHTMLToAccordion, addAccordionEvents } from "@js-components/accordion/browser";
 import JscAccordion from "@js-components/accordion";
+import { baseConfig } from "./accordion.test";
 
 describe( "functions", () => {
    addAccordionEvents();
@@ -64,6 +65,43 @@ describe( "functions", () => {
          trigger?.click();
 
          expect( accordion?.dataset['collapse'] ).toEqual( isCollapsed );
+      });
+   });
+
+   describe( "getRelativeAccordions", () => {
+      test( "if all the accordions are relative", () => {
+         document.body.insertAdjacentHTML( "afterbegin", customStruture );
+         new JscAccordion( baseConfig );
+
+         const accordions: HTMLElement[]  = Array.from( document.querySelectorAll( `${customContainerSelector} > ${customItemWrapperSelector} > ${customAccordionElSelector}` ) );
+         const accordion = accordions[0];
+
+         expect( accordion instanceof HTMLElement ).toBeTruthy();
+
+         const relativeAccordion = getRelativeAccordions( accordion );
+         expect( relativeAccordion ).not.toBeNull();
+
+         relativeAccordion?.map( acc => {
+            expect( accordions.includes( acc ) ).toBe( true );
+         });
+      });
+
+
+      test( "if all the accordions are relative", () => {
+         document.body.insertAdjacentHTML( "afterbegin", customStruture );
+         new JscAccordion( baseConfig );
+
+         const accordions: HTMLElement[]  = Array.from( document.querySelectorAll( `${customContainerSelector} > ${customItemWrapperSelector} > ${customItemWrapperSelector} > ${customAccordionElSelector}` ) );
+         const accordion = accordions[0];
+
+         expect( accordion instanceof HTMLElement ).toBeTruthy();
+
+         const relativeAccordion = getRelativeAccordions( accordion );
+         expect( relativeAccordion ).not.toBeNull();
+
+         relativeAccordion?.map( acc => {
+            expect( accordions.includes( acc ) ).toBe( true );
+         });
       });
    });
 });

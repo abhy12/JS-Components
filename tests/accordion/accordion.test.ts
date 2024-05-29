@@ -4,7 +4,7 @@ import { CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, ACCORDION_ATTR, TRIGGER_AT
 import { getClosestTriggers } from "@js-components/accordion/trigger";
 import { customStruture, accordionStructure, accordionContainerId, customContainerSelector, customItemWrapperSelector, customAccordionEl, customAccordionElSelector, customTriggerSelector, customContainerId, customItemWrapper, customTrigger } from "./structure";
 
-const baseConfig = {
+export const baseConfig = {
    container: customContainerSelector,
    accordionElWrapper: customItemWrapperSelector,
    accordionEl: customAccordionElSelector,
@@ -177,7 +177,7 @@ describe( "JscAccordion", () => {
       });
    });
 
-   describe( "select only direct or relative elements", () => {
+   describe( "select all the accordion elements", () => {
       const baseConfig: AccordionArgs = {
          container: customContainerSelector,
          accordionElWrapper: customItemWrapperSelector,
@@ -205,6 +205,11 @@ describe( "JscAccordion", () => {
                <div class="${customAccordionEl}">Lorem ipsum dolor sit amet consect</div>
             </div>
          </div>
+         <div class="${customItemWrapper}"></div>
+         <div class="${customItemWrapper}">
+            <h1><button class="${customTrigger}">Lorem ipsum dolor sit amet.</button></h1>
+            <div class="${customAccordionEl}">Lorem ipsum dolor sit amet consect</div>
+         </div>
       </div>`;
 
       beforeEach(() => {
@@ -213,59 +218,52 @@ describe( "JscAccordion", () => {
          convertHTMLToAccordion( JscAccordion );
       });
 
-      it( "initiate only direct accordion wrapper", () => {
+      it( "initiate wrappers which has accordion", () => {
          new JscAccordion( baseConfig );
-         const directWrappers = document.querySelectorAll( `${customContainerSelector} > ${customItemWrapperSelector}` );
-         const nestedWrappers = document.querySelectorAll( `${customContainerSelector} > ${customItemWrapperSelector} ${customItemWrapperSelector}` );
+         const wrappers = document.querySelectorAll( `${customContainerSelector} ${customItemWrapperSelector}` );
 
-         expect( directWrappers.length ).toBeGreaterThan( 0 );
-         expect( nestedWrappers.length ).toBeGreaterThan( 0 );
+         wrappers.forEach( wrapper => {
+            const accordion = wrapper.querySelector( ACCORDION_SELECTOR );
 
-         directWrappers.forEach( wrapper => {
-            expect( wrapper.getAttribute( ACCORDION_ITEM_WRAPPER_ATTR ) ).toEqual( "true" );
-         });
-
-         nestedWrappers.forEach( wrapper => {
-            expect( wrapper.getAttribute( ACCORDION_ITEM_WRAPPER_ATTR ) ).toBe( null );
+            if( accordion ) {
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR ) === wrapper ).toBeTruthy();
+               expect( wrapper.getAttribute( ACCORDION_ITEM_WRAPPER_ATTR ) ).toEqual( "true" );
+            } else {
+               expect( wrapper.getAttribute( ACCORDION_ITEM_WRAPPER_ATTR ) ).toEqual( null );
+            }
          });
       });
 
-      it( "initiate only those accordions which is directly inside accordion wrapper and is first element", () => {
+      it( "initiate no more than one accordion inside one wrapper", () => {
          new JscAccordion( baseConfig );
-         const directWrappers = document.querySelectorAll( `${customContainerSelector} > ${customItemWrapperSelector}` ) as NodeListOf<HTMLElement>;
-         const indirectAccordions = document.querySelectorAll( `${customContainerSelector} > ${customItemWrapperSelector} ${customItemWrapperSelector} ${customAccordionElSelector}` );
+         const wrappers = document.querySelectorAll( `${customContainerSelector} ${customItemWrapperSelector}` );
 
-         expect( directWrappers.length ).toEqual( 2 );
-         expect( indirectAccordions.length ).toEqual( 2 );
-
-         directWrappers.forEach( ( wrapper: HTMLElement ) => {
-            const accordions = wrapper.querySelectorAll( `:scope > ${customAccordionElSelector}` ) as NodeListOf<HTMLElement>;
-            ///i think it's a bug in Jsdom because it's selecting more than 2, so not using toEqual
-            expect( accordions.length ).toBeGreaterThan( 2 );
+         wrappers.forEach( ( wrapper ) => {
+            const accordions = wrapper.querySelectorAll( customAccordionElSelector );
 
             accordions.forEach( ( accordion, i ) => {
-               if( i !== 0 )  {
-                  expect( accordion.getAttribute( ACCORDION_ATTR ) ).toEqual( null );
-               } else {
+               if( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR ) !== wrapper ) return
+
+               if( i === 0 ) {
                   expect( accordion.getAttribute( ACCORDION_ATTR ) ).toEqual( "true" );
+               } else {
+                  expect( accordion.getAttribute( ACCORDION_ATTR ) ).toEqual( null );
                }
             });
          });
-
-         indirectAccordions.forEach( accordion => {
-            expect( accordion.getAttribute( ACCORDION_ATTR ) ).toBe( null );
-         });
       });
 
-      it( "select all the triggers inside the accordion wrapper not in nested accordion", () => {
+      it( "select all the triggers which has accordion", () => {
          new JscAccordion( baseConfig );
-         const wrappers = document.querySelectorAll( `${customContainerSelector} > ${customItemWrapperSelector}` ) as NodeListOf<HTMLElement>;
+         const triggers = document.querySelectorAll( customTriggerSelector );
 
-         wrappers.forEach( wrapper => {
-            const triggers = wrapper.querySelectorAll( TRIGGER_SELECTOR );
-            triggers.forEach( trigger => {
-               expect( trigger.closest( customItemWrapperSelector ) === wrapper ).toBe( true );
-            });
+         triggers.forEach( trigger => {
+            const accordion = trigger.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.querySelector( ACCORDION_SELECTOR );
+
+            if( accordion ) {
+               expect( trigger.getAttribute( TRIGGER_ATTR ) ).not.toBeNull();
+               expect( accordion.id === trigger.getAttribute( TRIGGER_ATTR ) ).toBeTruthy();
+            }
          });
       });
    });
