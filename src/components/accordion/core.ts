@@ -66,15 +66,34 @@ export function getTransitionDuration( container: HTMLElement ): number | undefi
    return duration;
 }
 
-export function getRelativeAccordions( accordion: HTMLElement ): NodeListOf<HTMLElement> | null  {
-   ///find closest container
-   const accordionClosesetContainer = accordion.closest( CONTAINER_SELECTOR ) as HTMLElement | null;
+export function getRelativeAccordions( accordion: HTMLElement ): HTMLElement[] | null  {
+   const closestContainer = accordion.closest( CONTAINER_SELECTOR ) as HTMLElement | null;
 
-   if( accordionClosesetContainer )  {
-      return accordionClosesetContainer.querySelectorAll( `:scope > ${ACCORDION_ITEM_WRAPPER_SELECTOR} > ${ACCORDION_SELECTOR}` );
-   } else {
-      return null
+   if( closestContainer ) {
+      let parent = accordion.parentElement;
+
+      // try to find closest wrapper
+      while( parent?.getAttribute( ACCORDION_ITEM_WRAPPER_ATTR ) === null && parent !== closestContainer ) {
+         parent = accordion.parentElement;
+      }
+
+      if( parent && parent.parentElement ) {
+         const relativeAccordions: HTMLElement[] = [];
+         const wrappers = parent.parentElement.querySelectorAll( `:scope > ${ACCORDION_ITEM_WRAPPER_SELECTOR}` );
+
+         wrappers.forEach( wrapper => {
+            const accordion = wrapper.querySelector( ACCORDION_SELECTOR );
+
+            if( accordion && accordion instanceof HTMLElement && accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR ) === wrapper ) {
+               relativeAccordions.push( accordion );
+            }
+         });
+
+         return relativeAccordions
+      }
    }
+
+   return null
 }
 
 /**

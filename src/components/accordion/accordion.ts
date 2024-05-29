@@ -1,4 +1,4 @@
-import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME } from "./core";
+import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR } from "./core";
 import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, initTrigger } from "./trigger";
 
 export interface AccordionArgs {
@@ -79,28 +79,41 @@ export default class JscAccordion implements AccordionInterface {
       this.container.setAttribute( DURATION_ATTR, '' + this.duration );
       this.container.classList.add( INIT_CLASSNAME );
 
-      ///if accordion wrapper is not defined then select every direct children of the container
-      const wrapperSelector = this.accordionElWrapper ? this.accordionElWrapper : '*';
-      const accordionElWrappers = this.container.querySelectorAll( `:scope > ${wrapperSelector}` );
+      const wrapperSelector = this.accordionElWrapper ? this.accordionElWrapper : ACCORDION_ITEM_WRAPPER_SELECTOR;
+      const accordionElWrappers = this.container.querySelectorAll( wrapperSelector );
       const accordionElSelector = this.accordionEl ? this.accordionEl : ACCORDION_SELECTOR;
+      const accordionParents: HTMLElement[] = [];
 
       for( let i = 0; i < accordionElWrappers.length; i++ ) {
          const wrapper = accordionElWrappers[i];
-         const accordion = wrapper.querySelector( `:scope > ${accordionElSelector}` );
+         const accordion = wrapper.querySelector( accordionElSelector );
+         const closestWrapper = accordion?.closest( wrapperSelector );
 
-         if( !( accordion instanceof HTMLElement ) || !( wrapper instanceof HTMLElement ) ) continue
+         if(
+            //make sure the wrapper is not a nested wrapper
+            closestWrapper !== wrapper
+            || !( accordion instanceof HTMLElement )
+            || !( wrapper instanceof HTMLElement )
+            || !wrapper.parentElement
+         ) continue
 
          ///if accordion is found have then this element is an accordion wrapper
          wrapper.setAttribute( ACCORDION_ITEM_WRAPPER_ATTR, "true" );
 
          ///// start initialization of accordion and trigger(s) /////
 
-         let collapsed = !( i === 0 && this.firstElExpend !== false );
+         let collapsed: boolean;
+
+         if( i > 0 && accordionParents.includes( wrapper.parentElement ) ) {
+            collapsed = true;
+         } else {
+            accordionParents.push( wrapper.parentElement );
+            collapsed = this.firstElExpend === false;
+         }
 
          let trigger;
 
          if( typeof this.button === "string" ) {
-            ///if ID is set then find all the associate triggers
             if( accordion.id )  {
                trigger = getAllAssociateTriggers( accordion, wrapper, wrapperSelector, this.button );
             } else if( !accordion.id ) {
