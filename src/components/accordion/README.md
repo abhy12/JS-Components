@@ -153,11 +153,11 @@ const newAccordion = new JscAccordion({
 
    ///(optional)
    ///string
-   // default (all the direct elements of the container)
+   // default '[data-jsc-accordion-item]'
    accordionElWrapper: ".accordion-item"
 }
 ```
-<td>The elements needs to direct children of the container. If ommited then all direct elements will be selected which has an accordion element in it.</td>
+<td>Selector of accordion wrapper which wrap accordion and accordion trigger.</td>
 </td>
 </tr>
 <tr>
@@ -172,7 +172,7 @@ const newAccordion = new JscAccordion({
    accordionEl: ".accordion"
 }
 ```
-<td>It needs to be direct child of the accordion wrapper.</td>
+<td>It needs to be a child of the accordion wrapper.</td>
 </td>
 </tr>
 <tr>
