@@ -74,7 +74,7 @@ export function getRelativeAccordions( accordion: HTMLElement ): HTMLElement[] |
 
       // try to find closest wrapper
       while( parent?.getAttribute( ACCORDION_ITEM_WRAPPER_ATTR ) === null && parent !== closestContainer ) {
-         parent = accordion.parentElement;
+         parent = parent.parentElement;
       }
 
       if( parent && parent.parentElement ) {
