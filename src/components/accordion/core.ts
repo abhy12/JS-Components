@@ -19,6 +19,7 @@ export const TRIGGER_SELECTOR: string = `[${TRIGGER_ATTR}]`;
 export const COLLAPSE_ATTR: string = "data-collapse";
 export const TOGGLE_TYPE_ATTR = `data-accordion-${PREFIX}-type`;
 export const DURATION_ATTR = `data-${PREFIX}-duration`;
+export const DURATION_CSS_VAR = `--${PREFIX}-ac-duration`;
 
 export function SELECT_TRIGGER_ACCORDION( selector: string ): string  {
    return `[${TRIGGER_ATTR}="${selector}"]`;
