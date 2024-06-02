@@ -1,9 +1,10 @@
-import { PREFIX, COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionsTransitioning, beforeAccordionTransition, afterAccordionTransitionFinish, TOGGLE_TYPE_ATTR, CONTAINER_SELECTOR } from "./core";
+import { PREFIX, COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionsTransitioning, beforeAccordionTransition, afterAccordionTransitionFinish, TOGGLE_TYPE_ATTR, CONTAINER_SELECTOR, EXPENDED_CSS_CLASS, COLLAPSED_CSS_CLASS } from "./core";
 
 export function initTrigger( trigger: HTMLElement, targetId: string, collapsed: boolean )  {
    trigger.setAttribute( TRIGGER_ATTR, targetId );
    trigger.setAttribute( 'aria-expanded', `${!collapsed}` );
    trigger.setAttribute( 'aria-controls', targetId );
+   trigger.classList.add( collapsed ? COLLAPSED_CSS_CLASS : EXPENDED_CSS_CLASS );
 
    if( collapsed ) trigger.classList.add( 'collapsed' );
 }
@@ -54,6 +55,8 @@ export function collapseAccordion( accordion: HTMLElement )  {
    });
 
    accordion.setAttribute( COLLAPSE_ATTR, "true" );
+   accordion.classList.add( COLLAPSED_CSS_CLASS );
+   accordion.classList.remove( EXPENDED_CSS_CLASS );
 
    updateTriggers( accordion.id, true );
 }
@@ -88,6 +91,8 @@ export function expendAccordion( accordion: HTMLElement )  {
    afterAccordionTransitionFinish( accordion );
 
    accordion.setAttribute( COLLAPSE_ATTR, "false" );
+   accordion.classList.add( EXPENDED_CSS_CLASS );
+   accordion.classList.remove( COLLAPSED_CSS_CLASS );
 
    updateTriggers( accordion.id, false );
 }
@@ -125,17 +130,19 @@ export function toggleAccordion( accordion: HTMLElement )  {
 }
 
 export function updateTriggers( accordionId: string, isAccordionCollapsed: boolean )  {
-   const triggers = document.querySelectorAll( SELECT_TRIGGER_ACCORDION( accordionId ) ) as NodeListOf<HTMLElement>;
+   const triggers = document.querySelectorAll( SELECT_TRIGGER_ACCORDION( accordionId ) );
 
-   triggers.forEach( ( trigger: HTMLElement ) =>  {
-      if( isAccordionCollapsed )  {
+   triggers.forEach( ( trigger ) => {
+      if( isAccordionCollapsed ) {
          trigger.setAttribute( 'aria-expanded', 'false' );
-         trigger.classList.add( 'collapsed' );
+         trigger.classList.add( COLLAPSED_CSS_CLASS );
+         trigger.classList.remove( EXPENDED_CSS_CLASS );
       }
 
-      if( !isAccordionCollapsed )  {
+      if( !isAccordionCollapsed ) {
          trigger.setAttribute( 'aria-expanded', 'true' );
-         trigger.classList.remove( 'collapsed' );
+         trigger.classList.remove( COLLAPSED_CSS_CLASS );
+         trigger.classList.add( EXPENDED_CSS_CLASS );
       }
    });
 }

@@ -20,6 +20,8 @@ export const COLLAPSE_ATTR: string = "data-collapse";
 export const TOGGLE_TYPE_ATTR = `data-accordion-${PREFIX}-type`;
 export const DURATION_ATTR = `data-${PREFIX}-duration`;
 export const DURATION_CSS_VAR = `--${PREFIX}-ac-duration`;
+export const EXPENDED_CSS_CLASS = 'expended';
+export const COLLAPSED_CSS_CLASS = 'collapsed';
 
 export function SELECT_TRIGGER_ACCORDION( selector: string ): string  {
    return `[${TRIGGER_ATTR}="${selector}"]`;
@@ -40,6 +42,12 @@ export function initAccordion( accordion: HTMLElement, initCollapse: boolean = t
    }
 
    accordion.setAttribute( "data-collapse", initCollapse + "" );
+
+   if( initCollapse ) {
+      accordion.classList.add( COLLAPSED_CSS_CLASS );
+   } else if( initCollapse === false ) {
+      accordion.classList.add( EXPENDED_CSS_CLASS );
+   }
 
    ///hide the element if initial collapse is true
    if( initCollapse )  accordion.style.display = "none";
