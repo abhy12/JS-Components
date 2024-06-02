@@ -51,7 +51,26 @@ describe( "accordion trigger", () => {
             button: '.item button',
          });
 
-         expect( document.querySelectorAll( "#eg-1 .item button" )[1]?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBe( true );
+         const accordions = document.querySelectorAll( "#eg-1 .item button" );
+
+         accordions.forEach( accordion => {
+            const isCollapsed = accordion.getAttribute( COLLAPSE_ATTR );
+            const trigger = document.querySelector( SELECT_TRIGGER_ACCORDION( accordion.id ) );
+
+            if( isCollapsed === 'true' ) {
+               expect( accordion.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
+               expect( accordion.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
+
+               expect( trigger?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBe( true );
+               expect( trigger?.classList.contains( EXPENDED_CSS_CLASS ) ).toBe( false );
+            } else if( isCollapsed === 'false' ) {
+               expect( accordion.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
+               expect( accordion.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
+
+               expect( trigger?.classList.contains( EXPENDED_CSS_CLASS ) ).toBe( true );
+               expect( trigger?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBe( false );
+            }
+         });
       });
    });
 
@@ -117,13 +136,27 @@ describe( "accordion trigger", () => {
             expect( accordion ).not.toBeFalsy();
 
             if( trigger instanceof HTMLElement && accordion instanceof HTMLElement ) {
-               const isCollapsed = accordion.dataset['collapse'];
+               const isCollapsed = accordion.getAttribute( COLLAPSE_ATTR );
 
                trigger.click();
 
-               setTimeout(() => {
-                  expect( accordion.dataset['collapse'] ).not.toEqual( isCollapsed );
-               });
+               const afterClickedIsCollapsed = accordion.getAttribute( COLLAPSE_ATTR );
+
+               expect( afterClickedIsCollapsed ).not.toEqual( isCollapsed );
+
+               if( afterClickedIsCollapsed === 'true' ) {
+                  expect( accordion.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
+                  expect( accordion.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
+
+                  expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
+                  expect( trigger.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
+               } else if( afterClickedIsCollapsed === 'false' ) {
+                  expect( accordion.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
+                  expect( accordion.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
+
+                  expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
+                  expect( trigger.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
+               }
             }
 
             jest.runAllTimers();
