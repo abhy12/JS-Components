@@ -27,7 +27,7 @@ export default class JscAccordion implements AccordionInterface {
 
    constructor( args: AccordionArgs )  {
       //return if falsy value
-      if( !args.container ) return this
+      if( !args || !args.container ) return this
 
       let tempContainer: Element | string | null = args.container;
 
