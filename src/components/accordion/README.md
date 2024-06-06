@@ -196,15 +196,14 @@ Default value is true.</td>
    
 ```javascript
 {
-   ///CSS selector or DOM element(s) 
-   ///and [] of CSS selectors
-   button: "#acc-btn"
+   ///CSS selector
+   button: ".acc-btn"
 }
 ```
 </td>
-<td>You can use single selector as a accordion toggle button or collection of HTML element in array or DOM elements nodes.  
+<td>This will be the trigger/button which will expend/collapse relative accordion.
 
-**Note**: you can use either multiple values of DOM query string selector or DOM elements nodes, not both at same time as button property value.</td>
+**Note**: if you want to use custom trigger/button outside of the struture of accordion, just add any none taken CSS ID to accordion and after that place ```data-jsc-target="#ID"``` this dataset to any HTML element (eg. 'button' ) and replace the 'ID' value (just don't remove '#') with the one that you have added in the above accordion.</td>
 </tr>
 <tr>
 <td>duration</td>
