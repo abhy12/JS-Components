@@ -8,7 +8,7 @@ window.JscAccordion = JscAccordion
 
 addAccordionEvents();
 
-if( document.readyState === 'complete' ) {
+if( document.readyState === 'complete' || document.readyState === 'interactive' ) {
    convertHTMLToAccordion( JscAccordion );
 } else {
    document.addEventListener( 'DOMContentLoaded', () => {
