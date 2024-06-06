@@ -8,9 +8,13 @@ window.JscAccordion = JscAccordion
 
 addAccordionEvents();
 
-document.addEventListener( 'DOMContentLoaded', () => {
+if( document.readyState === 'complete' ) {
    convertHTMLToAccordion( JscAccordion );
-});
+} else {
+   document.addEventListener( 'DOMContentLoaded', () => {
+      convertHTMLToAccordion( JscAccordion );
+   });
+}
 
 export * from "./accordion"
 export default JscAccordion;
