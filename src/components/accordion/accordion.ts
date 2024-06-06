@@ -2,7 +2,7 @@ import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOG
 import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, initTrigger } from "./trigger";
 
 export interface AccordionArgs {
-   container: string | HTMLElement | null | undefined,
+   container: string | HTMLElement,
    accordionElWrapper?: string,
    accordionEl?: string,
    firstElExpend?: boolean,
@@ -47,7 +47,6 @@ export default class JscAccordion implements AccordionInterface {
          this.accordionEl = args.accordionEl;
       }
 
-      ///it has be a string for searching the trigger inside the container
       if( typeof args.button === "string" ) {
          this.button = args.button;
       }
@@ -57,17 +56,14 @@ export default class JscAccordion implements AccordionInterface {
       if( args.type === "toggle" ) this.container.setAttribute( TOGGLE_TYPE_ATTR, "toggle" );
 
       /// duration
-      if( !args.duration ) {
+      if( typeof args.duration === "number" && args.duration > 0 ) {
+         this.duration = args.duration;
+      } else {
          const containerDuration = getTransitionDuration( this.container );
 
-         if( containerDuration ) {
-            this.duration = containerDuration;
-         } else {
-            this.duration = TRANSITION_TIME;
-         }
+         this.duration = TRANSITION_TIME;
 
-      } else if( typeof args.duration === "number" && args.duration > 0 ) {
-         this.duration = args.duration;
+         if( containerDuration ) this.duration = containerDuration;
       }
 
       this._init();
