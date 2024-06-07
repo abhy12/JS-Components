@@ -1,4 +1,4 @@
-import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR } from "./core";
+import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, COLLAPSED_CSS_CLASS, EXPENDED_CSS_CLASS } from "./core";
 import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, initTrigger } from "./trigger";
 
 export interface AccordionArgs {
@@ -118,6 +118,12 @@ export default class JscAccordion implements AccordionInterface {
             }
          } else if( !this.button ) {
             trigger = getClosestTriggers( wrapper );
+         }
+
+         if( collapsed ) {
+            wrapper.classList.add( COLLAPSED_CSS_CLASS );
+         } else if( collapsed === false ) {
+            wrapper.classList.add( EXPENDED_CSS_CLASS );
          }
 
          ///it has to be done after selecting trigger

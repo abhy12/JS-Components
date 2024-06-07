@@ -54,9 +54,14 @@ export function collapseAccordion( accordion: HTMLElement )  {
       accordion.style.display = 'none';
    });
 
+
+   const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
+   if( wrapper ) {
+      wrapper.classList.add( COLLAPSED_CSS_CLASS );
+      wrapper.classList.remove( EXPENDED_CSS_CLASS );
+   }
+
    accordion.setAttribute( COLLAPSE_ATTR, "true" );
-   accordion.classList.add( COLLAPSED_CSS_CLASS );
-   accordion.classList.remove( EXPENDED_CSS_CLASS );
 
    updateTriggers( accordion.id, true );
 }
@@ -90,9 +95,13 @@ export function expendAccordion( accordion: HTMLElement )  {
 
    afterAccordionTransitionFinish( accordion );
 
+   const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
+   if( wrapper ) {
+      wrapper.classList.add( EXPENDED_CSS_CLASS );
+      wrapper.classList.remove( COLLAPSED_CSS_CLASS );
+   }
+
    accordion.setAttribute( COLLAPSE_ATTR, "false" );
-   accordion.classList.add( EXPENDED_CSS_CLASS );
-   accordion.classList.remove( COLLAPSED_CSS_CLASS );
 
    updateTriggers( accordion.id, false );
 }

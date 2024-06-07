@@ -26,14 +26,14 @@ describe( "accordion trigger", () => {
             const trigger = document.querySelector( SELECT_TRIGGER_ACCORDION( accordion.id ) );
 
             if( isCollapsed === 'true' ) {
-               expect( accordion.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
-               expect( accordion.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
 
                expect( trigger?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBe( true );
                expect( trigger?.classList.contains( EXPENDED_CSS_CLASS ) ).toBe( false );
             } else if( isCollapsed === 'false' ) {
-               expect( accordion.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
-               expect( accordion.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
 
                expect( trigger?.classList.contains( EXPENDED_CSS_CLASS ) ).toBe( true );
                expect( trigger?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBe( false );
@@ -58,14 +58,14 @@ describe( "accordion trigger", () => {
             const trigger = document.querySelector( SELECT_TRIGGER_ACCORDION( accordion.id ) );
 
             if( isCollapsed === 'true' ) {
-               expect( accordion.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
-               expect( accordion.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
 
                expect( trigger?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBe( true );
                expect( trigger?.classList.contains( EXPENDED_CSS_CLASS ) ).toBe( false );
             } else if( isCollapsed === 'false' ) {
-               expect( accordion.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
-               expect( accordion.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
 
                expect( trigger?.classList.contains( EXPENDED_CSS_CLASS ) ).toBe( true );
                expect( trigger?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBe( false );
@@ -97,14 +97,14 @@ describe( "accordion trigger", () => {
                expect( afterClickedIsCollapsed ).not.toEqual( isCollapsed );
 
                if( afterClickedIsCollapsed === 'true' ) {
-                  expect( accordion.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
-                  expect( accordion.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
 
                   expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
                   expect( trigger.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
                } else if( afterClickedIsCollapsed === 'false' ) {
-                  expect( accordion.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
-                  expect( accordion.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
 
                   expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
                   expect( trigger.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
@@ -145,14 +145,14 @@ describe( "accordion trigger", () => {
                expect( afterClickedIsCollapsed ).not.toEqual( isCollapsed );
 
                if( afterClickedIsCollapsed === 'true' ) {
-                  expect( accordion.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
-                  expect( accordion.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
 
                   expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
                   expect( trigger.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
                } else if( afterClickedIsCollapsed === 'false' ) {
-                  expect( accordion.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
-                  expect( accordion.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
 
                   expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
                   expect( trigger.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();

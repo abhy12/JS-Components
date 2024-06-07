@@ -43,12 +43,6 @@ export function initAccordion( accordion: HTMLElement, initCollapse: boolean = t
 
    accordion.setAttribute( "data-collapse", initCollapse + "" );
 
-   if( initCollapse ) {
-      accordion.classList.add( COLLAPSED_CSS_CLASS );
-   } else if( initCollapse === false ) {
-      accordion.classList.add( EXPENDED_CSS_CLASS );
-   }
-
    ///hide the element if initial collapse is true
    if( initCollapse )  accordion.style.display = "none";
 }
