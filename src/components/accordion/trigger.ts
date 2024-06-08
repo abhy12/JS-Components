@@ -172,7 +172,7 @@ export function accordionToggleEventHandler( e: Event )  {
 
    const accordion = document.querySelector( `${ACCORDION_SELECTOR}#${accordionId}` );
 
-   if( !( accordion instanceof HTMLElement ) || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || isAccordionsTransitioning( accordion ) )  return
+   if( !( accordion instanceof HTMLElement ) || isAccordionsTransitioning( accordion ) )  return
 
    toggleAccordion( accordion );
 }
