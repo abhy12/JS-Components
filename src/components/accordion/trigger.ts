@@ -39,7 +39,7 @@ export function getAllAssociateTriggers( accordion: HTMLElement, wrapperEl: HTML
 }
 
 export function collapseAccordion( accordion: HTMLElement )  {
-   if( isAccordionsTransitioning( accordion ) ) return false
+   if( isAccordionsTransitioning( accordion ) || isAccordionCollapsed( accordion ) ) return false
 
    let accordionHeight = accordion.getBoundingClientRect().height;
 
