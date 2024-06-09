@@ -1,4 +1,4 @@
-import { PREFIX, COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionsTransitioning, beforeAccordionTransition, afterAccordionTransitionFinish, TOGGLE_TYPE_ATTR, CONTAINER_SELECTOR, EXPENDED_CSS_CLASS, COLLAPSED_CSS_CLASS } from "./core";
+import { COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionsTransitioning, beforeAccordionTransition, afterAccordionTransitionFinish, EXPENDED_CSS_CLASS, COLLAPSED_CSS_CLASS, getAccordionType } from "./core";
 
 export function initTrigger( trigger: HTMLElement, targetId: string, collapsed: boolean )  {
    trigger.setAttribute( TRIGGER_ATTR, targetId );
@@ -39,6 +39,8 @@ export function getAllAssociateTriggers( accordion: HTMLElement, wrapperEl: HTML
 }
 
 export function collapseAccordion( accordion: HTMLElement )  {
+   if( isAccordionsTransitioning( accordion ) ) return false
+
    let accordionHeight = accordion.getBoundingClientRect().height;
 
    beforeAccordionTransition( accordion );
@@ -54,8 +56,8 @@ export function collapseAccordion( accordion: HTMLElement )  {
       accordion.style.display = 'none';
    });
 
-
    const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
+
    if( wrapper ) {
       wrapper.classList.add( COLLAPSED_CSS_CLASS );
       wrapper.classList.remove( EXPENDED_CSS_CLASS );
@@ -64,10 +66,31 @@ export function collapseAccordion( accordion: HTMLElement )  {
    accordion.setAttribute( COLLAPSE_ATTR, "true" );
 
    updateTriggers( accordion.id, true );
+
+   return true
 }
 
-export function expendAccordion( accordion: HTMLElement )  {
-   let accordionHeight = accordion.getBoundingClientRect().height;
+export function collapseRelativeAccordions( accordion: HTMLElement ) {
+   const relativeAccordions = getRelativeAccordions( accordion );
+
+   if( !relativeAccordions ) return
+
+   for( let i = 0; i < relativeAccordions.length; i++ ) {
+      if( relativeAccordions[i] === accordion ) continue
+
+      ///collapse whichever accordion is expended
+      if( !isAccordionCollapsed( relativeAccordions[i] ) ) {
+         collapseAccordion( relativeAccordions[i] );
+      }
+   }
+}
+
+export function expendAccordion( accordion: HTMLElement ) {
+   if( isAccordionsTransitioning( accordion ) || !isAccordionCollapsed( accordion ) ) return false
+
+   if( getAccordionType( accordion ) !== 'toggle' ) collapseRelativeAccordions( accordion );
+
+   let accordionHeight = 0;
 
    beforeAccordionTransition( accordion );
 
@@ -96,6 +119,7 @@ export function expendAccordion( accordion: HTMLElement )  {
    afterAccordionTransitionFinish( accordion );
 
    const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
+
    if( wrapper ) {
       wrapper.classList.add( EXPENDED_CSS_CLASS );
       wrapper.classList.remove( COLLAPSED_CSS_CLASS );
@@ -104,37 +128,15 @@ export function expendAccordion( accordion: HTMLElement )  {
    accordion.setAttribute( COLLAPSE_ATTR, "false" );
 
    updateTriggers( accordion.id, false );
+
+   return true
 }
 
 export function toggleAccordion( accordion: HTMLElement )  {
-   ///any relative accordions are collapsing or expending don't toggle any accordion
-   if( isAccordionsTransitioning( accordion ) )  return
-
-   let isCollapsed = isAccordionCollapsed( accordion );
-   const toggleType = accordion.closest( CONTAINER_SELECTOR )?.getAttribute( TOGGLE_TYPE_ATTR ) === "toggle" ? "toggle" : "accordion";
-
-   if( isCollapsed )  {
-      expendAccordion( accordion );
-   }
-   else if( isCollapsed === false )  {
-      collapseAccordion( accordion );
-   }
-
-   if( toggleType === "accordion" && isCollapsed )  {
-      const relativeAccordions = getRelativeAccordions( accordion );
-      if( relativeAccordions )  {
-         for( let i = 0; i < relativeAccordions.length; i++ )  {
-            if( relativeAccordions[i] === accordion )  continue
-
-            ///collapse whichever accordion is expended
-            if( !isAccordionCollapsed( relativeAccordions[i] ) )  {
-               collapseAccordion( relativeAccordions[i] );
-               ///breaking this because only one accordion can be expended at time
-               ///so it's a good idea to break the loop
-               break
-            }
-         }
-      }
+   if( isAccordionCollapsed( accordion ) ) {
+      return expendAccordion( accordion );
+   } else {
+      return collapseAccordion( accordion );
    }
 }
 

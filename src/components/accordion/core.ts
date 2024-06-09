@@ -153,3 +153,7 @@ export function isAccordionsTransitioning( accordion: HTMLElement ): boolean  {
 
    return false
 }
+
+export function getAccordionType( element: HTMLElement ) {
+   return element.closest( CONTAINER_SELECTOR )?.getAttribute( TOGGLE_TYPE_ATTR );
+}
