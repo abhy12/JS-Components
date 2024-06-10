@@ -1,5 +1,5 @@
-import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, COLLAPSED_CSS_CLASS, EXPENDED_CSS_CLASS } from "./core";
-import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, initTrigger } from "./trigger";
+import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, COLLAPSED_CSS_CLASS, EXPENDED_CSS_CLASS, findAccordionWithPosition } from "./core";
+import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, initTrigger, expendAccordion, collapseAccordion } from "./trigger";
 
 export interface AccordionArgs {
    container: string | HTMLElement,
@@ -145,9 +145,48 @@ export default class JscAccordion implements AccordionInterface {
       this.container?.setAttribute( `data-${PREFIX}-accCon`, 'false' );
    }
 
-   toggle()  {
-      if( !( this.container instanceof HTMLElement ) ) return
+   /**
+    * @param accordionPosition position number of the accordion from top
+    * @returns boolean whether if succeed or not
+    * @description expend/open accordion
+    */
+   expend( accordionPosition : number ) {
+      if( this.container ) {
+         const accordion = findAccordionWithPosition( this.container, accordionPosition );
 
-      toggleAccordion( this.container );
+         if( accordion ) return expendAccordion( accordion );
+      }
+
+      return false
+   }
+
+   /**
+    * @param accordionPosition position number of the accordion from top
+    * @returns boolean whether if succeed or not
+    * @description collapse/close accordion
+    */
+   collapse( accordionPosition : number ) {
+      if( this.container ) {
+         const accordion = findAccordionWithPosition( this.container, accordionPosition );
+
+         if( accordion ) return collapseAccordion( accordion );
+      }
+
+      return false
+   }
+
+   /**
+    * @param accordionPosition position number of the accordion from top
+    * @returns boolean whether if succeed or not
+    * @description collapse/close or expend/open, depending on the current state of accordion
+    */
+   toggle( accordionPosition: number ) {
+      if( this.container ) {
+         const accordion = findAccordionWithPosition( this.container, accordionPosition );
+
+         if( accordion ) return toggleAccordion( accordion );
+      }
+
+      return false
    }
 }

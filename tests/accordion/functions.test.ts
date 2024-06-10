@@ -1,4 +1,4 @@
-import { getContainer, ACCORDION_SELECTOR, DURATION_ATTR, getTransitionDuration, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_SELECTOR, getRelativeAccordions } from "@js-components/accordion/core";
+import { getContainer, ACCORDION_SELECTOR, DURATION_ATTR, getTransitionDuration, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_SELECTOR, getRelativeAccordions, findAccordionWithPosition } from "@js-components/accordion/core";
 import { accordionStructure, accordionContainerId, customStruture, customContainerSelector, customItemWrapperSelector, customAccordionElSelector } from "./structure";
 import { convertHTMLToAccordion, addAccordionEvents } from "@js-components/accordion/browser";
 import JscAccordion from "@js-components/accordion";
@@ -86,7 +86,6 @@ describe( "functions", () => {
          });
       });
 
-
       test( "if all the accordions are relative", () => {
          document.body.insertAdjacentHTML( "afterbegin", customStruture );
          new JscAccordion( baseConfig );
@@ -101,6 +100,53 @@ describe( "functions", () => {
 
          relativeAccordion?.map( acc => {
             expect( accordions.includes( acc ) ).toBe( true );
+         });
+      });
+
+      describe( "findAccordionWithPosition", () => {
+         it( "get first accordion", () => {
+            document.body.insertAdjacentHTML( "afterbegin", customStruture );
+            new JscAccordion( baseConfig );
+
+            const container = document.querySelector( customContainerSelector );
+            expect( container ).not.toBe( null );
+
+            if( !( container instanceof HTMLElement ) ) return
+
+            const firstAccordion = container.querySelector( `${customContainerSelector} > ${customItemWrapperSelector} > ${customAccordionElSelector}`)
+
+            expect( firstAccordion ).not.toBe( null );
+            expect( firstAccordion === findAccordionWithPosition( container, 1 ) ).toBe( true );
+         });
+
+         it( "get second accordion", () => {
+            document.body.insertAdjacentHTML( "afterbegin", customStruture );
+            new JscAccordion( baseConfig );
+
+            const container = document.querySelector( customContainerSelector );
+            expect( container ).not.toBe( null );
+
+            if( !( container instanceof HTMLElement ) ) return
+
+            const secondAccordion = container.querySelector( `${customContainerSelector} > ${customItemWrapperSelector}:nth-child(2) > ${customAccordionElSelector}`)
+
+            expect( secondAccordion ).not.toBe( null );
+            expect( secondAccordion === findAccordionWithPosition( container, 2 ) ).toBe( true );
+         });
+
+         it( "get nested accordion", () => {
+            document.body.insertAdjacentHTML( "afterbegin", customStruture );
+            new JscAccordion( baseConfig );
+
+            const container = document.querySelector( customContainerSelector );
+            expect( container ).not.toBe( null );
+
+            if( !( container instanceof HTMLElement ) ) return
+
+            const nestedAccordion = container.querySelector( `${customContainerSelector} > ${customItemWrapperSelector}:nth-child(2) > ${customItemWrapperSelector} > ${customAccordionElSelector}`)
+
+            expect( nestedAccordion ).not.toBe( null );
+            expect( nestedAccordion === findAccordionWithPosition( container, 3 ) ).toBe( true );
          });
       });
    });

@@ -157,3 +157,21 @@ export function isAccordionsTransitioning( accordion: HTMLElement ): boolean  {
 export function getAccordionType( element: HTMLElement ) {
    return element.closest( CONTAINER_SELECTOR )?.getAttribute( TOGGLE_TYPE_ATTR );
 }
+
+/**
+ * @param accordionContainer container element of accordion
+ * @param position number of the accordion from top
+ * @returns HTMLElement | null whether if succeed or not
+ * @description find accordion in the container from top position
+ */
+export function findAccordionWithPosition( accordionContainer: HTMLElement, position: number ) {
+   if( Number.isInteger( position ) && position > 0 ) {
+      const selectedAccordion = accordionContainer.querySelector( `${ACCORDION_ITEM_WRAPPER_SELECTOR}:nth-child(${position}) ${ACCORDION_SELECTOR}`);
+
+      if( selectedAccordion && selectedAccordion instanceof HTMLElement ) {
+         return selectedAccordion
+      }
+   }
+
+   return null
+}
