@@ -22,6 +22,9 @@ export const DURATION_ATTR = `data-${PREFIX}-duration`;
 export const DURATION_CSS_VAR = `--${PREFIX}-ac-duration`;
 export const EXPENDED_CSS_CLASS = 'expended';
 export const COLLAPSED_CSS_CLASS = 'collapsed';
+export const DATA_WRAPPER_SELECTOR_ATTR = `data-${PREFIX}-wrapper-selector`;
+export const DATA_ACCORDION_SELECTOR_ATTR = `data-${PREFIX}-accordion-selector`;
+export const DATA_TRIGGER_SELECTOR_ATTR = `data-${PREFIX}-trigger-selector`;
 
 export function SELECT_TRIGGER_ACCORDION( selector: string ): string  {
    return `[${TRIGGER_ATTR}="${selector}"]`;

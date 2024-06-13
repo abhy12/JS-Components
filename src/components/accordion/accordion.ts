@@ -1,4 +1,4 @@
-import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, COLLAPSED_CSS_CLASS, EXPENDED_CSS_CLASS, findAccordionWithPosition } from "./core";
+import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, COLLAPSED_CSS_CLASS, EXPENDED_CSS_CLASS, findAccordionWithPosition, DATA_WRAPPER_SELECTOR_ATTR, DATA_ACCORDION_SELECTOR_ATTR, DATA_TRIGGER_SELECTOR_ATTR, TRIGGER_SELECTOR } from "./core";
 import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, initTrigger, expendAccordion, collapseAccordion } from "./trigger";
 
 export interface AccordionArgs {
@@ -80,6 +80,11 @@ export default class JscAccordion implements AccordionInterface {
       const accordionElWrappers = this.container.querySelectorAll( wrapperSelector );
       const accordionElSelector = this.accordionEl ? this.accordionEl : ACCORDION_SELECTOR;
       const accordionParents: HTMLElement[] = [];
+
+      // add selector args to data attribute
+      this.container.setAttribute( DATA_WRAPPER_SELECTOR_ATTR, wrapperSelector );
+      this.container.setAttribute( DATA_ACCORDION_SELECTOR_ATTR, accordionElSelector );
+      this.container.setAttribute( DATA_TRIGGER_SELECTOR_ATTR, this.button ? this.button : TRIGGER_SELECTOR );
 
       for( let i = 0; i < accordionElWrappers.length; i++ ) {
          const wrapper = accordionElWrappers[i];
