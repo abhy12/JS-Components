@@ -1,4 +1,4 @@
-import { getContainer, ACCORDION_SELECTOR, DURATION_ATTR, getTransitionDuration, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_SELECTOR, getRelativeAccordions, findAccordionWithPosition } from "@js-components/accordion/core";
+import { getContainer, ACCORDION_SELECTOR, DURATION_ATTR, getTransitionDuration, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_SELECTOR, getRelativeAccordions, findAccordionWithPosition, isContainer } from "@js-components/accordion/core";
 import { accordionStructure, accordionContainerId, customStruture, customContainerSelector, customItemWrapperSelector, customAccordionElSelector } from "./structure";
 import { convertHTMLToAccordion, addAccordionEvents } from "@js-components/accordion/browser";
 import JscAccordion from "@js-components/accordion";
@@ -149,5 +149,25 @@ describe( "functions", () => {
             expect( nestedAccordion === findAccordionWithPosition( container, 3 ) ).toBe( true );
          });
       });
+   });
+
+   test( "isContainer", () => {
+      const test1ClassName = 'test-1';
+      const test1 = `<div class="${test1ClassName}"></div>`;
+      const test2ClassName = 'test-2';
+      const test2 = `<div class="${test2ClassName}" data-jsc-accordion-container="true"></div>`;
+
+      document.body.insertAdjacentHTML( 'beforeend', test1 );
+      document.body.insertAdjacentHTML( 'beforeend', test2 );
+
+      const con1 = document.querySelector( '.' + test1ClassName );
+      expect( con1 ).not.toBeNull();
+
+      if( con1 ) expect( isContainer( con1 ) ).toBe( false );
+
+      const con2 = document.querySelector( '.' + test2ClassName );
+      expect( con2 ).not.toBeNull();
+
+      if( con2 ) expect( isContainer( con2 ) ).toBe( true );
    });
 });

@@ -1,5 +1,5 @@
-import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, COLLAPSED_CSS_CLASS, EXPENDED_CSS_CLASS, findAccordionWithPosition, DATA_WRAPPER_SELECTOR_ATTR, DATA_ACCORDION_SELECTOR_ATTR, DATA_TRIGGER_SELECTOR_ATTR, TRIGGER_SELECTOR } from "./core";
-import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, initTrigger, expendAccordion, collapseAccordion } from "./trigger";
+import { PREFIX, CONTAINER_ATTR, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, findAccordionWithPosition, DATA_WRAPPER_SELECTOR_ATTR, DATA_ACCORDION_SELECTOR_ATTR, DATA_TRIGGER_SELECTOR_ATTR, TRIGGER_SELECTOR, initWrapper } from "./core";
+import { toggleAccordion, expendAccordion, collapseAccordion } from "./trigger";
 
 export interface AccordionArgs {
    container: string | HTMLElement,
@@ -88,21 +88,8 @@ export default class JscAccordion implements AccordionInterface {
 
       for( let i = 0; i < accordionElWrappers.length; i++ ) {
          const wrapper = accordionElWrappers[i];
-         const accordion = wrapper.querySelector( accordionElSelector );
-         const closestWrapper = accordion?.closest( wrapperSelector );
 
-         if(
-            //make sure the wrapper is not a nested wrapper
-            closestWrapper !== wrapper
-            || !( accordion instanceof HTMLElement )
-            || !( wrapper instanceof HTMLElement )
-            || !wrapper.parentElement
-         ) continue
-
-         ///if accordion is found have then this element is an accordion wrapper
-         wrapper.setAttribute( ACCORDION_ITEM_WRAPPER_ATTR, "true" );
-
-         ///// start initialization of accordion and trigger(s) /////
+         if( !wrapper.parentElement ) continue
 
          let collapsed: boolean;
 
@@ -113,32 +100,7 @@ export default class JscAccordion implements AccordionInterface {
             collapsed = this.firstElExpend === false;
          }
 
-         let trigger;
-
-         if( typeof this.button === "string" ) {
-            if( accordion.id )  {
-               trigger = getAllAssociateTriggers( accordion, wrapper, wrapperSelector, this.button );
-            } else if( !accordion.id ) {
-               trigger = getClosestTriggers( wrapper, wrapperSelector, this.button );
-            }
-         } else if( !this.button ) {
-            trigger = getClosestTriggers( wrapper );
-         }
-
-         if( collapsed ) {
-            wrapper.classList.add( COLLAPSED_CSS_CLASS );
-         } else if( collapsed === false ) {
-            wrapper.classList.add( EXPENDED_CSS_CLASS );
-         }
-
-         ///it has to be done after selecting trigger
-         initAccordion( accordion, collapsed );
-
-         if( trigger )  {
-            trigger.forEach( trigger =>  {
-               initTrigger( trigger, accordion.id, collapsed );
-            });
-         }
+         initWrapper( wrapper, wrapperSelector, accordionElSelector, this.button, collapsed );
       }
    }
 

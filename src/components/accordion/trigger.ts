@@ -1,12 +1,32 @@
-import { COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionsTransitioning, beforeAccordionTransition, afterAccordionTransitionFinish, EXPENDED_CSS_CLASS, COLLAPSED_CSS_CLASS, getAccordionType } from "./core";
+import { COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionsTransitioning, beforeAccordionTransition, afterAccordionTransitionFinish, getAccordionType, toggleActiveCSSClass } from "./core";
+import { isHTMLElement } from "./utilities";
+
+/**
+ * @param triggerSelector - css selector of trigger
+ * @param wrapperEl - accordion's wrapper
+ * @param wrapperSelector - wrapper selector
+ * @param accordionEl - accordion element
+ * @returns Array of trigger elements
+ */
+export function findAccordionTriggers( triggerSelector: string | null | undefined, wrapperEl: HTMLElement, wrapperSelector: string, accordionEl: HTMLElement ): HTMLElement[] {
+   let triggers: HTMLElement[] = [];
+
+   if( typeof triggerSelector === "string" && accordionEl.id ) {
+      triggers = getAllAssociateTriggers( accordionEl, wrapperEl, wrapperSelector, triggerSelector );
+   } else if( typeof triggerSelector === "string" && !accordionEl.id ) {
+      triggers = getClosestTriggers( wrapperEl, wrapperSelector, triggerSelector );
+   } else {
+      triggers = getClosestTriggers( wrapperEl );
+   }
+
+   return triggers;
+}
 
 export function initTrigger( trigger: HTMLElement, targetId: string, collapsed: boolean )  {
    trigger.setAttribute( TRIGGER_ATTR, targetId );
    trigger.setAttribute( 'aria-expanded', `${!collapsed}` );
    trigger.setAttribute( 'aria-controls', targetId );
-   trigger.classList.add( collapsed ? COLLAPSED_CSS_CLASS : EXPENDED_CSS_CLASS );
-
-   if( collapsed ) trigger.classList.add( 'collapsed' );
+   toggleActiveCSSClass( trigger, collapsed );
 }
 
 /**
@@ -58,10 +78,7 @@ export function collapseAccordion( accordion: HTMLElement )  {
 
    const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
 
-   if( wrapper ) {
-      wrapper.classList.add( COLLAPSED_CSS_CLASS );
-      wrapper.classList.remove( EXPENDED_CSS_CLASS );
-   }
+   if( isHTMLElement( wrapper ) ) toggleActiveCSSClass( wrapper )
 
    accordion.setAttribute( COLLAPSE_ATTR, "true" );
 
@@ -120,10 +137,7 @@ export function expendAccordion( accordion: HTMLElement ) {
 
    const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
 
-   if( wrapper ) {
-      wrapper.classList.add( EXPENDED_CSS_CLASS );
-      wrapper.classList.remove( COLLAPSED_CSS_CLASS );
-   }
+   if( wrapper ) toggleActiveCSSClass( wrapper, false );
 
    accordion.setAttribute( COLLAPSE_ATTR, "false" );
 
@@ -146,14 +160,10 @@ export function updateTriggers( accordionId: string, isAccordionCollapsed: boole
    triggers.forEach( ( trigger ) => {
       if( isAccordionCollapsed ) {
          trigger.setAttribute( 'aria-expanded', 'false' );
-         trigger.classList.add( COLLAPSED_CSS_CLASS );
-         trigger.classList.remove( EXPENDED_CSS_CLASS );
-      }
-
-      if( !isAccordionCollapsed ) {
+         toggleActiveCSSClass( trigger );
+      } else if( !isAccordionCollapsed ) {
          trigger.setAttribute( 'aria-expanded', 'true' );
-         trigger.classList.remove( COLLAPSED_CSS_CLASS );
-         trigger.classList.add( EXPENDED_CSS_CLASS );
+         toggleActiveCSSClass( trigger, false );
       }
    });
 }

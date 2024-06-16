@@ -1,4 +1,4 @@
-import { assignNewUniqueIdToElement, randomIdGenerator } from "@js-components/accordion/utilities";
+import { assignNewUniqueIdToElement, isHTMLElement, randomIdGenerator } from "@js-components/accordion/utilities";
 
 describe( "Random ID Generator", () =>  {
    it( "returns a random ID ", () =>  {
@@ -34,5 +34,19 @@ describe( "New Random ID Assigner", () =>  {
 
       assignNewUniqueIdToElement( el );
       expect( el.id ).not.toEqual( "prevID" );
+   });
+});
+
+describe( "isHTMLElement", () => {
+   test( "1", () => {
+      expect( isHTMLElement( 1 ) ).toBeFalsy();
+   });
+
+   test( "2", () => {
+      expect( isHTMLElement( false ) ).toBeFalsy();
+   });
+
+   test( "3", () => {
+      expect( isHTMLElement( document.body ) ).toBeTruthy();
    });
 });

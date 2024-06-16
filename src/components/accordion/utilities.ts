@@ -23,3 +23,7 @@ export function assignNewUniqueIdToElement( element: HTMLElement )  {
 
    element.id = randomId;
 }
+
+export function isHTMLElement( element: unknown ): element is HTMLElement {
+   return element instanceof HTMLElement
+}
