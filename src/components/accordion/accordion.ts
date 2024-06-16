@@ -1,5 +1,6 @@
 import { PREFIX, CONTAINER_ATTR, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, findAccordionWithPosition, DATA_WRAPPER_SELECTOR_ATTR, DATA_ACCORDION_SELECTOR_ATTR, DATA_TRIGGER_SELECTOR_ATTR, TRIGGER_SELECTOR, initWrapper } from "./core";
 import { toggleAccordion, expendAccordion, collapseAccordion } from "./trigger";
+import { mutationObserve } from "./browser";
 
 export interface AccordionArgs {
    container: string | HTMLElement,
@@ -75,6 +76,7 @@ export default class JscAccordion implements AccordionInterface {
       this.container.setAttribute( DURATION_ATTR, '' + this.duration );
       this.container.style.setProperty( DURATION_CSS_VAR, this.duration + 'ms' );
       this.container.classList.add( INIT_CLASSNAME );
+      mutationObserve( this.container );
 
       const wrapperSelector = this.accordionElWrapper ? this.accordionElWrapper : ACCORDION_ITEM_WRAPPER_SELECTOR;
       const accordionElWrappers = this.container.querySelectorAll( wrapperSelector );
