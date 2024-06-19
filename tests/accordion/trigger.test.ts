@@ -15,7 +15,7 @@ describe( "accordion trigger", () => {
       test( "browser", () => {
          document.body.insertAdjacentHTML( "afterbegin", accordionStructure );
 
-         convertHTMLToAccordion( JscAccordion );
+         convertHTMLToAccordion();
 
          const accordions = document.querySelectorAll( ACCORDION_SELECTOR );
 
@@ -77,7 +77,7 @@ describe( "accordion trigger", () => {
    describe( "expanding and collapsing accordion", () => {
       test( "html", () => {
          document.body.insertAdjacentHTML( "afterbegin", accordionStructure );
-         convertHTMLToAccordion( JscAccordion );
+         convertHTMLToAccordion();
 
          document.getElementById( accordionContainerId )?.querySelectorAll( ACCORDION_ITEM_WRAPPER_SELECTOR ).forEach( accordionItem => {
             if( !( accordionItem instanceof HTMLElement ) ) return

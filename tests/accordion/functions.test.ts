@@ -45,7 +45,7 @@ describe( "functions", () => {
    describe( "convertHTMLToAccordion", () => {
       it( "convert all not init accordion html to working accordion", () => {
          document.body.insertAdjacentHTML( "afterbegin", accordionStructure );
-         convertHTMLToAccordion( JscAccordion );
+         convertHTMLToAccordion();
 
          expect( document.getElementById( accordionContainerId )?.classList.contains( INIT_CLASSNAME ) ).toBeTruthy();
       });
@@ -55,7 +55,7 @@ describe( "functions", () => {
          const container = document.getElementById( accordionContainerId );
          container?.classList.add( INIT_CLASSNAME );
 
-         convertHTMLToAccordion( JscAccordion );
+         convertHTMLToAccordion();
          const wrapper = container?.querySelector( ACCORDION_ITEM_WRAPPER_SELECTOR );
          const trigger = wrapper?.querySelector( TRIGGER_SELECTOR ) as HTMLElement | null;
          const accordion = wrapper?.querySelector( ACCORDION_SELECTOR ) as HTMLElement | null;

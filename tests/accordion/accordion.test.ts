@@ -16,7 +16,7 @@ describe( "JscAccordion", () => {
       document.body.innerHTML = '';
       document.body.insertAdjacentHTML( "afterbegin", accordionStructure );
       document.body.insertAdjacentHTML( "afterbegin", customStruture );
-      convertHTMLToAccordion( JscAccordion );
+      convertHTMLToAccordion();
    });
 
    it( "convert all DOM accordion struture to working accordion", async () => {
@@ -215,7 +215,7 @@ describe( "JscAccordion", () => {
       beforeEach(() => {
          document.body.innerHTML = '';
          document.body.insertAdjacentHTML( "afterbegin", customStruture );
-         convertHTMLToAccordion( JscAccordion );
+         convertHTMLToAccordion();
       });
 
       it( "initiate wrappers which has accordion", () => {
@@ -349,7 +349,7 @@ describe( "JscAccordion", () => {
 
       if( !( trigger instanceof HTMLElement ) ) return
 
-      let isCollapseContain = trigger.classList.contains( 'collapsed' );
+      const isCollapseContain = trigger.classList.contains( 'collapsed' );
       trigger.click();
 
       if( isCollapseContain ) {
