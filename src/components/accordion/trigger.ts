@@ -45,7 +45,7 @@ export function getClosestTriggers( wrapperEl: HTMLElement, wrapperSelector: str
 export function getAllAssociateTriggers( accordion: HTMLElement, wrapperEl: HTMLElement, wrapperSelector: string = ACCORDION_ITEM_WRAPPER_SELECTOR, triggerSelector: string = TRIGGER_SELECTOR ): HTMLElement[] {
    const closestTriggers = getClosestTriggers( wrapperEl, wrapperSelector, triggerSelector );
    const associateTriggers = document.querySelectorAll( SELECT_TRIGGER_ACCORDION( accordion.id ) ) as NodeListOf<HTMLElement>;
-   let triggers:HTMLElement[] = [];
+   const triggers:HTMLElement[] = [];
 
    if( closestTriggers )  {
       closestTriggers.forEach( trigger => triggers.push( trigger ) );
@@ -61,7 +61,7 @@ export function getAllAssociateTriggers( accordion: HTMLElement, wrapperEl: HTML
 export function collapseAccordion( accordion: HTMLElement )  {
    if( isAccordionsTransitioning( accordion ) || isAccordionCollapsed( accordion ) ) return false
 
-   let accordionHeight = accordion.getBoundingClientRect().height;
+   const accordionHeight = accordion.getBoundingClientRect().height;
 
    beforeAccordionTransition( accordion );
 

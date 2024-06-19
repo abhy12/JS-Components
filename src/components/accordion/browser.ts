@@ -1,8 +1,9 @@
-import { ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, CONTAINER_SELECTOR, TRIGGER_SELECTOR, INIT_CLASSNAME, isContainer, getWrapperSelector, getAccordionSelector, getTriggerSelector, initWrapper, getContainer } from "./core";
+import { ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, CONTAINER_SELECTOR, TRIGGER_SELECTOR, INIT_CLASSNAME, getWrapperSelector, getAccordionSelector, getTriggerSelector, initWrapper, getContainer } from "./core";
 import { accordionToggleEventHandler } from "./trigger";
 import { isHTMLElement } from "./utilities";
+import JscAccordion from "./accordion";
 
-export function convertHTMLToAccordion( JscAccordion: any )  {
+export function convertHTMLToAccordion()  {
    const accordionContainers = document.querySelectorAll( `${CONTAINER_SELECTOR}:not(.${INIT_CLASSNAME})` );
 
    accordionContainers.forEach( container => {
@@ -11,7 +12,6 @@ export function convertHTMLToAccordion( JscAccordion: any )  {
       if( accordionItemWrappers.length > 0 )  {
          new JscAccordion({
             container: container,
-            containerIsAccordion: false,
             accordionElWrapper: ACCORDION_ITEM_WRAPPER_SELECTOR,
             accordionEl: ACCORDION_SELECTOR,
             button: TRIGGER_SELECTOR,

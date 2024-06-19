@@ -202,6 +202,7 @@ export function isAccordionCollapsed( accordion: HTMLElement ): boolean  {
    return accordion.dataset.collapse === 'true' ? true : false;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function beforeAccordionTransition( accordion: HTMLElement, callBackFunc?: Function )  {
    if( typeof callBackFunc === 'function' )  callBackFunc();
 
@@ -219,6 +220,7 @@ export function beforeAccordionTransition( accordion: HTMLElement, callBackFunc?
    accordion.style.transition = `height ${duration}ms ease-in-out`;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function afterAccordionTransitionFinish( accordion: HTMLElement, callBackFunc?: Function )  {
    let duration: number = TRANSITION_TIME;
    const container = getContainer( accordion );

@@ -14,6 +14,7 @@ export function randomIdGenerator( length: number = 8 ): string  {
 export function assignNewUniqueIdToElement( element: HTMLElement )  {
    let randomId = randomIdGenerator();
 
+   // eslint-disable-next-line no-constant-condition
    while( true )  {
       ///no element found
       if( !document.getElementById( randomId ) )  break
