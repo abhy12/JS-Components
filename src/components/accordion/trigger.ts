@@ -95,14 +95,14 @@ export function collapseRelativeAccordions( accordion: HTMLElement ) {
    for( let i = 0; i < relativeAccordions.length; i++ ) {
       if( relativeAccordions[i] === accordion ) continue
 
-      ///collapse whichever accordion is expended
+      ///collapse whichever accordion is expanded
       if( !isAccordionCollapsed( relativeAccordions[i] ) ) {
          collapseAccordion( relativeAccordions[i] );
       }
    }
 }
 
-export function expendAccordion( accordion: HTMLElement ) {
+export function expandAccordion( accordion: HTMLElement ) {
    if( isAccordionsTransitioning( accordion ) || !isAccordionCollapsed( accordion ) ) return false
 
    if( getAccordionType( accordion ) !== 'toggle' ) collapseRelativeAccordions( accordion );
@@ -148,7 +148,7 @@ export function expendAccordion( accordion: HTMLElement ) {
 
 export function toggleAccordion( accordion: HTMLElement )  {
    if( isAccordionCollapsed( accordion ) ) {
-      return expendAccordion( accordion );
+      return expandAccordion( accordion );
    } else {
       return collapseAccordion( accordion );
    }

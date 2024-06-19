@@ -49,7 +49,7 @@ describe( "JscAccordion", () => {
       }
    });
 
-   describe( "checks if first accordion is expended or not", () => {
+   describe( "checks if first accordion is expanded or not", () => {
       test( "browser", () => {
          const accordion = document.querySelector( CONTAINER_SELECTOR + " " + ACCORDION_SELECTOR ) as HTMLElement | null;
 
@@ -64,7 +64,7 @@ describe( "JscAccordion", () => {
       });
 
       describe( "class", () => {
-         it( "checks if first accordion expended which is default behavior", () =>  {
+         it( "checks if first accordion expanded which is default behavior", () =>  {
             new JscAccordion( baseConfig );
 
             const accordion = document.querySelector( "#eg-1 .item .accordion" ) as HTMLElement | null;

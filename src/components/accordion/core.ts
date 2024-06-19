@@ -21,7 +21,7 @@ export const COLLAPSE_ATTR: string = "data-collapse";
 export const TOGGLE_TYPE_ATTR = `data-accordion-${PREFIX}-type`;
 export const DURATION_ATTR = `data-${PREFIX}-duration`;
 export const DURATION_CSS_VAR = `--${PREFIX}-ac-duration`;
-export const EXPENDED_CSS_CLASS = 'expended';
+export const EXPANDED_CSS_CLASS = 'expanded';
 export const COLLAPSED_CSS_CLASS = 'collapsed';
 export const DATA_WRAPPER_SELECTOR_ATTR = `data-${PREFIX}-wrapper-selector`;
 export const DATA_ACCORDION_SELECTOR_ATTR = `data-${PREFIX}-accordion-selector`;
@@ -275,15 +275,15 @@ export function findAccordionWithPosition( accordionContainer: HTMLElement, posi
 /**
  * @param element - which element to toggle classes
  * @param isCollapsed - whether accordion is collapsed or not. (default true)
- * @description add collapse CSS class and remove expend CSS class and
+ * @description add collapse CSS class and remove expand CSS class and
  * vice-versa if `isCollapsed` is false
  */
 export function toggleActiveCSSClass( element: Element, isCollapsed: boolean = true ) {
    if( isCollapsed ) {
       element.classList.add( COLLAPSED_CSS_CLASS );
-      element.classList.remove( EXPENDED_CSS_CLASS );
+      element.classList.remove( EXPANDED_CSS_CLASS );
    } else {
-      element.classList.add( EXPENDED_CSS_CLASS );
+      element.classList.add( EXPANDED_CSS_CLASS );
       element.classList.remove( COLLAPSED_CSS_CLASS );
    }
 }

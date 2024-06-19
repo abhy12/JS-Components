@@ -1,6 +1,6 @@
 import JscAccordion from "@js-components/accordion/";
 import { convertHTMLToAccordion } from "@js-components/accordion/browser";
-import { ACCORDION_SELECTOR, SELECT_TRIGGER_ACCORDION, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, COLLAPSED_CSS_CLASS, COLLAPSE_ATTR, EXPENDED_CSS_CLASS } from "@js-components/accordion/core";
+import { ACCORDION_SELECTOR, SELECT_TRIGGER_ACCORDION, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, COLLAPSED_CSS_CLASS, COLLAPSE_ATTR, EXPANDED_CSS_CLASS } from "@js-components/accordion/core";
 import { accordionStructure, accordionContainerId, customStruture, customContainerId } from "./structure";
 
 jest.useFakeTimers();
@@ -27,15 +27,15 @@ describe( "accordion trigger", () => {
 
             if( isCollapsed === 'true' ) {
                expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
-               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPANDED_CSS_CLASS ) ).toBeFalsy();
 
                expect( trigger?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBe( true );
-               expect( trigger?.classList.contains( EXPENDED_CSS_CLASS ) ).toBe( false );
+               expect( trigger?.classList.contains( EXPANDED_CSS_CLASS ) ).toBe( false );
             } else if( isCollapsed === 'false' ) {
-               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPANDED_CSS_CLASS ) ).toBeTruthy();
                expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
 
-               expect( trigger?.classList.contains( EXPENDED_CSS_CLASS ) ).toBe( true );
+               expect( trigger?.classList.contains( EXPANDED_CSS_CLASS ) ).toBe( true );
                expect( trigger?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBe( false );
             }
          });
@@ -59,22 +59,22 @@ describe( "accordion trigger", () => {
 
             if( isCollapsed === 'true' ) {
                expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
-               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPANDED_CSS_CLASS ) ).toBeFalsy();
 
                expect( trigger?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBe( true );
-               expect( trigger?.classList.contains( EXPENDED_CSS_CLASS ) ).toBe( false );
+               expect( trigger?.classList.contains( EXPANDED_CSS_CLASS ) ).toBe( false );
             } else if( isCollapsed === 'false' ) {
-               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPANDED_CSS_CLASS ) ).toBeTruthy();
                expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
 
-               expect( trigger?.classList.contains( EXPENDED_CSS_CLASS ) ).toBe( true );
+               expect( trigger?.classList.contains( EXPANDED_CSS_CLASS ) ).toBe( true );
                expect( trigger?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBe( false );
             }
          });
       });
    });
 
-   describe( "expending and collapsing accordion", () => {
+   describe( "expanding and collapsing accordion", () => {
       test( "html", () => {
          document.body.insertAdjacentHTML( "afterbegin", accordionStructure );
          convertHTMLToAccordion( JscAccordion );
@@ -98,16 +98,16 @@ describe( "accordion trigger", () => {
 
                if( afterClickedIsCollapsed === 'true' ) {
                   expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
-                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPANDED_CSS_CLASS ) ).toBeFalsy();
 
                   expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
-                  expect( trigger.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
+                  expect( trigger.classList.contains( EXPANDED_CSS_CLASS ) ).toBeFalsy();
                } else if( afterClickedIsCollapsed === 'false' ) {
-                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPANDED_CSS_CLASS ) ).toBeTruthy();
                   expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
 
                   expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
-                  expect( trigger.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
+                  expect( trigger.classList.contains( EXPANDED_CSS_CLASS ) ).toBeTruthy();
                }
             }
 
@@ -146,16 +146,16 @@ describe( "accordion trigger", () => {
 
                if( afterClickedIsCollapsed === 'true' ) {
                   expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
-                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPANDED_CSS_CLASS ) ).toBeFalsy();
 
                   expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
-                  expect( trigger.classList.contains( EXPENDED_CSS_CLASS ) ).toBeFalsy();
+                  expect( trigger.classList.contains( EXPANDED_CSS_CLASS ) ).toBeFalsy();
                } else if( afterClickedIsCollapsed === 'false' ) {
-                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPANDED_CSS_CLASS ) ).toBeTruthy();
                   expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
 
                   expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
-                  expect( trigger.classList.contains( EXPENDED_CSS_CLASS ) ).toBeTruthy();
+                  expect( trigger.classList.contains( EXPANDED_CSS_CLASS ) ).toBeTruthy();
                }
             }
 

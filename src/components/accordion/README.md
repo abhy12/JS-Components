@@ -68,7 +68,7 @@ It will convert your existing HTML to working **"Accordion"**.
 </div>
 ```
 
-### Change button text on collapse or expend state
+### Change button text on collapse or expand state
 ```html
 <h1>
    <button data-collapsetext="collapse" data-expendtext="Expend">Collapse</button>
@@ -176,18 +176,18 @@ const newAccordion = new JscAccordion({
 </td>
 </tr>
 <tr>
-<td> firstElExpend </td>
+<td> firstElExpand </td>
 <td>
 
 ```javascript
 {
    //boolean
    //default "true"
-   firstElExpend: true
+   firstElExpand: true
 }
 ```
 </td>
-<td>Whether first accordion will be expended initially.
+<td>Whether first accordion will be expanded initially.
 Default value is true.</td>
 </tr>
 <tr>
@@ -201,7 +201,7 @@ Default value is true.</td>
 }
 ```
 </td>
-<td>This will be the trigger/button which will expend/collapse relative accordion.
+<td>This will be the trigger/button which will expand/collapse relative accordion.
 
 **Note**: if you want to use custom trigger/button outside of the struture of accordion, just add any none taken CSS ID to accordion and after that place ```data-jsc-target="#ID"``` this dataset to any HTML element (eg. 'button' ) and replace the 'ID' value (just don't remove '#') with the one that you have added in the above accordion.</td>
 </tr>

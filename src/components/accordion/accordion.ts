@@ -1,12 +1,16 @@
 import { PREFIX, CONTAINER_ATTR, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, findAccordionWithPosition, DATA_WRAPPER_SELECTOR_ATTR, DATA_ACCORDION_SELECTOR_ATTR, DATA_TRIGGER_SELECTOR_ATTR, TRIGGER_SELECTOR, initWrapper } from "./core";
-import { toggleAccordion, expendAccordion, collapseAccordion } from "./trigger";
+import { toggleAccordion, expandAccordion, collapseAccordion } from "./trigger";
 import { mutationObserve } from "./browser";
 
 export interface AccordionArgs {
    container: string | HTMLElement,
    accordionElWrapper?: string,
    accordionEl?: string,
+   /**
+    * @deprecated use `firstElExpand` instead
+    */
    firstElExpend?: boolean,
+   firstElExpand?: boolean,
    button?: string,
    type?: 'accordion' | 'toggle',
    duration?: number,
@@ -20,7 +24,7 @@ export default class JscAccordion implements AccordionInterface {
    container: HTMLElement
    accordionElWrapper
    accordionEl
-   firstElExpend = true
+   firstElExpand = true
    button
    type: AccordionArgs['type'] = 'accordion';
    duration
@@ -52,7 +56,7 @@ export default class JscAccordion implements AccordionInterface {
          this.button = args.button;
       }
 
-      if( args.firstElExpend === false ) this.firstElExpend = false;
+      if( args.firstElExpand === false || args.firstElExpend === false ) this.firstElExpand = false;
 
       if( args.type === "toggle" ) this.container.setAttribute( TOGGLE_TYPE_ATTR, "toggle" );
 
@@ -99,7 +103,7 @@ export default class JscAccordion implements AccordionInterface {
             collapsed = true;
          } else {
             accordionParents.push( wrapper.parentElement );
-            collapsed = this.firstElExpend === false;
+            collapsed = this.firstElExpand === false;
          }
 
          initWrapper( wrapper, wrapperSelector, accordionElSelector, this.button, collapsed );
@@ -117,13 +121,13 @@ export default class JscAccordion implements AccordionInterface {
    /**
     * @param accordionPosition position number of the accordion from top
     * @returns boolean whether if succeed or not
-    * @description expend/open accordion
+    * @description expand/open accordion
     */
-   expend( accordionPosition : number ) {
+   expnd( accordionPosition : number ) {
       if( this.container ) {
          const accordion = findAccordionWithPosition( this.container, accordionPosition );
 
-         if( accordion ) return expendAccordion( accordion );
+         if( accordion ) return expandAccordion( accordion );
       }
 
       return false
@@ -147,7 +151,7 @@ export default class JscAccordion implements AccordionInterface {
    /**
     * @param accordionPosition position number of the accordion from top
     * @returns boolean whether if succeed or not
-    * @description collapse/close or expend/open, depending on the current state of accordion
+    * @description collapse/close or expand/open, depending on the current state of accordion
     */
    toggle( accordionPosition: number ) {
       if( this.container ) {
