@@ -1,4 +1,4 @@
-import { PREFIX, CONTAINER_ATTR, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, findAccordionWithPosition, DATA_WRAPPER_SELECTOR_ATTR, DATA_ACCORDION_SELECTOR_ATTR, DATA_TRIGGER_SELECTOR_ATTR, TRIGGER_SELECTOR, initWrapper } from "./core";
+import { CONTAINER_ATTR, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, findAccordionWithPosition, DATA_WRAPPER_SELECTOR_ATTR, DATA_ACCORDION_SELECTOR_ATTR, DATA_TRIGGER_SELECTOR_ATTR, TRIGGER_SELECTOR, initWrapper } from "./core";
 import { toggleAccordion, expandAccordion, collapseAccordion } from "./trigger";
 import { mutationObserve } from "./browser";
 
@@ -108,14 +108,6 @@ export default class JscAccordion implements AccordionInterface {
 
          initWrapper( wrapper, wrapperSelector, accordionElSelector, this.button, collapsed );
       }
-   }
-
-   enable()  {
-      this.container?.setAttribute( `data-${PREFIX}-accCon`, 'true' );
-   }
-
-   disable()  {
-      this.container?.setAttribute( `data-${PREFIX}-accCon`, 'false' );
    }
 
    /**
