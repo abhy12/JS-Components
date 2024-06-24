@@ -12,9 +12,9 @@ export function convertHTMLToAccordion()  {
       if( accordionItemWrappers.length > 0 )  {
          new JscAccordion({
             container: container,
-            accordionElWrapper: ACCORDION_ITEM_WRAPPER_SELECTOR,
-            accordionEl: ACCORDION_SELECTOR,
-            button: TRIGGER_SELECTOR,
+            wrapper: ACCORDION_ITEM_WRAPPER_SELECTOR,
+            accordion: ACCORDION_SELECTOR,
+            trigger: TRIGGER_SELECTOR,
          });
       }
    });
