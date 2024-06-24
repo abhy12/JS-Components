@@ -96,6 +96,24 @@ describe( "JscAccordion", () => {
                });
             }
          });
+
+         test( "(new args) first accordion is collapsed", () =>  {
+            new JscAccordion({
+               ...baseConfig,
+               firstElExpand: false
+            });
+
+            const accordion = document.querySelector( "#eg-1 .item .accordion" ) as HTMLElement | null;
+
+            expect( accordion?.getAttribute( COLLAPSE_ATTR ) ).toEqual( "true" );
+
+            if( accordion )  {
+               const triggers = getClosestTriggers( accordion );
+               triggers?.forEach( trigger => {
+                  expect( trigger.classList.contains( "collapsed" ) ).toBeTruthy();
+               });
+            }
+         });
       });
    });
 
@@ -103,6 +121,15 @@ describe( "JscAccordion", () => {
       new JscAccordion({
          ...baseConfig,
          type: 'accordion',
+      });
+
+      expect( document.querySelector( customContainerSelector )?.getAttribute( TOGGLE_TYPE_ATTR ) ).toEqual( null );
+   });
+
+   it( "(new args) don't add accordion type attribute to the container if type value equal to 'accordion'", () => {
+      new JscAccordion({
+         ...baseConfig,
+         toggleType: 'accordion',
       });
 
       expect( document.querySelector( customContainerSelector )?.getAttribute( TOGGLE_TYPE_ATTR ) ).toEqual( null );
@@ -117,64 +144,13 @@ describe( "JscAccordion", () => {
       expect( document.querySelector( customContainerSelector )?.getAttribute( TOGGLE_TYPE_ATTR ) ).toEqual( "toggle" );
    });
 
-   describe( "does not save accordion item wrapper or accordion element selector to the instance in these options are ommited", () => {
-      it( "accordion item wrapper", () => {
-         const myAccordion = new JscAccordion({
-            ...baseConfig,
-            accordionElWrapper: undefined
-         });
-
-         expect( myAccordion.accordionElWrapper ).toBe( undefined );
+   it( "(new args) adds toggle type attribute to the container", () => {
+      new JscAccordion({
+         ...baseConfig,
+         toggleType: 'toggle',
       });
 
-      it( "accordion item wrapper", () => {
-         const myAccordion = new JscAccordion({
-            ...baseConfig,
-            accordionElWrapper: ''
-         });
-
-         expect( myAccordion.accordionElWrapper ).toBe( undefined );
-      });
-
-      it( "accordion elment", () => {
-         const myAccordion = new JscAccordion({
-            ...baseConfig,
-            accordionEl: undefined
-         });
-
-         expect( myAccordion.accordionEl ).toBe( undefined );
-      });
-
-      it( "accordion elment", () => {
-         const myAccordion = new JscAccordion({
-            ...baseConfig,
-            accordionEl: ''
-         });
-
-         expect( myAccordion.accordionEl ).toBe( undefined );
-      });
-
-      it( "both accordion item wrapper and accordion elment", () => {
-         const myAccordion = new JscAccordion({
-            ...baseConfig,
-            accordionElWrapper: undefined,
-            accordionEl: undefined
-         });
-
-         expect( myAccordion.accordionElWrapper ).toBe( undefined );
-         expect( myAccordion.accordionEl ).toBe( undefined );
-      });
-
-      it( "both accordion item wrapper and accordion element", () => {
-         const myAccordion = new JscAccordion({
-            ...baseConfig,
-            accordionElWrapper: '',
-            accordionEl: ''
-         });
-
-         expect( myAccordion.accordionElWrapper ).toBe( undefined );
-         expect( myAccordion.accordionEl ).toBe( undefined );
-      });
+      expect( document.querySelector( customContainerSelector )?.getAttribute( TOGGLE_TYPE_ATTR ) ).toEqual( "toggle" );
    });
 
    describe( "select all the accordion elements", () => {
@@ -183,6 +159,13 @@ describe( "JscAccordion", () => {
          accordionElWrapper: customItemWrapperSelector,
          accordionEl: customAccordionElSelector,
          button: customTriggerSelector,
+      }
+
+      const newConfig: AccordionArgs = {
+         container: customContainerSelector,
+         wrapper: customItemWrapperSelector,
+         accordion: customAccordionElSelector,
+         trigger: customTriggerSelector,
       }
 
       const customStruture = `
@@ -234,6 +217,22 @@ describe( "JscAccordion", () => {
          });
       });
 
+      it( "(new args) initiate wrappers which has accordion", () => {
+         new JscAccordion( newConfig );
+         const wrappers = document.querySelectorAll( `${customContainerSelector} ${customItemWrapperSelector}` );
+
+         wrappers.forEach( wrapper => {
+            const accordion = wrapper.querySelector( ACCORDION_SELECTOR );
+
+            if( accordion ) {
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR ) === wrapper ).toBeTruthy();
+               expect( wrapper.getAttribute( ACCORDION_ITEM_WRAPPER_ATTR ) ).toEqual( "true" );
+            } else {
+               expect( wrapper.getAttribute( ACCORDION_ITEM_WRAPPER_ATTR ) ).toEqual( null );
+            }
+         });
+      });
+
       it( "initiate no more than one accordion inside one wrapper", () => {
          new JscAccordion( baseConfig );
          const wrappers = document.querySelectorAll( `${customContainerSelector} ${customItemWrapperSelector}` );
@@ -255,6 +254,20 @@ describe( "JscAccordion", () => {
 
       it( "select all the triggers which has accordion", () => {
          new JscAccordion( baseConfig );
+         const triggers = document.querySelectorAll( customTriggerSelector );
+
+         triggers.forEach( trigger => {
+            const accordion = trigger.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.querySelector( ACCORDION_SELECTOR );
+
+            if( accordion ) {
+               expect( trigger.getAttribute( TRIGGER_ATTR ) ).not.toBeNull();
+               expect( accordion.id === trigger.getAttribute( TRIGGER_ATTR ) ).toBeTruthy();
+            }
+         });
+      });
+
+      it( "(new args) select all the triggers which has accordion", () => {
+         new JscAccordion( newConfig );
          const triggers = document.querySelectorAll( customTriggerSelector );
 
          triggers.forEach( trigger => {
