@@ -1,9 +1,10 @@
-const path = require("path");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const { EsbuildPlugin } = require("esbuild-loader");
+import path from "path";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+const __dirname = import.meta.dirname;
+import { EsbuildPlugin } from "esbuild-loader";
 
 ///ENVIRONMENT
-module.exports = ( _, argv ) => {
+export default ( _, argv ) => {
    const environment = argv.mode;
    const envOutputDir = environment === 'development' ? 'examples' : 'src/components';
    const isMin = environment === 'development' ? '' : '.min';
@@ -49,7 +50,7 @@ module.exports = ( _, argv ) => {
       },
       output: {
          // filename: '[name]/[name].min.js',
-         path: path.resolve(__dirname, envOutputDir),
+         path: path.resolve( __dirname, envOutputDir),
          iife: true,
          clean: false,
       },
