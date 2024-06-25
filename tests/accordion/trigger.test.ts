@@ -2,6 +2,7 @@ import JscAccordion from "@js-components/accordion/";
 import { convertHTMLToAccordion } from "@js-components/accordion/browser";
 import { ACCORDION_SELECTOR, SELECT_TRIGGER_ACCORDION, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, COLLAPSED_CSS_CLASS, COLLAPSE_ATTR, EXPANDED_CSS_CLASS } from "@js-components/accordion/core";
 import { accordionStructure, accordionContainerId, customStruture, customContainerId } from "./structure";
+import { isHTMLElement } from "@js-components/accordion/utilities";
 
 jest.useFakeTimers();
 jest.spyOn( global, 'setTimeout' );
@@ -139,6 +140,103 @@ describe( "accordion trigger", () => {
                const isCollapsed = accordion.getAttribute( COLLAPSE_ATTR );
 
                trigger.click();
+
+               const afterClickedIsCollapsed = accordion.getAttribute( COLLAPSE_ATTR );
+
+               expect( afterClickedIsCollapsed ).not.toEqual( isCollapsed );
+
+               if( afterClickedIsCollapsed === 'true' ) {
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPANDED_CSS_CLASS ) ).toBeFalsy();
+
+                  expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
+                  expect( trigger.classList.contains( EXPANDED_CSS_CLASS ) ).toBeFalsy();
+               } else if( afterClickedIsCollapsed === 'false' ) {
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPANDED_CSS_CLASS ) ).toBeTruthy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
+
+                  expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
+                  expect( trigger.classList.contains( EXPANDED_CSS_CLASS ) ).toBeTruthy();
+               }
+            }
+
+            jest.runAllTimers();
+
+            expect( setTimeout ).toHaveBeenCalled();
+         });
+      });
+
+      test( "class instance method expand and collapse", () => {
+         document.body.insertAdjacentHTML( "afterbegin", customStruture );
+
+         const accordionInstance = new JscAccordion({
+            container: '#eg-1',
+            accordionElWrapper: '.item',
+            accordionEl: '.accordion',
+            button: '.item button',
+         });
+
+         document.getElementById( customContainerId )?.querySelectorAll( ACCORDION_ITEM_WRAPPER_SELECTOR ).forEach( ( accordionItem, i ) => {
+            if( !( isHTMLElement( accordionItem ) ) ) return
+
+            const trigger = accordionItem.querySelector( TRIGGER_SELECTOR );
+            const accordion = accordionItem.querySelector( ACCORDION_SELECTOR );
+            expect( trigger ).not.toBeFalsy();
+            expect( accordion ).not.toBeFalsy();
+
+            if( trigger instanceof HTMLElement && accordion instanceof HTMLElement ) {
+               const isCollapsed = accordion.getAttribute( COLLAPSE_ATTR );
+               const accordionPosition = i + 1;
+
+               if( isCollapsed === "true" ) {
+                  accordionInstance.expand( accordionPosition );
+               } else {
+                  accordionInstance.collapse( accordionPosition );
+               }
+
+               if( isCollapsed === 'false' ) {
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPANDED_CSS_CLASS ) ).toBeFalsy();
+
+                  expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
+                  expect( trigger.classList.contains( EXPANDED_CSS_CLASS ) ).toBeFalsy();
+               } else if( isCollapsed === 'true' ) {
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPANDED_CSS_CLASS ) ).toBeTruthy();
+                  expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
+
+                  expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
+                  expect( trigger.classList.contains( EXPANDED_CSS_CLASS ) ).toBeTruthy();
+               }
+            }
+
+            jest.runAllTimers();
+
+            expect( setTimeout ).toHaveBeenCalled();
+         });
+      });
+
+      test( "class instance method toggle", () => {
+         document.body.insertAdjacentHTML( "afterbegin", customStruture );
+
+         const accordionInstance = new JscAccordion({
+            container: '#eg-1',
+            accordionElWrapper: '.item',
+            accordionEl: '.accordion',
+            button: '.item button',
+         });
+
+         document.getElementById( customContainerId )?.querySelectorAll( ACCORDION_ITEM_WRAPPER_SELECTOR ).forEach( ( accordionItem, i ) => {
+            if( !( isHTMLElement( accordionItem ) ) ) return
+
+            const trigger = accordionItem.querySelector( TRIGGER_SELECTOR );
+            const accordion = accordionItem.querySelector( ACCORDION_SELECTOR );
+            expect( trigger ).not.toBeFalsy();
+            expect( accordion ).not.toBeFalsy();
+
+            if( trigger instanceof HTMLElement && accordion instanceof HTMLElement ) {
+               const isCollapsed = accordion.getAttribute( COLLAPSE_ATTR );
+
+               accordionInstance.toggle( i + 1 );
 
                const afterClickedIsCollapsed = accordion.getAttribute( COLLAPSE_ATTR );
 
