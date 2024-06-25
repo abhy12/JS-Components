@@ -169,7 +169,7 @@ export function updateTriggers( accordionId: string, isAccordionCollapsed: boole
 }
 
 export function accordionToggleEventHandler( e: Event )  {
-   if( !( e.target instanceof HTMLElement ) )  return
+   if( !( e.target instanceof Element ) )  return
 
    ///find the closest accordion trigger
    ///so if button has some nested element(s) it will find the trigger
