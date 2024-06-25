@@ -1,9 +1,9 @@
 /* reset */
-[data-jsc-accordion-container] [data-jsc-accordion-item] .accordion-header{
+[data-jsc-accordion-container] .accordion-header{
   margin: 0;
 }
 
-[data-jsc-accordion-container] [data-jsc-accordion-item] .accordion-button{
+[data-jsc-accordion-container] .accordion-button{
   display: block;
   width: 100%;
   text-align: inherit;
@@ -11,12 +11,12 @@
   border: 0;
 }
 
-[data-jsc-accordion-container] [data-jsc-accordion-item] .accordion-button:not(:disabled){
+[data-jsc-accordion-container] .accordion-button:not(:disabled){
   cursor: pointer;
 }
 
 /* basic design */
-[data-jsc-accordion-container] [data-jsc-accordion-item] .accordion-button{
+[data-jsc-accordion-container] .accordion-button{
   padding: 10px;
   background-color: #eee;
 }
@@ -29,7 +29,7 @@
   margin-top: 8px;
 }
 
-[data-jsc-accordion-container] [data-jsc-accordion-item] [data-jsc-accordion] > .accordion-content{
+[data-jsc-accordion-container] [data-jsc-accordion] > .accordion-content{
   padding: 10px;
 }
 
