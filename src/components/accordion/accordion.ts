@@ -30,6 +30,9 @@ export interface AccordionInterface {
    triggerSelector?: string,
    duration?: number,
    initiated: boolean,
+   expand: ( pos: number ) => boolean,
+   collapse: ( pos: number ) => boolean,
+   toggle: ( pos: number ) => boolean,
 }
 
 export default class JscAccordion implements AccordionInterface {
@@ -132,7 +135,7 @@ export default class JscAccordion implements AccordionInterface {
     * @returns boolean whether if succeed or not
     * @description expand/open accordion
     */
-   expnd( accordionPosition : number ) {
+   expand( accordionPosition : number ) {
       if( this.container ) {
          const accordion = findAccordionWithPosition( this.container, accordionPosition );
 
