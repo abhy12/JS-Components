@@ -21,6 +21,8 @@ export function convertHTMLToAccordion()  {
 }
 
 export function addAccordionEvents() {
+   // if called again
+   removeAccordionEvents();
    ///for event Bubbling
    document.body.addEventListener( "click", accordionToggleEventHandler );
 }
