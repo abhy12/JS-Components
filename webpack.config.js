@@ -3,7 +3,6 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 const __dirname = import.meta.dirname;
 import { EsbuildPlugin } from "esbuild-loader";
 
-///ENVIRONMENT
 export default ( _, argv ) => {
    const environment = argv.mode;
    const envOutputDir = environment === 'development' ? 'examples' : 'src/components';
@@ -13,7 +12,12 @@ export default ( _, argv ) => {
       entry: {
          accordion: {
             import: './src/components/accordion/index.ts',
-            filename: './accordion/accordion' + isMin + '.js'
+            filename: './accordion/accordion' + isMin + '.js',
+            library: {
+               name: 'JscAccordion',
+               type: 'window',
+               export: 'default',
+            },
          },
          slider: {
             import: './src/components/slider/index.ts',
