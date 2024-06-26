@@ -4,11 +4,11 @@
 }
 
 [data-jsc-accordion-container] .accordion-button{
-  display: block;
   width: 100%;
   text-align: inherit;
   border-radius: 0;
   border: 0;
+  font-size: 1rem;
 }
 
 [data-jsc-accordion-container] .accordion-button:not(:disabled){
@@ -38,4 +38,32 @@
   padding: 0!important;
   margin: 0!important;
   overflow: hidden;
+}
+
+/* accordion trigger */
+[data-jsc-accordion-container] .accordion-button{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+[data-jsc-accordion-container] .accordion-button .accordion-icon{
+  flex-shrink: 0;
+  flex-grow: 0;
+  line-height: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--jsc-ac-duration, 300ms) ease-in-out;
+  --size: 1.4em;
+}
+
+[data-jsc-accordion-container] .accordion-button.expanded .accordion-icon{
+  transform: rotate(-180deg);
+}
+
+[data-jsc-accordion-container] .accordion-button .accordion-icon svg{
+  width: var(--size, 1rem);
+  height: var(--size, 1rem);
 }
