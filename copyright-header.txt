@@ -1,0 +1,7 @@
+{pkg.name} {pkg.version}
+{pkg.description}
+{pkg.url}
+
+Copyright (c) {pkg.author}
+
+Released under the GNU License
