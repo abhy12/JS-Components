@@ -1,28 +1,52 @@
-import { PREFIX, CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR } from "./core";
-import { toggleAccordion, getClosestTriggers, getAllAssociateTriggers, TriggerInterface, initTrigger } from "./trigger";
+import { CONTAINER_ATTR, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, findAccordionWithPosition, DATA_WRAPPER_SELECTOR_ATTR, DATA_ACCORDION_SELECTOR_ATTR, DATA_TRIGGER_SELECTOR_ATTR, TRIGGER_SELECTOR, initWrapper } from "./core";
+import { toggleAccordion, expandAccordion, collapseAccordion } from "./trigger";
+import { mutationObserve } from "./browser";
+
+export interface AccordionArgs {
+   container: string | HTMLElement | Element,
+   /** @deprecated use `wrapper` */
+   accordionElWrapper?: string,
+   wrapper?: string,
+   /** @deprecated use `accordion` */
+   accordionEl?: string,
+   accordion?: string,
+   /** @deprecated use `firstElExpand` */
+   firstElExpend?: boolean,
+   firstElExpand?: boolean,
+   /** @deprecated use `trigger` */
+   button?: string,
+   trigger?: string,
+   toggleType?: 'accordion' | 'toggle',
+   /** @deprecated use `toggleType` */
+   type?: AccordionArgs['toggleType'],
+   duration?: number,
+}
 
 export interface AccordionInterface {
-   container: string | HTMLElement | null | undefined,
-   accordionElWrapper?: string,
-   accordionEl?: string,
-   firstElExpend?: boolean,
-   button?: string | Element | HTMLElement | HTMLCollectionOf<HTMLElement> | NodeListOf<HTMLElement> | ( HTMLElement | string )[] | undefined | null,
-   type?: 'accordion' | 'toggle',
+   container: HTMLElement
+   wrapperSelector?: string,
+   accordionSelector?: string,
+   firstElExpand?: boolean,
+   triggerSelector?: string,
    duration?: number,
+   initiated: boolean,
+   expand: ( pos: number ) => boolean,
+   collapse: ( pos: number ) => boolean,
+   toggle: ( pos: number ) => boolean,
 }
 
 export default class JscAccordion implements AccordionInterface {
    container: HTMLElement
-   accordionElWrapper
-   accordionEl
-   firstElExpend = true
-   button
-   type: AccordionInterface['type'] = 'accordion';
+   wrapperSelector
+   accordionSelector
+   firstElExpand = true
+   triggerSelector
    duration
+   initiated = false
 
-   constructor( args: AccordionInterface )  {
+   constructor( args: AccordionArgs ) {
       //return if falsy value
-      if( !args.container )  return
+      if( !args || !args.container ) return this
 
       let tempContainer: Element | string | null = args.container;
 
@@ -31,109 +55,123 @@ export default class JscAccordion implements AccordionInterface {
       }
 
       ///don't do anything if container is not an element
-      if( !( tempContainer instanceof HTMLElement ) )  return
-
+      if( !( tempContainer instanceof HTMLElement ) ) return this
       this.container = tempContainer;
 
-      if( typeof args.accordionElWrapper === "string" && args.accordionElWrapper !== '' ) {
-         this.accordionElWrapper = args.accordionElWrapper;
+      if( typeof args.wrapper === "string" && args.wrapper !== '' ) {
+         this.wrapperSelector = args.wrapper;
+      } else if( typeof args.accordionElWrapper === "string" && args.accordionElWrapper !== '' ) {
+         this.wrapperSelector = args.accordionElWrapper;
       }
 
-      if( typeof args.accordionEl === "string" && args.accordionEl !== '' ) {
-         this.accordionEl = args.accordionEl;
+      if( typeof args.accordion === "string" && args.accordion !== '' ) {
+         this.accordionSelector = args.accordion;
+      } else if( typeof args.accordionEl === "string" && args.accordionEl !== '' ) {
+         this.accordionSelector = args.accordionEl;
       }
 
-      ///it has be a string for searching the trigger inside the container
-      if( typeof args.button === "string" ) {
-         this.button = args.button;
+      if( typeof args.trigger === "string" ) {
+         this.triggerSelector = args.trigger;
+      } else if( typeof args.button === "string" ) {
+         this.triggerSelector = args.button;
       }
 
-      if( args.firstElExpend === false ) this.firstElExpend = false;
+      if( args.firstElExpand === false || args.firstElExpend === false ) this.firstElExpand = false;
 
-      if( args.type === "toggle" ) this.container.setAttribute( TOGGLE_TYPE_ATTR, "toggle" );
+      if( args.toggleType === "toggle" || args.type === "toggle" ) this.container.setAttribute( TOGGLE_TYPE_ATTR, "toggle" );
 
       /// duration
-      if( !args.duration ) {
+      if( typeof args.duration === "number" && args.duration > 0 ) {
+         this.duration = args.duration;
+      } else {
          const containerDuration = getTransitionDuration( this.container );
 
-         if( containerDuration ) {
-            this.duration = containerDuration;
-         } else {
-            this.duration = TRANSITION_TIME;
-         }
+         this.duration = TRANSITION_TIME;
 
-      } else if( typeof args.duration === "number" && args.duration > 0 ) {
-         this.duration = args.duration;
+         if( containerDuration ) this.duration = containerDuration;
       }
 
       this._init();
    }
 
    _init()  {
+      this.initiated = true;
       this.container.setAttribute( CONTAINER_ATTR, "true" );
       this.container.setAttribute( DURATION_ATTR, '' + this.duration );
+      this.container.style.setProperty( DURATION_CSS_VAR, this.duration + 'ms' );
+      this.container.classList.add( INIT_CLASSNAME );
+      mutationObserve( this.container );
 
-      const accordionEl = this.accordionEl ? this.accordionEl : ACCORDION_SELECTOR;
-      ///if accordion wrapper is not defined then select every direct children of the container
-      const wrapperSelector = this.accordionElWrapper ? this.accordionElWrapper : '*';
-      const accordionElWrappers = this.container.querySelectorAll( `:scope > ${wrapperSelector}` ) as NodeListOf<HTMLElement>;
+      const wrapperSelector = this.wrapperSelector ? this.wrapperSelector : ACCORDION_ITEM_WRAPPER_SELECTOR;
+      const accordionElWrappers = this.container.querySelectorAll( wrapperSelector );
+      const accordionElSelector = this.accordionSelector ? this.accordionSelector : ACCORDION_SELECTOR;
+      const accordionParents: HTMLElement[] = [];
+
+      // add selector args to data attribute
+      this.container.setAttribute( DATA_WRAPPER_SELECTOR_ATTR, wrapperSelector );
+      this.container.setAttribute( DATA_ACCORDION_SELECTOR_ATTR, accordionElSelector );
+      this.container.setAttribute( DATA_TRIGGER_SELECTOR_ATTR, this.triggerSelector ? this.triggerSelector : TRIGGER_SELECTOR );
 
       for( let i = 0; i < accordionElWrappers.length; i++ ) {
-         const accordion = accordionElWrappers[i].querySelector( `:scope > ${accordionEl}` );
+         const wrapper = accordionElWrappers[i];
 
-         if( !( accordion instanceof HTMLElement ) ) continue
-
-         ///if accordion is found have then this element is an accordion wrapper
-         accordionElWrappers[i].setAttribute( ACCORDION_ITEM_WRAPPER_ATTR, "true" );
-
-         ///// start initialization of accordion and trigger(s) /////
+         if( !wrapper.parentElement ) continue
 
          let collapsed: boolean;
 
-         if( i !== 0 )  {
+         if( i > 0 && accordionParents.includes( wrapper.parentElement ) ) {
             collapsed = true;
-         }
-         else {
-            ///first element should be expended depending on the arguments
-            ///default true
-            collapsed = !this.firstElExpend;
+         } else {
+            accordionParents.push( wrapper.parentElement );
+            collapsed = this.firstElExpand === false;
          }
 
-         let trigger: TriggerInterface = null;
-
-         if( typeof this.button === "string" )  {
-            ///if ID is set then find all the associate triggers
-            if( accordion.id )  {
-               trigger = getAllAssociateTriggers( accordion, this.accordionElWrapper, this.button );
-            } else if( !accordion.id ) {
-               trigger = getClosestTriggers( accordion, this.accordionElWrapper, this.button );
-            }
-         } else if( !this.button ) {
-            trigger = getClosestTriggers( accordion );
-         }
-
-         ///it has to be done after selecting trigger
-         initAccordion( accordion, collapsed );
-
-         if( trigger )  {
-            trigger.forEach( trigger =>  {
-               initTrigger( trigger, accordion.id, collapsed );
-            });
-         }
+         initWrapper( wrapper, wrapperSelector, accordionElSelector, this.triggerSelector, collapsed );
       }
    }
 
-   enable()  {
-      this.container?.setAttribute( `data-${PREFIX}-accCon`, 'true' );
+   /**
+    * @param accordionPosition position number of the accordion from top
+    * @returns boolean whether if succeed or not
+    * @description expand/open accordion
+    */
+   expand( accordionPosition : number ) {
+      if( this.container ) {
+         const accordion = findAccordionWithPosition( this.container, accordionPosition );
+
+         if( accordion ) return expandAccordion( accordion );
+      }
+
+      return false
    }
 
-   disable()  {
-      this.container?.setAttribute( `data-${PREFIX}-accCon`, 'false' );
+   /**
+    * @param accordionPosition position number of the accordion from top
+    * @returns boolean whether if succeed or not
+    * @description collapse/close accordion
+    */
+   collapse( accordionPosition : number ) {
+      if( this.container ) {
+         const accordion = findAccordionWithPosition( this.container, accordionPosition );
+
+         if( accordion ) return collapseAccordion( accordion );
+      }
+
+      return false
    }
 
-   toggle()  {
-      if( !( this.container instanceof HTMLElement ) ) return
+   /**
+    * @param accordionPosition position number of the accordion from top
+    * @returns boolean whether if succeed or not
+    * @description collapse/close or expand/open, depending on the current state of accordion
+    */
+   toggle( accordionPosition: number ) {
+      if( this.container ) {
+         const accordion = findAccordionWithPosition( this.container, accordionPosition );
 
-      toggleAccordion( this.container );
+         if( accordion ) return toggleAccordion( accordion );
+      }
+
+      return false
    }
 }

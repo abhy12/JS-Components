@@ -1,38 +1,51 @@
-import { PREFIX, COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionsTransitioning, beforeAccordionTransition, afterAccordionTransitionFinish, TOGGLE_TYPE_ATTR, CONTAINER_SELECTOR } from "./core";
+import { COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionsTransitioning, beforeAccordionTransition, afterAccordionTransitionFinish, getAccordionType, toggleActiveCSSClass } from "./core";
+import { isHTMLElement } from "./utilities";
 
-export type TriggerInterface = null | HTMLElement[] | NodeListOf<HTMLElement>;
+/**
+ * @param triggerSelector - css selector of trigger
+ * @param wrapperEl - accordion's wrapper
+ * @param wrapperSelector - wrapper selector
+ * @param accordionEl - accordion element
+ * @returns Array of trigger elements
+ */
+export function findAccordionTriggers( triggerSelector: string | null | undefined, wrapperEl: HTMLElement, wrapperSelector: string, accordionEl: HTMLElement ): HTMLElement[] {
+   let triggers: HTMLElement[] = [];
+
+   if( typeof triggerSelector === "string" && accordionEl.id ) {
+      triggers = getAllAssociateTriggers( accordionEl, wrapperEl, wrapperSelector, triggerSelector );
+   } else if( typeof triggerSelector === "string" && !accordionEl.id ) {
+      triggers = getClosestTriggers( wrapperEl, wrapperSelector, triggerSelector );
+   } else {
+      triggers = getClosestTriggers( wrapperEl );
+   }
+
+   return triggers;
+}
 
 export function initTrigger( trigger: HTMLElement, targetId: string, collapsed: boolean )  {
    trigger.setAttribute( TRIGGER_ATTR, targetId );
    trigger.setAttribute( 'aria-expanded', `${!collapsed}` );
    trigger.setAttribute( 'aria-controls', targetId );
-
-   if( collapsed ) trigger.classList.add( 'collapsed' );
+   toggleActiveCSSClass( trigger, collapsed );
 }
 
 /**
  * get all the triggers relative to the accordion's wrapper but not inside nested wrapper
  */
-export function getClosestTriggers( accordion: HTMLElement, wrapperSelector: string = ACCORDION_ITEM_WRAPPER_SELECTOR, triggerSelector: string = TRIGGER_SELECTOR ): null | HTMLElement[] {
-   let accordionElWrapper: HTMLElement | null = accordion.closest( wrapperSelector );
+export function getClosestTriggers( wrapperEl: HTMLElement, wrapperSelector: string = ACCORDION_ITEM_WRAPPER_SELECTOR, triggerSelector: string = TRIGGER_SELECTOR ): HTMLElement[] {
+   let triggers: HTMLElement[] = Array.from( wrapperEl.querySelectorAll( triggerSelector ) );
 
-   if( accordionElWrapper instanceof HTMLElement )  {
-      let triggers: HTMLElement[] = Array.from( accordionElWrapper.querySelectorAll( triggerSelector ) ) as HTMLElement[];
+   ///filter only those triggers which in an accordion wrapper not in nested wrapper
+   triggers = triggers.filter( trigger => trigger.closest( wrapperSelector ) === wrapperEl );
 
-      ///filter only those triggers which in an accordion wrapper not in nested wrapper
-      triggers = triggers.filter( trigger => trigger.closest( wrapperSelector ) === accordionElWrapper );
-
-      if( triggers.length > 0 )  return triggers
-   }
-
-   return null
+   return triggers
 }
 
 ///get closest triggers inside accordion item container and all over the DOM
-export function getAllAssociateTriggers( accordion: HTMLElement, wrapperSelector: string = ACCORDION_ITEM_WRAPPER_SELECTOR, triggerSelector: string = TRIGGER_SELECTOR ): HTMLElement[] {
-   const closestTriggers: TriggerInterface = getClosestTriggers( accordion, wrapperSelector, triggerSelector );
+export function getAllAssociateTriggers( accordion: HTMLElement, wrapperEl: HTMLElement, wrapperSelector: string = ACCORDION_ITEM_WRAPPER_SELECTOR, triggerSelector: string = TRIGGER_SELECTOR ): HTMLElement[] {
+   const closestTriggers = getClosestTriggers( wrapperEl, wrapperSelector, triggerSelector );
    const associateTriggers = document.querySelectorAll( SELECT_TRIGGER_ACCORDION( accordion.id ) ) as NodeListOf<HTMLElement>;
-   let triggers:HTMLElement[] = [];
+   const triggers:HTMLElement[] = [];
 
    if( closestTriggers )  {
       closestTriggers.forEach( trigger => triggers.push( trigger ) );
@@ -46,7 +59,9 @@ export function getAllAssociateTriggers( accordion: HTMLElement, wrapperSelector
 }
 
 export function collapseAccordion( accordion: HTMLElement )  {
-   let accordionHeight = accordion.getBoundingClientRect().height;
+   if( isAccordionsTransitioning( accordion ) || isAccordionCollapsed( accordion ) ) return false
+
+   const accordionHeight = accordion.getBoundingClientRect().height;
 
    beforeAccordionTransition( accordion );
 
@@ -61,13 +76,38 @@ export function collapseAccordion( accordion: HTMLElement )  {
       accordion.style.display = 'none';
    });
 
+   const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
+
+   if( isHTMLElement( wrapper ) ) toggleActiveCSSClass( wrapper )
+
    accordion.setAttribute( COLLAPSE_ATTR, "true" );
 
    updateTriggers( accordion.id, true );
+
+   return true
 }
 
-export function expendAccordion( accordion: HTMLElement )  {
-   let accordionHeight = accordion.getBoundingClientRect().height;
+export function collapseRelativeAccordions( accordion: HTMLElement ) {
+   const relativeAccordions = getRelativeAccordions( accordion );
+
+   if( !relativeAccordions ) return
+
+   for( let i = 0; i < relativeAccordions.length; i++ ) {
+      if( relativeAccordions[i] === accordion ) continue
+
+      ///collapse whichever accordion is expanded
+      if( !isAccordionCollapsed( relativeAccordions[i] ) ) {
+         collapseAccordion( relativeAccordions[i] );
+      }
+   }
+}
+
+export function expandAccordion( accordion: HTMLElement ) {
+   if( isAccordionsTransitioning( accordion ) || !isAccordionCollapsed( accordion ) ) return false
+
+   if( getAccordionType( accordion ) !== 'toggle' ) collapseRelativeAccordions( accordion );
+
+   let accordionHeight = 0;
 
    beforeAccordionTransition( accordion );
 
@@ -95,61 +135,41 @@ export function expendAccordion( accordion: HTMLElement )  {
 
    afterAccordionTransitionFinish( accordion );
 
+   const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
+
+   if( wrapper ) toggleActiveCSSClass( wrapper, false );
+
    accordion.setAttribute( COLLAPSE_ATTR, "false" );
 
    updateTriggers( accordion.id, false );
+
+   return true
 }
 
 export function toggleAccordion( accordion: HTMLElement )  {
-   ///any relative accordions are collapsing or expending don't toggle any accordion
-   if( isAccordionsTransitioning( accordion ) )  return
-
-   let isCollapsed = isAccordionCollapsed( accordion );
-   const toggleType = accordion.closest( CONTAINER_SELECTOR )?.getAttribute( TOGGLE_TYPE_ATTR ) === "toggle" ? "toggle" : "accordion";
-
-   if( isCollapsed )  {
-      expendAccordion( accordion );
-   }
-   else if( isCollapsed === false )  {
-      collapseAccordion( accordion );
-   }
-
-   if( toggleType === "accordion" && isCollapsed )  {
-      const relativeAccordions = getRelativeAccordions( accordion );
-      if( relativeAccordions )  {
-         for( let i = 0; i < relativeAccordions.length; i++ )  {
-            if( relativeAccordions[i] === accordion )  continue
-
-            ///collapse whichever accordion is expended
-            if( !isAccordionCollapsed( relativeAccordions[i] ) )  {
-               collapseAccordion( relativeAccordions[i] );
-               ///breaking this because only one accordion can be expended at time
-               ///so it's a good idea to break the loop
-               break
-            }
-         }
-      }
+   if( isAccordionCollapsed( accordion ) ) {
+      return expandAccordion( accordion );
+   } else {
+      return collapseAccordion( accordion );
    }
 }
 
 export function updateTriggers( accordionId: string, isAccordionCollapsed: boolean )  {
-   const triggers = document.querySelectorAll( SELECT_TRIGGER_ACCORDION( accordionId ) ) as NodeListOf<HTMLElement>;
+   const triggers = document.querySelectorAll( SELECT_TRIGGER_ACCORDION( accordionId ) );
 
-   triggers.forEach( ( trigger: HTMLElement ) =>  {
-      if( isAccordionCollapsed )  {
+   triggers.forEach( ( trigger ) => {
+      if( isAccordionCollapsed ) {
          trigger.setAttribute( 'aria-expanded', 'false' );
-         trigger.classList.add( 'collapsed' );
-      }
-
-      if( !isAccordionCollapsed )  {
+         toggleActiveCSSClass( trigger );
+      } else if( !isAccordionCollapsed ) {
          trigger.setAttribute( 'aria-expanded', 'true' );
-         trigger.classList.remove( 'collapsed' );
+         toggleActiveCSSClass( trigger, false );
       }
    });
 }
 
 export function accordionToggleEventHandler( e: Event )  {
-   if( !( e.target instanceof HTMLElement ) )  return
+   if( !( e.target instanceof Element ) )  return
 
    ///find the closest accordion trigger
    ///so if button has some nested element(s) it will find the trigger
@@ -164,7 +184,7 @@ export function accordionToggleEventHandler( e: Event )  {
 
    const accordion = document.querySelector( `${ACCORDION_SELECTOR}#${accordionId}` );
 
-   if( !( accordion instanceof HTMLElement ) || accordion.getAttribute( `data-${PREFIX}-accCon` ) === 'false' || isAccordionsTransitioning( accordion ) )  return
+   if( !( accordion instanceof HTMLElement ) || isAccordionsTransitioning( accordion ) )  return
 
    toggleAccordion( accordion );
 }

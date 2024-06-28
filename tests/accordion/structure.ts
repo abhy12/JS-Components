@@ -34,5 +34,9 @@ export const customStruture = `
    <div class="${customItemWrapper}">
       <h1><button class="${customTrigger}">Lorem ipsum dolor sit amet.</button></h1>
       <div class="${customAccordionEl}">Lorem ipsum dolor sit amet consect</div>
+      <div class="${customItemWrapper}">
+         <h1><button class="${customTrigger}">Lorem ipsum dolor sit amet.</button></h1>
+         <div class="${customAccordionEl}">Lorem ipsum dolor sit amet consect</div>
+      </div>
    </div>
 </div>`;

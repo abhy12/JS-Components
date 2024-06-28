@@ -2,15 +2,15 @@ import "./accordion.css";
 import JscAccordion from "./accordion";
 import { addAccordionEvents, convertHTMLToAccordion } from "./browser";
 
-//@ts-ignore
-///exposing class
-window.JscAccordion = JscAccordion
+if( document.readyState === 'complete' || document.readyState === 'interactive' ) {
+   convertHTMLToAccordion();
+} else {
+   document.addEventListener( 'DOMContentLoaded', convertHTMLToAccordion );
+}
 
-addAccordionEvents();
-
-document.addEventListener( 'DOMContentLoaded', () => {
-   convertHTMLToAccordion( JscAccordion );
-});
+export default (() => {
+   addAccordionEvents();
+   return JscAccordion;
+})();
 
 export * from "./accordion"
-export default JscAccordion;
