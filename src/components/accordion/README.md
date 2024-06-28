@@ -259,7 +259,7 @@ You can also add `data-jsc-duration='500'` attribute to the container with the v
 ### expand( position: number ): boolean
 
 **position:** position of accordion inside a container  
-**returns:** boolean whether succeed or not
+**returns:** boolean whether succeed or not  
 **description:** open/expand accordion
 
 ```js
@@ -269,7 +269,7 @@ accordion.expand( 1 );
 ### collapse( position: number ): boolean
 
 **position:** position of accordion inside a container  
-**returns:** boolean whether succeed or not
+**returns:** boolean whether succeed or not  
 **description:** close/collapse accordion
 
 ```js
@@ -279,7 +279,7 @@ accordion.collapse( 1 );
 ### toggle( position: number ): boolean
 
 **position:** position of accordion inside a container  
-**returns:** boolean whether succeed or not
+**returns:** boolean whether succeed or not  
 **description:** open/expand or close/collapse accordion depends on the current state of accordion.
 
 ```js
