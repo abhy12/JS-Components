@@ -3,7 +3,7 @@ import { toggleAccordion, expandAccordion, collapseAccordion } from "./trigger";
 import { mutationObserve } from "./browser";
 
 export interface AccordionArgs {
-   container: string | HTMLElement | Element,
+   container: string | HTMLElement | Element | null | undefined,
    /** @deprecated use `wrapper` */
    accordionElWrapper?: string,
    wrapper?: string,
