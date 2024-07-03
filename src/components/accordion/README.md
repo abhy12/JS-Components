@@ -242,6 +242,19 @@ because anything can be a trigger, just add this `data-jsc-target='ID'` attribut
 
 <hr>
 
+### toggleType
+**type: string = 'accordion' | 'toggle'**
+
+```js
+{
+   // default accordion
+   toggleType: 'accordion', // CSS selector
+}
+```
+Set option to `toggle` if you want any accordion to expand/open without collapsing/closing other accordion, or ommit this option or set it's value to `accordion` to expand/open only one accordion at a time.
+
+<hr>
+
 ### duration
 **type: number**
 
