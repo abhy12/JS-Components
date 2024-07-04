@@ -1,0 +1,126 @@
+---
+import Code from "../components/Code.astro";
+
+const htmlStr =
+`<div id="example-dynamic-accordion-container"><!-- container -->
+   <button class="add-new-accordion btn mb-2">Add new accordion</button>
+   <div class="accordion-wrapper"><!-- accordion wrapper -->
+      <h1 class="accordion-header"><!-- needed for accessibility -->
+         <button class="accordion-button trigger"><!-- trigger -->
+            <span>Accordion Example #1</span>
+            <div class="accordion-icon">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
+                 <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+               </svg>
+            </div>
+         </button>
+      </h1>
+      <div class="accordion"><!-- accordion -->
+         <div class="accordion-content"><!-- content here -->
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+            industry's standard dummy text ever
+         </div>
+      </div>
+   </div>
+   <div class="accordion-wrapper">
+      <h1 class="accordion-header">
+         <button class="accordion-button trigger">
+            <span>Accordion Example #2</span>
+            <div class="accordion-icon">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
+                 <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+               </svg>
+            </div>
+         </button>
+      </h1>
+      <div class="accordion">
+         <div class="accordion-content">
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+            industry's standard dummy text ever
+         </div>
+      </div>
+   </div>
+</div>`;
+
+const jsStr =
+`import JscAccordion from "@js-components/accordion";
+
+const container = document.getElementById( "example-dynamic-accordion-container" );
+new JscAccordion({
+   container,
+   wrapper: ".accordion-wrapper",
+   accordion: ".accordion",
+   trigger: ".trigger",
+});
+
+container?.querySelector( ".add-new-accordion" )?.addEventListener( "click", () => {
+   const childNum = container.children.length;
+   const dynamicAccordion =
+   '<div class="accordion-wrapper">
+      <h1 class="accordion-header">
+         <button class="accordion-button trigger">
+            <span>Accordion Example #\${childNum}</span>
+            <div class="accordion-icon">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
+                 <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+               </svg>
+            </div>
+         </button>
+      </h1>
+      <div class="accordion">
+         <div class="accordion-content">
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+         </div>
+      </div>
+   </div>';
+   container.insertAdjacentHTML( 'beforeend', dynamicAccordion );
+});
+`
+---
+
+<script>
+   import JscAccordion from "@js-components/accordion";
+   const container = document.getElementById( "example-dynamic-accordion-container" ) as HTMLElement;
+   new JscAccordion({
+      container,
+      wrapper: ".accordion-wrapper",
+      accordion: ".accordion",
+      trigger: ".trigger",
+   });
+
+   container?.querySelector( ".add-new-accordion" )?.addEventListener( "click", () => {
+      const childNum = container.children.length;
+      const dynamicAccordion =
+      `<div class="accordion-wrapper">
+         <h1 class="accordion-header">
+            <button class="accordion-button trigger">
+               <span>Accordion Example #${childNum}</span>
+               <div class="accordion-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                  </svg>
+               </div>
+            </button>
+         </h1>
+         <div class="accordion">
+            <div class="accordion-content">
+               Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+               industry's standard dummy text ever
+            </div>
+         </div>
+      </div>`;
+      container.insertAdjacentHTML( 'beforeend', dynamicAccordion );
+   });
+</script>
+
+<Fragment set:html={htmlStr} />
+
+<Code
+   lang="html"
+   code={htmlStr}
+/>
+
+<Code
+   lang="typescript"
+   code={jsStr}
+/>

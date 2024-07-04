@@ -1,0 +1,13 @@
+---
+import * as Doc from './_README.md'; //not fetching docs because of format issues, will fix soon
+import Layout from "../../layouts/Layout.astro";
+import Container from "../../components/Container.astro";
+
+---
+<Layout title="Accordion Docs">
+   <main>
+      <Container>
+         <Fragment set:html={Doc.compiledContent()}/>
+      </Container>
+   </main>
+</Layout>

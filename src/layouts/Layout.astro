@@ -1,28 +1,53 @@
 ---
-import "../styles/global.css";
-import Header from "../components/Header.astro";
+import Header from '../components/Header.astro';
+import "../_style.css";
 
 interface Props {
-   title: string,
-   className?: string,
+	title: string;
 }
 
-const { title, className } = Astro.props;
+const { title } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
-   <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width" />
-      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-      <meta name="generator" content={Astro.generator} />
-      <title>{title}</title>
-   </head>
-   <body>
-      <Header />
-      <main class={className ? className : ""}>
-         <slot />
-      </main>
-   </body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<Header />
+		<slot />
+		<script>
+			import "../scripts/copy-code";
+		</script>
+	</body>
 </html>
+<style is:global>
+	*{
+		box-sizing: border-box;
+	}
+	html{
+		font-family: "Poppins", sans-serif;
+	}
+	body{
+		margin: 0;
+	}
+	ul{
+		@apply p-0 m-0 list-none;
+	}
+	header a{
+		@apply text-black no-underline;
+	}
+	button{
+		font-family: inherit;
+	}
+	.btn{
+		@apply appearance-none text-base rounded border-2 border-gray-800 px-2.5 py-1.5 bg-gray-100 cursor-pointer focus:ring-2;
+	}
+</style>

@@ -1,0 +1,48 @@
+---
+import Code from "../components/Code.astro";
+
+const htmlStr =
+`<div data-jsc-accordion-container=""><!-- container -->
+   <div data-jsc-accordion-item=""><!-- accordion wrapper -->
+      <h1 class="accordion-header"><!-- needed for accessibility -->
+         <button class="accordion-button" data-jsc-target=""><!-- trigger -->
+            <span>Accordion Example #1</span>
+            <div class="accordion-icon">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
+                 <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+               </svg>
+            </div>
+         </button>
+      </h1>
+      <div class="accordion" data-jsc-accordion=""><!-- accordion -->
+         <div class="accordion-content"><!-- content here -->
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+         </div>
+      </div>
+   </div>
+   <div data-jsc-accordion-item="">
+      <h1 class="accordion-header">
+         <button class="accordion-button" data-jsc-target="">
+            <span>Accordion Example #2</span>
+            <div class="accordion-icon">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
+                 <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+               </svg>
+            </div>
+         </button>
+      </h1>
+      <div class="accordion" data-jsc-accordion="">
+         <div class="accordion-content">
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+         </div>
+      </div>
+   </div>
+</div>`;
+---
+
+<Fragment set:html={htmlStr} />
+
+<Code
+   lang="html"
+   code={htmlStr}
+/>

@@ -1,0 +1,268 @@
+---
+import Code from "../components/Code.astro";
+
+const htmlStr =
+`<script src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+
+<div id="example-1" class="mb-4">
+   <div class="accordion-wrapper">
+      <h2 class="accordion-header">
+         <button class="accordion-button">
+            <div>
+               <div class="intro-icon">
+                  <ion-icon name="alarm-outline"></ion-icon>
+               </div>
+               <span>8am - 10am</span>
+            </div>
+            <div class="accordion">
+               <div class="accordion-content">
+                  <div class="main-icon">
+                     <ion-icon name="color-palette-sharp"></ion-icon>
+                  </div>
+                  <div class="content">
+                     <h3>Jamie talks design</h3>
+                     <h4>Monday - Thursday</h4>
+                     <p>I talk a bunch of rubbish</p>
+                     <a>More information</a>
+                  </div>
+               </div>
+            </div>
+         </button>
+      </h2>
+   </div>
+   <div class="accordion-wrapper">
+      <h2 class="accordion-header">
+         <button class="accordion-button">
+            <div>
+               <div class="intro-icon">
+                  <ion-icon name="alarm-outline"></ion-icon>
+               </div>
+               <span>8am - 10am</span>
+            </div>
+            <div class="accordion">
+               <div class="accordion-content">
+                  <div class="main-icon">
+                     <ion-icon name="musical-notes"></ion-icon>
+                  </div>
+                  <div class="content">
+                     <h3>Jamie talks design</h3>
+                     <h4>Monday - Thursday</h4>
+                     <p>I talk a bunch of rubbish</p>
+                     <a>More information</a>
+                  </div>
+               </div>
+            </div>
+         </button>
+      </h2>
+   </div>
+   <div class="accordion-wrapper">
+      <h2 class="accordion-header">
+         <button class="accordion-button">
+            <div>
+               <div class="intro-icon">
+                  <ion-icon name="alarm-outline"></ion-icon>
+               </div>
+               <span>8am - 10am</span>
+            </div>
+            <div class="accordion">
+               <div class="accordion-content">
+                  <div class="main-icon">
+                     <ion-icon name="mic-sharp"></ion-icon>
+                  </div>
+                  <div class="content">
+                     <h3>Jamie talks design</h3>
+                     <h4>Monday - Thursday</h4>
+                     <p>I talk a bunch of rubbish</p>
+                     <a>More information</a>
+                  </div>
+               </div>
+            </div>
+         </button>
+      </h2>
+   </div>
+   <div class="accordion-wrapper">
+      <h2 class="accordion-header">
+         <button class="accordion-button">
+            <div>
+               <div class="intro-icon">
+                  <ion-icon name="alarm-outline"></ion-icon>
+               </div>
+               <span>8am - 10am</span>
+            </div>
+            <div class="accordion">
+               <div class="accordion-content">
+                  <div class="main-icon">
+                     <ion-icon name="wine-sharp"></ion-icon>
+                  </div>
+                  <div class="content">
+                     <h3>Jamie talks design</h3>
+                     <h4>Monday - Thursday</h4>
+                     <p>I talk a bunch of rubbish</p>
+                     <a>More information</a>
+                  </div>
+               </div>
+            </div>
+         </button>
+      </h2>
+   </div>
+</div>`;
+
+const jsStr =
+`new JscAccordion({
+   container: "#example-1",
+   wrapper: ".accordion-wrapper",
+   accordion: ".accordion",
+   trigger: ".accordion-button",
+});
+`
+
+const cssStr =
+`#example-1{
+   border-radius: 16px;
+   overflow: hidden;
+   box-shadow: 4px 5px 0px rgba(0, 0, 0, 0.11);
+   --clr-1: #99b998;
+   --clr-2: #E4B794;
+   --clr-3: #f4837d;
+   --clr-4: #ea495f;
+}
+#example-1 .accordion-wrapper{
+   border: 0;
+   margin: 0!important;
+   background-color: var(--clr-1);
+   border-left: 12px solid rgba(0, 0, 0, 0.12);
+}
+#example-1 .accordion-wrapper:nth-child(2){
+   background-color: var(--clr-2);
+}
+#example-1 .accordion-wrapper:nth-child(3){
+   background-color: var(--clr-3);
+}
+#example-1 .accordion-wrapper:nth-child(4){
+   background-color: var(--clr-4);
+}
+#example-1 .accordion-header{
+   text-align: right;
+   overflow: hidden;
+}
+#example-1 .accordion-header .accordion-button{
+   --padding-top: 30px;
+   padding: var(--padding-top) 20px;
+   background: transparent;
+   display: block;
+}
+#example-1 .accordion-header .accordion-button > div:first-child{
+   display: flex;
+}
+#example-1 .accordion-header .accordion-button > div span{
+   flex-grow: 1;
+   font-size: 1.2rem;
+   font-weight: 600;
+}
+#example-1 .accordion-header .intro-icon{
+   font-size: 1.25rem;
+   flex-shrink: 0;
+   display: flex;
+   align-items: center;
+   opacity: .3;
+   transition: all var(--jsc-ac-duration) ease-in;
+}
+#example-1 .accordion-button.expanded .intro-icon{
+   opacity: 0;
+}
+#example-1 .accordion{
+   transition: all var(--jsc-ac-duration) cubic-bezier(1, 0, 0.41, 1.01)!important;
+   overflow: visible!important;
+}
+#example-1 .accordion .accordion-content{
+   padding: 0 0 0 32px;
+   display: flex;
+   gap: 20px;
+   align-items: flex-start;
+}
+#example-1 .accordion .accordion-content .main-icon{
+   transition: transform 0.3s var(--jsc-ac-duration) cubic-bezier(0.455, 0.03, 0.515, 0.955);
+   background: var(--clr-4);
+   padding: 20px;
+   border-radius: 12px;
+   font-size: 2.2rem;
+   color: #fff;
+   display: flex;
+   align-item: center;
+}
+#example-1 .accordion-wrapper:nth-child(2) .accordion .accordion-content .main-icon{
+   background: var(--clr-1);
+}
+#example-1 .accordion-wrapper:nth-child(3) .accordion .accordion-content .main-icon{
+   background: var(--clr-2);
+}
+#example-1 .accordion-wrapper:nth-child(4) .accordion .accordion-content .main-icon{
+   background: var(--clr-3);
+}
+#example-1 .accordion-button .main-icon{
+   transform: translateY( calc( ( -150% - var(--padding-top) ) ) );
+}
+#example-1 .accordion-button.expanded .main-icon{
+   transform: translateY(0);
+}
+#example-1 .content{
+   margin-top: 6px;
+   transition: all 0.3s 0.2s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+   transition-delay: var(--jsc-ac-duration);
+   transform: translateY(130%);
+   opacity: 0;
+   flex-grow: 1;
+}
+#example-1 .expanded .content{
+   opacity: 1;
+   transform: translateY(0);
+}
+#example-1 .content > *:not(:last-child) {
+   margin: 0 0 5px 0;
+}
+#example-1 .content h3{
+   font-size: 1.1rem;
+   font-weight: 500;
+}
+#example-1 .content h4{
+   font-size: .9rem;
+   font-weight: 500;
+   color: rgba(0, 0, 0, 0.33);
+}
+#example-1 .content p,
+#example-1 .content a{
+   font-size: .85rem;
+   color: #fff;
+}
+#example-1 .content a{
+   border: 2px solid #fff;
+   border-radius: 5px;
+   display: inline-block;
+   padding: 6px 20px;
+   transition: all 0.3s;
+}
+#example-1 .content a:hover,
+#example-1 .content a:active{
+   background: #fff;
+   color: #222;
+}
+`
+---
+<script>
+   import JscAccordion from "@js-components/accordion";
+   new JscAccordion({
+      container: "#example-1",
+      wrapper: ".accordion-wrapper",
+      accordion: ".accordion",
+      trigger: ".accordion-button",
+   });
+</script>
+
+<Fragment set:html={htmlStr} />
+<p class="text-right mb-10"><a href="https://codepen.io/jcoulterdesign/pen/OMmZPd" target="_blank">design by</a></p>
+<Code lang="html" code={htmlStr} />
+
+<Code lang="typescript" code={jsStr} />
+
+<Fragment set:html={`<style>${cssStr}</style>`} />
+<Code lang="css" code={cssStr}/>
