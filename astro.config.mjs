@@ -10,5 +10,5 @@ export default defineConfig({
     }
   },
   site: 'https://abhy12.github.io/',
-  base: '/js-components',
+  base: '/JS-Components',
 });
