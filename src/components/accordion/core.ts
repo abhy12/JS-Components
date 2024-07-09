@@ -281,11 +281,6 @@ export function findAccordionWithPosition( accordionContainer: HTMLElement, posi
  * vice-versa if `isCollapsed` is false
  */
 export function toggleActiveCSSClass( element: Element, isCollapsed: boolean = true ) {
-   if( isCollapsed ) {
-      element.classList.add( COLLAPSED_CSS_CLASS );
-      element.classList.remove( EXPANDED_CSS_CLASS );
-   } else {
-      element.classList.add( EXPANDED_CSS_CLASS );
-      element.classList.remove( COLLAPSED_CSS_CLASS );
-   }
+   element.classList.toggle( COLLAPSED_CSS_CLASS, isCollapsed );
+   element.classList.toggle( EXPANDED_CSS_CLASS, !isCollapsed );
 }
