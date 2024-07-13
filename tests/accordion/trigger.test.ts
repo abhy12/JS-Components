@@ -263,4 +263,40 @@ describe( "accordion trigger", () => {
          });
       });
    });
+
+   test( "only one accordion can be expand at a time when accordion toggle type is not 'toggle'", () => {
+      document.body.insertAdjacentHTML( "afterbegin", customStruture );
+
+      const container = document.getElementById( customContainerId );
+
+      const accordionInstance = new JscAccordion({
+         container: container,
+         wrapper: '.item',
+         accordion: '.accordion',
+         trigger: '.item button',
+         toggleType: "accordion",
+         firstElExpand: false,
+      });
+
+      expect( accordionInstance.expand( 1 ) ).not.toBeFalsy();
+      expect( accordionInstance.expand( 2 ) ).toBeFalsy();
+   });
+
+   test( "multiple accordion can be expand at the same time when accordion toggle type is 'toggle'", () => {
+      document.body.insertAdjacentHTML( "afterbegin", customStruture );
+
+      const container = document.getElementById( customContainerId );
+
+      const accordionInstance = new JscAccordion({
+         container: container,
+         wrapper: '.item',
+         accordion: '.accordion',
+         trigger: '.item button',
+         toggleType: "toggle",
+         firstElExpand: false,
+      });
+
+      expect( accordionInstance.expand( 1 ) ).not.toBeFalsy();
+      expect( accordionInstance.expand( 2 ) ).not.toBeFalsy();
+   });
 });

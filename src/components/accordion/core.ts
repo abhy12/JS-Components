@@ -241,11 +241,24 @@ export function afterAccordionTransitionFinish( accordion: HTMLElement, callBack
    }, duration );
 }
 
-export function isAccordionsTransitioning( accordion: HTMLElement ): boolean  {
+/**
+ * @param accordion - accordion element
+ * @returns - boolean whether accordion is transitioning
+ */
+export function isAccordionTransitioning( accordion: HTMLElement ): boolean {
+   return accordion.classList.contains( TRANSITION_STATE_CLASSNAME );
+}
+
+/**
+ * @param accordion - accordion element
+ * @returns - boolean whether relative or provided accordion is transitioning
+ */
+export function isRelativeAccordionTransitioning( accordion: HTMLElement ): boolean {
    const relativeAccordions = getRelativeAccordions( accordion );
-   if( relativeAccordions )  {
-      for( let i = 0; i < relativeAccordions.length; i++ )  {
-         if( relativeAccordions[i].classList.contains( TRANSITION_STATE_CLASSNAME ) )  return true
+
+   if( relativeAccordions ) {
+      for( let i = 0; i < relativeAccordions.length; i++ ) {
+         if( isAccordionTransitioning( relativeAccordions[i] ) ) return true
       }
    }
 

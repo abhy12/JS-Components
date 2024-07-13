@@ -1,4 +1,4 @@
-import { COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionsTransitioning, beforeAccordionTransition, afterAccordionTransitionFinish, getAccordionType, toggleActiveCSSClass } from "./core";
+import { COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionTransitioning, isRelativeAccordionTransitioning, beforeAccordionTransition, afterAccordionTransitionFinish, getAccordionType, toggleActiveCSSClass } from "./core";
 import { isHTMLElement } from "./utilities";
 
 /**
@@ -58,8 +58,8 @@ export function getAllAssociateTriggers( accordion: HTMLElement, wrapperEl: HTML
    return triggers;
 }
 
-export function collapseAccordion( accordion: HTMLElement )  {
-   if( isAccordionsTransitioning( accordion ) || isAccordionCollapsed( accordion ) ) return false
+export function collapseAccordion( accordion: HTMLElement ): boolean {
+   if( isAccordionCollapsed( accordion ) ) return false
 
    const accordionHeight = accordion.getBoundingClientRect().height;
 
@@ -102,10 +102,14 @@ export function collapseRelativeAccordions( accordion: HTMLElement ) {
    }
 }
 
-export function expandAccordion( accordion: HTMLElement ) {
-   if( isAccordionsTransitioning( accordion ) || !isAccordionCollapsed( accordion ) ) return false
+export function expandAccordion( accordion: HTMLElement ): boolean {
+   if( !isAccordionCollapsed( accordion ) ) return false
 
-   if( getAccordionType( accordion ) !== 'toggle' ) collapseRelativeAccordions( accordion );
+   if( getAccordionType( accordion ) !== 'toggle' ) {
+      if( isRelativeAccordionTransitioning( accordion ) ) return false
+
+      collapseRelativeAccordions( accordion );
+   }
 
    let accordionHeight = 0;
 
@@ -168,23 +172,22 @@ export function updateTriggers( accordionId: string, isAccordionCollapsed: boole
    });
 }
 
-export function accordionToggleEventHandler( e: Event )  {
-   if( !( e.target instanceof Element ) )  return
+export function accordionToggleEventHandler( e: Event ) {
+   if( !( e.target instanceof Element ) ) return
 
    ///find the closest accordion trigger
    ///so if button has some nested element(s) it will find the trigger
    const trigger = e.target.closest( TRIGGER_SELECTOR );
 
-   ///don't wanna repeate it :(
-   if( !( trigger instanceof HTMLElement ) )  return
+   if( !( trigger instanceof HTMLElement ) ) return
 
    const accordionId: null | string = trigger.getAttribute( TRIGGER_ATTR );
 
-   if( !accordionId )  return
+   if( !accordionId ) return
 
    const accordion = document.querySelector( `${ACCORDION_SELECTOR}#${accordionId}` );
 
-   if( !( accordion instanceof HTMLElement ) || isAccordionsTransitioning( accordion ) )  return
+   if( !( accordion instanceof HTMLElement ) || isAccordionTransitioning( accordion ) ) return
 
    toggleAccordion( accordion );
 }
