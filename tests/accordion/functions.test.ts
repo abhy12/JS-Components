@@ -4,6 +4,8 @@ import { convertHTMLToAccordion, addAccordionEvents } from "@js-components/accor
 import JscAccordion from "@js-components/accordion";
 import { baseConfig } from "./accordion.test";
 
+jest.spyOn( window, 'requestAnimationFrame' ).mockImplementation( ( callback ) => {callback(0); return 0} );
+
 describe( "functions", () => {
    addAccordionEvents();
 

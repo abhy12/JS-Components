@@ -6,6 +6,7 @@ import { isHTMLElement } from "@js-components/accordion/utilities";
 
 jest.useFakeTimers();
 jest.spyOn( global, 'setTimeout' );
+jest.spyOn( window, 'requestAnimationFrame' ).mockImplementation( ( callback ) => {callback(0); return 0} );
 
 describe( "accordion trigger", () => {
    beforeEach(() =>  {

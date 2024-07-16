@@ -4,6 +4,8 @@ import { CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, ACCORDION_ATTR, TRIGGER_AT
 import { getClosestTriggers } from "@js-components/accordion/trigger";
 import { customStruture, accordionStructure, accordionContainerId, customContainerSelector, customItemWrapperSelector, customAccordionEl, customAccordionElSelector, customTriggerSelector, customContainerId, customItemWrapper, customTrigger } from "./structure";
 
+jest.spyOn( window, 'requestAnimationFrame' ).mockImplementation( ( callback ) => {callback(0); return 0} );
+
 export const baseConfig = {
    container: customContainerSelector,
    accordionElWrapper: customItemWrapperSelector,
