@@ -1,5 +1,4 @@
-import { COLLAPSE_ATTR, ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionTransitioning, isRelativeAccordionTransitioning, beforeAccordionTransition, afterAccordionTransitionFinish, getAccordionType, toggleActiveCSSClass } from "./core";
-import { isHTMLElement } from "./utilities";
+import { ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionTransitioning, isRelativeAccordionTransitioning, beforeAccordionTransition, getAccordionType, toggleActiveCSSClass, startAccordionTransition } from "./core";
 
 /**
  * @param triggerSelector - css selector of trigger
@@ -71,16 +70,9 @@ export function collapseAccordion( accordion: HTMLElement ): boolean {
    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
          accordion.style.height = '0';
-         afterAccordionTransitionFinish( accordion, () => {
+         startAccordionTransition( accordion, true, () => {
             accordion.style.display = 'none';
          });
-
-         const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
-         if( isHTMLElement( wrapper ) ) toggleActiveCSSClass( wrapper )
-
-         accordion.setAttribute( COLLAPSE_ATTR, "true" );
-
-         updateTriggers( accordion.id, true );
       });
    });
 
@@ -133,14 +125,7 @@ export function expandAccordion( accordion: HTMLElement ): boolean {
    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
          accordion.style.height = accordionHeight + 'px';
-         afterAccordionTransitionFinish( accordion );
-
-         const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
-         if( wrapper ) toggleActiveCSSClass( wrapper, false );
-
-         accordion.setAttribute( COLLAPSE_ATTR, "false" );
-
-         updateTriggers( accordion.id, false );
+         startAccordionTransition( accordion, false );
       });
    })
 

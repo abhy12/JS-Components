@@ -1,5 +1,5 @@
 import { assignNewUniqueIdToElement, isHTMLElement } from "./utilities";
-import { findAccordionTriggers, initTrigger } from "./trigger";
+import { findAccordionTriggers, initTrigger, updateTriggers } from "./trigger";
 
 ///// CORE /////
 export const PREFIX: string = "jsc";
@@ -150,8 +150,12 @@ export function getTriggerSelector( container: HTMLElement ): string {
    return selector ? selector : TRIGGER_SELECTOR
 }
 
-export function getTransitionDuration( container: HTMLElement ): number | undefined {
-   let duration;
+/**
+ * @param container - accordion container
+ * @returns get timing of `container` if provided, otherwise get default timing
+ */
+export function getTransitionDuration( container?: HTMLElement ): number {
+   let duration = TRANSITION_TIME;
 
    if( container ) {
       const containerDuration = container.getAttribute( DURATION_ATTR );
@@ -219,22 +223,29 @@ export function beforeAccordionTransition( accordion: HTMLElement, callBackFunc?
    accordion.style.transition = `height ${duration}ms ease-in-out`;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export function afterAccordionTransitionFinish( accordion: HTMLElement, callBackFunc?: Function )  {
-   let duration: number = TRANSITION_TIME;
-   const container = getContainer( accordion );
+/**
+ * @param accordion - accordion which will be transition
+ * @param collapse - accordion is collapsing or not
+ * @param afterTransitionCallback - callback after transition is done
+ */
+export function startAccordionTransition( accordion: HTMLElement, collapse: boolean, afterTransitionCallback?: CallableFunction ): void {
+   const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
+   if( isHTMLElement( wrapper ) ) toggleActiveCSSClass( wrapper, collapse);
 
-   if( container ) {
-      const containerDuration = getTransitionDuration( container );
-      if( containerDuration ) duration = containerDuration;
-   }
+   accordion.setAttribute( COLLAPSE_ATTR, collapse + '' );
 
-   setTimeout( () =>  {
-      if( typeof callBackFunc === 'function' )  callBackFunc();
+   updateTriggers( accordion.id, collapse );
+
+   afterAccordionTransitionFinish( accordion, afterTransitionCallback );
+}
+
+export function afterAccordionTransitionFinish( accordion: HTMLElement, callback?: CallableFunction ) {
+   setTimeout(() =>  {
+      if( typeof callback === 'function' ) callback();
       accordion.style.transition = '';
       accordion.style.height = '';
       accordion.classList.remove( TRANSITION_STATE_CLASSNAME );
-   }, duration );
+   }, getTransitionDuration( getContainer( accordion ) ) );
 }
 
 /**
