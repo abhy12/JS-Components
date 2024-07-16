@@ -68,21 +68,21 @@ export function collapseAccordion( accordion: HTMLElement ): boolean {
    ///set height for transition
    accordion.style.height = accordionHeight + 'px';
 
-   setTimeout( () =>  {
-      accordion.style.height = '0';
-   }, 5 );
+   requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+         accordion.style.height = '0';
+         afterAccordionTransitionFinish( accordion, () => {
+            accordion.style.display = 'none';
+         });
 
-   afterAccordionTransitionFinish( accordion, () => {
-      accordion.style.display = 'none';
+         const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
+         if( isHTMLElement( wrapper ) ) toggleActiveCSSClass( wrapper )
+
+         accordion.setAttribute( COLLAPSE_ATTR, "true" );
+
+         updateTriggers( accordion.id, true );
+      });
    });
-
-   const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
-
-   if( isHTMLElement( wrapper ) ) toggleActiveCSSClass( wrapper )
-
-   accordion.setAttribute( COLLAPSE_ATTR, "true" );
-
-   updateTriggers( accordion.id, true );
 
    return true
 }
@@ -111,10 +111,6 @@ export function expandAccordion( accordion: HTMLElement ): boolean {
       collapseRelativeAccordions( accordion );
    }
 
-   let accordionHeight = 0;
-
-   beforeAccordionTransition( accordion );
-
    //it will change the whatever display the element has before
    accordion.style.display = '';
 
@@ -127,25 +123,26 @@ export function expandAccordion( accordion: HTMLElement ): boolean {
    ///update the height because if accordion is collapsed
    ///previous value has to be 0 and we need the current height
    ///of the accordion for further use
-   accordionHeight = accordion.getBoundingClientRect().height;
+   const accordionHeight = accordion.getBoundingClientRect().height;
 
    ///immediately change the element height to 0
    accordion.style.height = '0';
 
-   ///wait just a little bit for animation to work properly
-   setTimeout( () =>  {
-      accordion.style.height = accordionHeight + 'px';
-   }, 0 );
+   beforeAccordionTransition( accordion );
 
-   afterAccordionTransitionFinish( accordion );
+   requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+         accordion.style.height = accordionHeight + 'px';
+         afterAccordionTransitionFinish( accordion );
 
-   const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
+         const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
+         if( wrapper ) toggleActiveCSSClass( wrapper, false );
 
-   if( wrapper ) toggleActiveCSSClass( wrapper, false );
+         accordion.setAttribute( COLLAPSE_ATTR, "false" );
 
-   accordion.setAttribute( COLLAPSE_ATTR, "false" );
-
-   updateTriggers( accordion.id, false );
+         updateTriggers( accordion.id, false );
+      });
+   })
 
    return true
 }

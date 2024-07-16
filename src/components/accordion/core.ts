@@ -3,7 +3,6 @@ import { findAccordionTriggers, initTrigger } from "./trigger";
 
 ///// CORE /////
 export const PREFIX: string = "jsc";
-export const EXTRA_TIME_FOR_TRANSITION = 60; //ms
 export const TRANSITION_TIME = 300; //ms
 export const TRANSITION_STATE_CLASSNAME = 'colexping';
 export const INIT_CLASSNAME = `${PREFIX}-initialized`;
@@ -229,9 +228,6 @@ export function afterAccordionTransitionFinish( accordion: HTMLElement, callBack
       const containerDuration = getTransitionDuration( container );
       if( containerDuration ) duration = containerDuration;
    }
-
-   // adding extra time because sometimes accordion will not transition properly
-   duration += EXTRA_TIME_FOR_TRANSITION;
 
    setTimeout( () =>  {
       if( typeof callBackFunc === 'function' )  callBackFunc();
