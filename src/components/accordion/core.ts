@@ -6,6 +6,9 @@ export const PREFIX: string = "jsc";
 export const TRANSITION_TIME = 300; //ms
 export const TRANSITION_STATE_CLASSNAME = 'colexping';
 export const INIT_CLASSNAME = `${PREFIX}-initialized`;
+export const DURATION_CSS_VAR = `--${PREFIX}-ac-duration`;
+export const EXPANDED_CSS_CLASS = 'expanded';
+export const COLLAPSED_CSS_CLASS = 'collapsed';
 
 //// ATTRIBUTE AND SELECTOR /////
 export const CONTAINER_ATTR: string = `data-${PREFIX}-accordion-container`;
@@ -19,9 +22,6 @@ export const TRIGGER_SELECTOR: string = `[${TRIGGER_ATTR}]`;
 export const COLLAPSE_ATTR: string = "data-collapse";
 export const TOGGLE_TYPE_ATTR = `data-${PREFIX}-accordion-type`;
 export const DURATION_ATTR = `data-${PREFIX}-duration`;
-export const DURATION_CSS_VAR = `--${PREFIX}-ac-duration`;
-export const EXPANDED_CSS_CLASS = 'expanded';
-export const COLLAPSED_CSS_CLASS = 'collapsed';
 export const DATA_WRAPPER_SELECTOR_ATTR = `data-${PREFIX}-wrapper-selector`;
 export const DATA_ACCORDION_SELECTOR_ATTR = `data-${PREFIX}-accordion-selector`;
 export const DATA_TRIGGER_SELECTOR_ATTR = `data-${PREFIX}-trigger-selector`;
