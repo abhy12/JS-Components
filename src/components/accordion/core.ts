@@ -234,8 +234,6 @@ export function startAccordionTransition( accordion: HTMLElement, collapse: bool
 }
 
 export function afterAccordionTransitionFinish( accordion: HTMLElement ) {
-   accordion.style.transition = '';
-   accordion.style.height = '';
    accordion.classList.remove( TRANSITION_STATE_CLASSNAME );
 }
 
@@ -318,8 +316,16 @@ export function expandElement( element: HTMLElement, duration: number = 300, bef
    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
          if( typeof beforeTransition === 'function' ) beforeTransition();
+
          element.style.height = fullHeight + 'px';
-         if( typeof afterTransition === 'function' ) setTimeout( afterTransition, transitionDuration );
+
+         setTimeout(() => {
+            element.style.transition = '';
+            element.style.height = '';
+            element.style.overflow = '';
+
+            if( typeof afterTransition === 'function' ) afterTransition();
+         }, transitionDuration );
       });
    });
 }
@@ -342,8 +348,16 @@ export function collapseElement( element: HTMLElement, duration: number = 300, b
    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
          if( typeof beforeTransition === 'function' ) beforeTransition();
+
          element.style.height = '0';
-         if( typeof afterTransition === 'function' ) setTimeout( afterTransition, transitionDuration );
+
+         setTimeout(() => {
+            element.style.transition = '';
+            element.style.height = '';
+            element.style.overflow = '';
+
+            if( typeof afterTransition === 'function' ) afterTransition();
+         }, transitionDuration );
       });
    });
 }
