@@ -205,11 +205,8 @@ export function isAccordionCollapsed( accordion: HTMLElement ): boolean  {
    return accordion.dataset.collapse === 'true' ? true : false;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export function beforeAccordionTransition( accordion: HTMLElement, callBackFunc?: Function )  {
-   if( typeof callBackFunc === 'function' )  callBackFunc();
-
-   ///add a class to accordion to let the "state" know that it's transitioning
+export function beforeAccordionTransition( accordion: HTMLElement )  {
+   // to let the "state" know that it will or it is transitioning
    accordion.classList.add( TRANSITION_STATE_CLASSNAME );
 
    let duration: number = TRANSITION_TIME;
@@ -226,26 +223,20 @@ export function beforeAccordionTransition( accordion: HTMLElement, callBackFunc?
 /**
  * @param accordion - accordion which will be transition
  * @param collapse - accordion is collapsing or not
- * @param afterTransitionCallback - callback after transition is done
  */
-export function startAccordionTransition( accordion: HTMLElement, collapse: boolean, afterTransitionCallback?: CallableFunction ): void {
+export function startAccordionTransition( accordion: HTMLElement, collapse: boolean ): void {
    const wrapper = accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR );
    if( isHTMLElement( wrapper ) ) toggleActiveCSSClass( wrapper, collapse);
 
    accordion.setAttribute( COLLAPSE_ATTR, collapse + '' );
 
    updateTriggers( accordion.id, collapse );
-
-   afterAccordionTransitionFinish( accordion, afterTransitionCallback );
 }
 
-export function afterAccordionTransitionFinish( accordion: HTMLElement, callback?: CallableFunction ) {
-   setTimeout(() =>  {
-      if( typeof callback === 'function' ) callback();
-      accordion.style.transition = '';
-      accordion.style.height = '';
-      accordion.classList.remove( TRANSITION_STATE_CLASSNAME );
-   }, getTransitionDuration( getContainer( accordion ) ) );
+export function afterAccordionTransitionFinish( accordion: HTMLElement ) {
+   accordion.style.transition = '';
+   accordion.style.height = '';
+   accordion.classList.remove( TRANSITION_STATE_CLASSNAME );
 }
 
 /**
@@ -303,4 +294,56 @@ export function findAccordionWithPosition( accordionContainer: HTMLElement, posi
 export function toggleActiveCSSClass( element: Element, isCollapsed: boolean = true ) {
    element.classList.toggle( COLLAPSED_CSS_CLASS, isCollapsed );
    element.classList.toggle( EXPANDED_CSS_CLASS, !isCollapsed );
+}
+
+/**
+ * @param element - element to expand/open
+ * @param duration - transition duration in millisecond (default 300)
+ * @param beforeTransition - callback function, which will be called when transition properly starts
+ * @param afterTransition - callback function, called when transition finished
+ * @description smoothly expand HTMLElement vertically
+ */
+export function expandElement( element: HTMLElement, duration: number = 300, beforeTransition?: CallableFunction | null, afterTransition?: CallableFunction | null ): void {
+   // reset
+   element.style.display = '';
+   element.style.overflow = 'hidden';
+   // to get the full height
+   element.style.height = 'auto';
+   const fullHeight = element.getBoundingClientRect().height;
+   const transitionDuration: number = ( duration && Number.isInteger( duration ) && duration > 0 ) ? duration : TRANSITION_TIME;
+   element.style.height = '0';
+   element.style.transition = `height ${transitionDuration}ms ease-in-out`;
+
+   // because of repaint of height, we have to do this for smooth transition
+   requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+         if( typeof beforeTransition === 'function' ) beforeTransition();
+         element.style.height = fullHeight + 'px';
+         if( typeof afterTransition === 'function' ) setTimeout( afterTransition, transitionDuration );
+      });
+   });
+}
+
+/**
+ * @param element - element to collapse/close
+ * @param duration - transition duration in millisecond (default 300)
+ * @param beforeTransition - callback function, which will be called when transition properly starts
+ * @param afterTransition - callback function, called when transition finished
+ * @description smoothly collapse HTMLElement vertically
+ */
+export function collapseElement( element: HTMLElement, duration: number = 300, beforeTransition?: CallableFunction | null, afterTransition?: CallableFunction | null ): void {
+   const fullHeight = element.getBoundingClientRect().height;
+   const transitionDuration: number = ( duration && Number.isInteger( duration ) && duration > 0 ) ? duration : TRANSITION_TIME;
+   element.style.height = fullHeight + 'px';
+   element.style.transition = `height ${transitionDuration}ms ease-in-out`;
+   element.style.overflow = 'hidden';
+
+   // because of repaint of height, we have to do this for smooth transition
+   requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+         if( typeof beforeTransition === 'function' ) beforeTransition();
+         element.style.height = '0';
+         if( typeof afterTransition === 'function' ) setTimeout( afterTransition, transitionDuration );
+      });
+   });
 }

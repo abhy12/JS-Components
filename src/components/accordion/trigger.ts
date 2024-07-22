@@ -1,4 +1,4 @@
-import { ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionTransitioning, isRelativeAccordionTransitioning, beforeAccordionTransition, getAccordionType, toggleActiveCSSClass, startAccordionTransition } from "./core";
+import { ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionTransitioning, isRelativeAccordionTransitioning, beforeAccordionTransition, getAccordionType, toggleActiveCSSClass, startAccordionTransition, expandElement, getTransitionDuration, getContainer, afterAccordionTransitionFinish, collapseElement } from "./core";
 
 /**
  * @param triggerSelector - css selector of trigger
@@ -60,21 +60,17 @@ export function getAllAssociateTriggers( accordion: HTMLElement, wrapperEl: HTML
 export function collapseAccordion( accordion: HTMLElement ): boolean {
    if( isAccordionCollapsed( accordion ) ) return false
 
-   const accordionHeight = accordion.getBoundingClientRect().height;
-
    beforeAccordionTransition( accordion );
 
-   ///set height for transition
-   accordion.style.height = accordionHeight + 'px';
-
-   requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-         accordion.style.height = '0';
-         startAccordionTransition( accordion, true, () => {
-            accordion.style.display = 'none';
-         });
-      });
-   });
+   collapseElement(
+      accordion,
+      getTransitionDuration( getContainer( accordion ) ),
+      () => startAccordionTransition( accordion, true ),
+      () => {
+         afterAccordionTransitionFinish( accordion );
+         accordion.style.display = 'none';
+      }
+   );
 
    return true
 }
@@ -103,31 +99,14 @@ export function expandAccordion( accordion: HTMLElement ): boolean {
       collapseRelativeAccordions( accordion );
    }
 
-   //it will change the whatever display the element has before
-   accordion.style.display = '';
-
-   ///to get the full height of the element
-   accordion.style.height = 'auto';
-
-   ///not using this method for now might be using this in future
-   // accordion.setAttribute('style', 'height:auto !important');
-
-   ///update the height because if accordion is collapsed
-   ///previous value has to be 0 and we need the current height
-   ///of the accordion for further use
-   const accordionHeight = accordion.getBoundingClientRect().height;
-
-   ///immediately change the element height to 0
-   accordion.style.height = '0';
-
    beforeAccordionTransition( accordion );
 
-   requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-         accordion.style.height = accordionHeight + 'px';
-         startAccordionTransition( accordion, false );
-      });
-   })
+   expandElement(
+      accordion,
+      getTransitionDuration( getContainer( accordion ) ),
+      () => startAccordionTransition( accordion, false ),
+      () => afterAccordionTransitionFinish( accordion )
+   );
 
    return true
 }
