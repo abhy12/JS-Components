@@ -1,4 +1,4 @@
-import { CONTAINER_ATTR, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, findAccordionWithPosition, DATA_WRAPPER_SELECTOR_ATTR, DATA_ACCORDION_SELECTOR_ATTR, DATA_TRIGGER_SELECTOR_ATTR, TRIGGER_SELECTOR, initWrapper } from "./core";
+import { CONTAINER_ATTR, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, findAccordionWithPosition, DATA_WRAPPER_SELECTOR_ATTR, DATA_ACCORDION_SELECTOR_ATTR, DATA_TRIGGER_SELECTOR_ATTR, TRIGGER_SELECTOR, initWrapper, expandElement, collapseElement } from "./core";
 import { toggleAccordion, expandAccordion, collapseAccordion } from "./trigger";
 import { mutationObserve } from "./browser";
 
@@ -43,6 +43,9 @@ export default class JscAccordion implements AccordionInterface {
    triggerSelector
    duration
    initiated = false
+
+   static expandElement = expandElement
+   static collapseElement = collapseElement
 
    constructor( args: AccordionArgs ) {
       //return if falsy value
