@@ -355,6 +355,7 @@ export function collapseElement( element: HTMLElement, duration: number = 300, b
             element.style.transition = '';
             element.style.height = '';
             element.style.overflow = '';
+            element.style.display = 'none';
 
             if( typeof afterTransition === 'function' ) afterTransition();
          }, transitionDuration );

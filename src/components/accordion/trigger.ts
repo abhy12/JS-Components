@@ -66,10 +66,7 @@ export function collapseAccordion( accordion: HTMLElement ): boolean {
       accordion,
       getTransitionDuration( getContainer( accordion ) ),
       () => startAccordionTransition( accordion, true ),
-      () => {
-         afterAccordionTransitionFinish( accordion );
-         accordion.style.display = 'none';
-      }
+      () => { afterAccordionTransitionFinish( accordion ) }
    );
 
    return true
