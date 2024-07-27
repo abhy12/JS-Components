@@ -137,7 +137,7 @@ export function accordionToggleEventHandler( e: Event ) {
    ///so if button has some nested element(s) it will find the trigger
    const trigger = e.target.closest( TRIGGER_SELECTOR );
 
-   if( !( trigger instanceof HTMLElement ) ) return
+   if( !( trigger instanceof Element ) ) return
 
    const accordionId: null | string = trigger.getAttribute( TRIGGER_ATTR );
 
