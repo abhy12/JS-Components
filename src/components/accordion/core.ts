@@ -1,5 +1,5 @@
 import { assignNewUniqueIdToElement, isHTMLElement } from "./utilities";
-import { findAccordionTriggers, initTrigger, updateTriggers } from "./trigger";
+import { updateTriggers } from "./trigger";
 
 ///// CORE /////
 export const PREFIX: string = "jsc";
@@ -22,9 +22,6 @@ export const TRIGGER_SELECTOR: string = `[${TRIGGER_ATTR}]`;
 export const COLLAPSE_ATTR: string = "data-collapse";
 export const TOGGLE_TYPE_ATTR = `data-${PREFIX}-accordion-type`;
 export const DURATION_ATTR = `data-${PREFIX}-duration`;
-export const DATA_WRAPPER_SELECTOR_ATTR = `data-${PREFIX}-wrapper-selector`;
-export const DATA_ACCORDION_SELECTOR_ATTR = `data-${PREFIX}-accordion-selector`;
-export const DATA_TRIGGER_SELECTOR_ATTR = `data-${PREFIX}-trigger-selector`;
 
 export function isContainer( element: Element ) {
    return element.getAttribute( CONTAINER_ATTR ) !== null
@@ -32,43 +29,6 @@ export function isContainer( element: Element ) {
 
 export function SELECT_TRIGGER_ACCORDION( selector: string ): string  {
    return `[${TRIGGER_ATTR}="${selector}"]`;
-}
-
-/**
- * @param wrapperEl - accordion wrapper element
- * @param wrapperSelector - wrapper css selector
- * @param accordionSelector - accordion css selector
- * @param triggerSelector - trigger css selector
- * @param collapsed - will accordion be collapsed or not (default: true)
- * @returns true if everything is good or false unless otherwise
- * @description it will init every accordions and triggers inside wrapper element
- */
-export function initWrapper( wrapperEl: unknown, wrapperSelector: string, accordionSelector: string, triggerSelector: undefined | null | string = undefined, collapsed: boolean = true ): boolean {
-   if( !isHTMLElement( wrapperEl ) ) return false
-
-   const accordion = findAccordionInsideWrapper( wrapperEl, wrapperSelector, accordionSelector );
-
-   if( !accordion ) return false
-
-   ///accordion found then this element is an accordion wrapper
-   wrapperEl.setAttribute( ACCORDION_ITEM_WRAPPER_ATTR, "true" );
-
-   const triggers = findAccordionTriggers( triggerSelector, wrapperEl, wrapperSelector, accordion );
-
-   ///it needs to done after selecting triggers, because below function
-   // will set accordion ID if it doesn't have, it will effect selecting
-   // proper triggers
-   // TODO: test
-   initAccordion( accordion, collapsed );
-
-   triggers.forEach( trigger => {
-      // checking accordion is truthy just because TS giving me some error
-      if( accordion && accordion.id ) initTrigger( trigger, accordion.id, collapsed );
-   });
-
-   toggleActiveCSSClass( wrapperEl, collapsed );
-
-   return true
 }
 
 export function initAccordion( accordion: HTMLElement, initCollapse: boolean = true )  {
@@ -106,7 +66,7 @@ export function getContainer( accordion: HTMLElement ): HTMLElement | undefined 
  * @returns Accordion Element if found one
  * @description find accordion inside wrapper (not nested wrapper)
  */
-export function findAccordionInsideWrapper( wrapperEl: HTMLElement, wrapperSelector: string, accordionSelector: string = ACCORDION_SELECTOR ): null | HTMLElement {
+export function findAccordionInsideWrapper( wrapperEl: Element, wrapperSelector: string, accordionSelector: string = ACCORDION_SELECTOR ): null | HTMLElement {
    const accordion = wrapperEl.querySelector( accordionSelector );
 
    if( isHTMLElement( accordion ) ) {
@@ -115,39 +75,6 @@ export function findAccordionInsideWrapper( wrapperEl: HTMLElement, wrapperSelec
    }
 
    return null
-}
-
-/**
- * @param container - accordions container
- * @returns wrapper css selector
- * @description it will get wrapper selector string from container data attribute,
- * the attribute has set when new instance of accordion was created
- */
-export function getWrapperSelector( container: HTMLElement ): string {
-   const selector = container.getAttribute( DATA_WRAPPER_SELECTOR_ATTR );
-   return selector ? selector : ACCORDION_ITEM_WRAPPER_SELECTOR
-}
-
-/**
- * @param container - accordions container
- * @returns accordon css selector
- * @description it will get accordion selector string from container data attribute,
- * the attribute has set when new instance of accordion was created
- */
-export function getAccordionSelector( container: HTMLElement ): string {
-   const selector = container.getAttribute( DATA_ACCORDION_SELECTOR_ATTR );
-   return selector ? selector : ACCORDION_ATTR
-}
-
-/**
- * @param container - accordions container
- * @returns trigger css selector
- * @description it will get trigger selector string from container data attribute,
- * the attribute has set when new instance of accordion was created
- */
-export function getTriggerSelector( container: HTMLElement ): string {
-   const selector = container.getAttribute( DATA_TRIGGER_SELECTOR_ATTR );
-   return selector ? selector : TRIGGER_SELECTOR
 }
 
 /**

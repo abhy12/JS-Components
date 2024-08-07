@@ -7,7 +7,7 @@ import { ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIG
  * @param accordionEl - accordion element
  * @returns Array of trigger elements
  */
-export function findAccordionTriggers( triggerSelector: string | null | undefined, wrapperEl: HTMLElement, wrapperSelector: string, accordionEl: HTMLElement ): HTMLElement[] {
+export function findAccordionTriggers( triggerSelector: string | null | undefined, wrapperEl: Element, wrapperSelector: string, accordionEl: HTMLElement ): HTMLElement[] {
    let triggers: HTMLElement[] = [];
 
    if( typeof triggerSelector === "string" && accordionEl.id ) {
@@ -31,7 +31,7 @@ export function initTrigger( trigger: HTMLElement, targetId: string, collapsed: 
 /**
  * get all the triggers relative to the accordion's wrapper but not inside nested wrapper
  */
-export function getClosestTriggers( wrapperEl: HTMLElement, wrapperSelector: string = ACCORDION_ITEM_WRAPPER_SELECTOR, triggerSelector: string = TRIGGER_SELECTOR ): HTMLElement[] {
+export function getClosestTriggers( wrapperEl: Element, wrapperSelector: string = ACCORDION_ITEM_WRAPPER_SELECTOR, triggerSelector: string = TRIGGER_SELECTOR ): HTMLElement[] {
    let triggers: HTMLElement[] = Array.from( wrapperEl.querySelectorAll( triggerSelector ) );
 
    ///filter only those triggers which in an accordion wrapper not in nested wrapper
@@ -41,7 +41,7 @@ export function getClosestTriggers( wrapperEl: HTMLElement, wrapperSelector: str
 }
 
 ///get closest triggers inside accordion item container and all over the DOM
-export function getAllAssociateTriggers( accordion: HTMLElement, wrapperEl: HTMLElement, wrapperSelector: string = ACCORDION_ITEM_WRAPPER_SELECTOR, triggerSelector: string = TRIGGER_SELECTOR ): HTMLElement[] {
+export function getAllAssociateTriggers( accordion: HTMLElement, wrapperEl: Element, wrapperSelector: string = ACCORDION_ITEM_WRAPPER_SELECTOR, triggerSelector: string = TRIGGER_SELECTOR ): HTMLElement[] {
    const closestTriggers = getClosestTriggers( wrapperEl, wrapperSelector, triggerSelector );
    const associateTriggers = document.querySelectorAll( SELECT_TRIGGER_ACCORDION( accordion.id ) ) as NodeListOf<HTMLElement>;
    const triggers:HTMLElement[] = [];

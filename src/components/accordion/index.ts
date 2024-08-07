@@ -1,6 +1,6 @@
 import "./accordion.css";
 import JscAccordion from "./accordion";
-import { addAccordionEvents, convertHTMLToAccordion } from "./browser";
+import { convertHTMLToAccordion } from "./browser";
 
 if( document.readyState === 'complete' || document.readyState === 'interactive' ) {
    convertHTMLToAccordion();
@@ -8,9 +8,12 @@ if( document.readyState === 'complete' || document.readyState === 'interactive' 
    document.addEventListener( 'DOMContentLoaded', convertHTMLToAccordion );
 }
 
-export default (() => {
-   addAccordionEvents();
-   return JscAccordion;
-})();
+declare global {
+   interface HTMLElement {
+      JscAccordion?: JscAccordion
+   }
+}
+
+export default JscAccordion;
 
 export * from "./accordion"

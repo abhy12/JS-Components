@@ -1,6 +1,11 @@
-import { CONTAINER_ATTR, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, findAccordionWithPosition, DATA_WRAPPER_SELECTOR_ATTR, DATA_ACCORDION_SELECTOR_ATTR, DATA_TRIGGER_SELECTOR_ATTR, TRIGGER_SELECTOR, initWrapper, expandElement, collapseElement } from "./core";
-import { toggleAccordion, expandAccordion, collapseAccordion } from "./trigger";
+import { CONTAINER_ATTR, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, findAccordionWithPosition, TRIGGER_SELECTOR, expandElement, collapseElement, findAccordionInsideWrapper, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, toggleActiveCSSClass } from "./core";
+import { toggleAccordion, expandAccordion, collapseAccordion, accordionToggleEventHandler, findAccordionTriggers, initTrigger } from "./trigger";
 import { mutationObserve } from "./browser";
+
+type AddEvents  = {
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   ( wrapper: Element, accordion: HTMLElement, trigger: Element[], collapseFunction: ( element: HTMLElement ) => boolean, expandFunction: ( element: HTMLElement ) => boolean ): any
+}
 
 export interface AccordionArgs {
    container: string | HTMLElement | Element | null | undefined,
@@ -20,29 +25,32 @@ export interface AccordionArgs {
    /** @deprecated use `toggleType` */
    type?: AccordionArgs['toggleType'],
    duration?: number,
+   addEvents?: AddEvents
 }
 
 export interface AccordionInterface {
    container: HTMLElement
-   wrapperSelector?: string,
-   accordionSelector?: string,
+   wrapperSelector: string,
+   accordionSelector: string,
    firstElExpand?: boolean,
-   triggerSelector?: string,
+   triggerSelector: string,
    duration?: number,
    initiated: boolean,
    expand: ( pos: number ) => boolean,
    collapse: ( pos: number ) => boolean,
    toggle: ( pos: number ) => boolean,
+   addEvents?: AddEvents
 }
 
 export default class JscAccordion implements AccordionInterface {
    container: HTMLElement
-   wrapperSelector
-   accordionSelector
+   wrapperSelector = ACCORDION_ITEM_WRAPPER_SELECTOR
+   accordionSelector = ACCORDION_SELECTOR
    firstElExpand = true
-   triggerSelector
+   triggerSelector = TRIGGER_SELECTOR
    duration
    initiated = false
+   addEvents
 
    static expandElement = expandElement
    static collapseElement = collapseElement
@@ -94,43 +102,62 @@ export default class JscAccordion implements AccordionInterface {
          if( containerDuration ) this.duration = containerDuration;
       }
 
+      if( typeof args.addEvents === 'function' ) this.addEvents = args.addEvents
+
       this._init();
    }
 
    _init()  {
+      this.container.JscAccordion = this;
       this.initiated = true;
       this.container.setAttribute( CONTAINER_ATTR, "true" );
       this.container.setAttribute( DURATION_ATTR, '' + this.duration );
       this.container.style.setProperty( DURATION_CSS_VAR, this.duration + 'ms' );
       this.container.classList.add( INIT_CLASSNAME );
+      this.container.addEventListener( 'click', accordionToggleEventHandler );
       mutationObserve( this.container );
 
-      const wrapperSelector = this.wrapperSelector ? this.wrapperSelector : ACCORDION_ITEM_WRAPPER_SELECTOR;
-      const accordionElWrappers = this.container.querySelectorAll( wrapperSelector );
-      const accordionElSelector = this.accordionSelector ? this.accordionSelector : ACCORDION_SELECTOR;
+      const accordionElWrappers = this.container.querySelectorAll( this.wrapperSelector );
       const accordionParents: HTMLElement[] = [];
-
-      // add selector args to data attribute
-      this.container.setAttribute( DATA_WRAPPER_SELECTOR_ATTR, wrapperSelector );
-      this.container.setAttribute( DATA_ACCORDION_SELECTOR_ATTR, accordionElSelector );
-      this.container.setAttribute( DATA_TRIGGER_SELECTOR_ATTR, this.triggerSelector ? this.triggerSelector : TRIGGER_SELECTOR );
 
       for( let i = 0; i < accordionElWrappers.length; i++ ) {
          const wrapper = accordionElWrappers[i];
 
          if( !wrapper.parentElement ) continue
 
-         let collapsed: boolean;
+         let isCollapsed: boolean;
 
          if( i > 0 && accordionParents.includes( wrapper.parentElement ) ) {
-            collapsed = true;
+            isCollapsed = true;
          } else {
             accordionParents.push( wrapper.parentElement );
-            collapsed = this.firstElExpand === false;
+            isCollapsed = this.firstElExpand === false;
          }
 
-         initWrapper( wrapper, wrapperSelector, accordionElSelector, this.triggerSelector, collapsed );
+         this._initItem( wrapper, isCollapsed );
       }
+   }
+
+   _initItem( wrapper: Element, isCollapsed: boolean = true ) {
+      const accordion = findAccordionInsideWrapper( wrapper, this.wrapperSelector, this.accordionSelector );
+
+      if( !accordion ) return
+
+      wrapper.setAttribute( ACCORDION_ITEM_WRAPPER_ATTR, "true" );
+      const triggers = findAccordionTriggers( this.triggerSelector, wrapper, this.wrapperSelector, accordion );
+
+      if( this.addEvents ) this.addEvents( wrapper, accordion, triggers, collapseAccordion, expandAccordion );
+
+      // it needs to done after selecting triggers, because below function
+      // will set accordion ID if it doesn't have, it will effect selecting
+      // proper triggers
+      initAccordion( accordion, isCollapsed );
+
+      triggers.forEach( trigger => {
+         if( accordion && accordion.id ) initTrigger( trigger, accordion.id, isCollapsed );
+      });
+
+      toggleActiveCSSClass( wrapper, isCollapsed );
    }
 
    /**

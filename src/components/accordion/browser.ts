@@ -1,4 +1,4 @@
-import { ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, CONTAINER_SELECTOR, TRIGGER_SELECTOR, INIT_CLASSNAME, getWrapperSelector, getAccordionSelector, getTriggerSelector, initWrapper, getContainer } from "./core";
+import { ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, CONTAINER_SELECTOR, TRIGGER_SELECTOR, INIT_CLASSNAME, getContainer } from "./core";
 import { accordionToggleEventHandler } from "./trigger";
 import { isHTMLElement } from "./utilities";
 import JscAccordion from "./accordion";
@@ -42,24 +42,29 @@ const mutationsObserverCallback: MutationCallback = ( mutationList ) => {
 
       const target = mutation.target;
       const container = getContainer( target );
-      if( !container ) continue
-      const wrapperSelector = getWrapperSelector( container );
-      const accordionSelector = getAccordionSelector( container );
-      const triggerSelector = getTriggerSelector( container );
+      const instance = container?.JscAccordion;
+      if( !container || !instance ) continue
 
-      mutation.addedNodes.forEach( node => {
-         if( !isHTMLElement( node ) ) return
+      try{
+         const wrapperSelector = instance.wrapperSelector;
 
-         // first element is wrapper
-         if( node.closest( wrapperSelector ) === node ) {
-            initWrapper( node, wrapperSelector, accordionSelector, triggerSelector );
-         }
+         mutation.addedNodes.forEach( node => {
+            if( !isHTMLElement( node ) ) return
 
-         // find nested wrapper
-         node.querySelectorAll( wrapperSelector ).forEach( wrapper => {
-            initWrapper( wrapper, wrapperSelector, accordionSelector, triggerSelector );
+            // first element is wrapper
+            if( node.closest( wrapperSelector ) === node ) {
+               instance._initItem( node );
+            }
+
+            // find nested wrapper
+            node.querySelectorAll( wrapperSelector ).forEach( wrapper => {
+               instance._initItem( wrapper );
+            });
          });
-      });
+      } catch( e ) {
+         // eslint-disable-next-line no-console
+         console.error( e );
+      }
    }
 }
 
