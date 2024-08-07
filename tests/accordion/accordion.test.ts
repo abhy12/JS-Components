@@ -1,6 +1,6 @@
 import JscAccordion, { AccordionArgs } from "@js-components/accordion/";
 import { convertHTMLToAccordion } from "@js-components/accordion/browser";
-import { CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, ACCORDION_ATTR, TRIGGER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, ACCORDION_SELECTOR, COLLAPSE_ATTR, CONTAINER_SELECTOR, TOGGLE_TYPE_ATTR, getTransitionDuration, TRANSITION_TIME, DURATION_ATTR, INIT_CLASSNAME, DATA_WRAPPER_SELECTOR_ATTR, DATA_ACCORDION_SELECTOR_ATTR, DATA_TRIGGER_SELECTOR_ATTR } from "@js-components/accordion/core";
+import { CONTAINER_ATTR, ACCORDION_ITEM_WRAPPER_ATTR, ACCORDION_ATTR, TRIGGER_ATTR, TRIGGER_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, ACCORDION_SELECTOR, COLLAPSE_ATTR, CONTAINER_SELECTOR, TOGGLE_TYPE_ATTR, getTransitionDuration, TRANSITION_TIME, DURATION_ATTR, INIT_CLASSNAME } from "@js-components/accordion/core";
 import { getClosestTriggers } from "@js-components/accordion/trigger";
 import { customStruture, accordionStructure, accordionContainerId, customContainerSelector, customItemWrapperSelector, customAccordionEl, customAccordionElSelector, customTriggerSelector, customContainerId, customItemWrapper, customTrigger } from "./structure";
 
@@ -404,38 +404,6 @@ describe( "JscAccordion", () => {
          });
 
          expect( container?.classList.contains( INIT_CLASSNAME ) ).toBeTruthy();
-      });
-   });
-
-   describe( "add selector args to data attribute in the container", () => {
-      test( "defined selector args", () => {
-         const container = document.querySelector( customContainerSelector );
-         expect( container instanceof HTMLElement ).toBe( true );
-         if( !( container instanceof HTMLElement ) ) return
-
-         new JscAccordion({
-            container,
-            accordionElWrapper: customItemWrapperSelector,
-            accordionEl: customAccordionElSelector,
-         });
-
-         expect( container.getAttribute( DATA_WRAPPER_SELECTOR_ATTR ) ).not.toBeNull();
-         expect( container.getAttribute( DATA_ACCORDION_SELECTOR_ATTR ) ).not.toBeNull();
-         expect( container.getAttribute( DATA_TRIGGER_SELECTOR_ATTR ) ).not.toBeNull();
-      });
-
-      test( "undefined selector args", () => {
-         const container = document.querySelector( customContainerSelector );
-         expect( container instanceof HTMLElement ).toBe( true );
-         if( !( container instanceof HTMLElement ) ) return
-
-         new JscAccordion({
-            container,
-         });
-
-         expect( container.getAttribute( DATA_WRAPPER_SELECTOR_ATTR ) === ACCORDION_ITEM_WRAPPER_SELECTOR ).toBe( true );
-         expect( container.getAttribute( DATA_ACCORDION_SELECTOR_ATTR ) === ACCORDION_SELECTOR ).toBe( true );
-         expect( container.getAttribute( DATA_TRIGGER_SELECTOR_ATTR ) === TRIGGER_SELECTOR ).toBe( true );
       });
    });
 });
