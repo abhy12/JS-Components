@@ -300,4 +300,49 @@ describe( "accordion trigger", () => {
       expect( accordionInstance.expand( 1 ) ).not.toBeFalsy();
       expect( accordionInstance.expand( 2 ) ).not.toBeFalsy();
    });
+
+   it( "removes default click event", () => {
+      document.body.insertAdjacentHTML( "afterbegin", customStruture );
+
+      new JscAccordion({
+         container: '#eg-1',
+         accordionElWrapper: '.item',
+         accordionEl: '.accordion',
+         button: '.item button',
+         removeDefaultEvents: true,
+      });
+
+      document.getElementById( customContainerId )?.querySelectorAll( ACCORDION_ITEM_WRAPPER_SELECTOR ).forEach( accordionItem => {
+         if( !( accordionItem instanceof HTMLElement ) ) return
+
+         const trigger = accordionItem.querySelector( TRIGGER_SELECTOR );
+         const accordion = accordionItem.querySelector( ACCORDION_SELECTOR );
+         expect( trigger ).not.toBeFalsy();
+         expect( accordion ).not.toBeFalsy();
+
+         if( trigger instanceof HTMLElement && accordion instanceof HTMLElement ) {
+            const isCollapsed = accordion.getAttribute( COLLAPSE_ATTR );
+
+            trigger.click();
+
+            const afterClickedIsCollapsed = accordion.getAttribute( COLLAPSE_ATTR );
+
+            expect( afterClickedIsCollapsed ).toEqual( isCollapsed );
+
+            if( afterClickedIsCollapsed === 'true' ) {
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPANDED_CSS_CLASS ) ).toBeFalsy();
+
+               expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeTruthy();
+               expect( trigger.classList.contains( EXPANDED_CSS_CLASS ) ).toBeFalsy();
+            } else if( afterClickedIsCollapsed === 'false' ) {
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( EXPANDED_CSS_CLASS ) ).toBeTruthy();
+               expect( accordion.closest( ACCORDION_ITEM_WRAPPER_SELECTOR )?.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
+
+               expect( trigger.classList.contains( COLLAPSED_CSS_CLASS ) ).toBeFalsy();
+               expect( trigger.classList.contains( EXPANDED_CSS_CLASS ) ).toBeTruthy();
+            }
+         }
+      });
+   });
 });

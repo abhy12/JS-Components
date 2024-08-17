@@ -26,6 +26,7 @@ export interface AccordionArgs {
    type?: AccordionArgs['toggleType'],
    duration?: number,
    addEvents?: AddEvents
+   removeDefaultEvents?: boolean
 }
 
 export interface AccordionInterface {
@@ -40,6 +41,7 @@ export interface AccordionInterface {
    collapse: ( pos: number ) => boolean,
    toggle: ( pos: number ) => boolean,
    addEvents?: AddEvents
+   removeDefaultEvents?: boolean
 }
 
 export default class JscAccordion implements AccordionInterface {
@@ -51,6 +53,7 @@ export default class JscAccordion implements AccordionInterface {
    duration
    initiated = false
    addEvents
+   removeDefaultEvents
 
    static expandElement = expandElement
    static collapseElement = collapseElement
@@ -104,6 +107,8 @@ export default class JscAccordion implements AccordionInterface {
 
       if( typeof args.addEvents === 'function' ) this.addEvents = args.addEvents
 
+      if( args.removeDefaultEvents === true ) this.removeDefaultEvents = true
+
       this._init();
    }
 
@@ -114,8 +119,8 @@ export default class JscAccordion implements AccordionInterface {
       this.container.setAttribute( DURATION_ATTR, '' + this.duration );
       this.container.style.setProperty( DURATION_CSS_VAR, this.duration + 'ms' );
       this.container.classList.add( INIT_CLASSNAME );
-      this.container.addEventListener( 'click', accordionToggleEventHandler );
       mutationObserve( this.container );
+      if( !this.removeDefaultEvents ) this.container.addEventListener( 'click', accordionToggleEventHandler );
 
       const accordionElWrappers = this.container.querySelectorAll( this.wrapperSelector );
       const accordionParents: HTMLElement[] = [];
