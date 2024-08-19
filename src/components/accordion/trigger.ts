@@ -1,4 +1,4 @@
-import { ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionTransitioning, isRelativeAccordionTransitioning, beforeAccordionTransition, getAccordionType, toggleActiveCSSClass, startAccordionTransition, expandElement, getTransitionDuration, getContainer, afterAccordionTransitionFinish, collapseElement } from "./core";
+import { ACCORDION_SELECTOR, ACCORDION_ITEM_WRAPPER_SELECTOR, TRIGGER_ATTR, TRIGGER_SELECTOR, SELECT_TRIGGER_ACCORDION, isAccordionCollapsed, getRelativeAccordions, isAccordionTransitioning, beforeAccordionTransition, getAccordionType, toggleActiveCSSClass, startAccordionTransition, expandElement, getTransitionDuration, getContainer, afterAccordionTransitionFinish, collapseElement } from "./core";
 
 /**
  * @param triggerSelector - css selector of trigger
@@ -90,11 +90,7 @@ export function collapseRelativeAccordions( accordion: HTMLElement ) {
 export function expandAccordion( accordion: HTMLElement ): boolean {
    if( !isAccordionCollapsed( accordion ) ) return false
 
-   if( getAccordionType( accordion ) !== 'toggle' ) {
-      if( isRelativeAccordionTransitioning( accordion ) ) return false
-
-      collapseRelativeAccordions( accordion );
-   }
+   if( getAccordionType( accordion ) !== 'toggle' ) collapseRelativeAccordions( accordion );
 
    beforeAccordionTransition( accordion );
 

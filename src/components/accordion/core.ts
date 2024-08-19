@@ -172,22 +172,6 @@ export function isAccordionTransitioning( accordion: HTMLElement ): boolean {
    return accordion.classList.contains( TRANSITION_STATE_CLASSNAME );
 }
 
-/**
- * @param accordion - accordion element
- * @returns - boolean whether relative or provided accordion is transitioning
- */
-export function isRelativeAccordionTransitioning( accordion: HTMLElement ): boolean {
-   const relativeAccordions = getRelativeAccordions( accordion );
-
-   if( relativeAccordions ) {
-      for( let i = 0; i < relativeAccordions.length; i++ ) {
-         if( isAccordionTransitioning( relativeAccordions[i] ) ) return true
-      }
-   }
-
-   return false
-}
-
 export function getAccordionType( element: HTMLElement ) {
    return element.closest( CONTAINER_SELECTOR )?.getAttribute( TOGGLE_TYPE_ATTR );
 }
@@ -239,20 +223,23 @@ export function expandElement( element: HTMLElement, duration: number = 300, bef
    element.style.height = '0';
    element.style.transition = `height ${transitionDuration}ms ease-in-out`;
 
+   function transitionEndEventCallback() {
+      element.style.transition = '';
+      element.style.height = '';
+      element.style.overflow = '';
+
+      if( typeof afterTransition === 'function' ) afterTransition();
+
+      element.removeEventListener( 'transitionend', transitionEndEventCallback, false );
+   }
+
    // because of repaint of height, we have to do this for smooth transition
    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
          if( typeof beforeTransition === 'function' ) beforeTransition();
+         element.addEventListener( 'transitionend', transitionEndEventCallback );
 
          element.style.height = fullHeight + 'px';
-
-         setTimeout(() => {
-            element.style.transition = '';
-            element.style.height = '';
-            element.style.overflow = '';
-
-            if( typeof afterTransition === 'function' ) afterTransition();
-         }, transitionDuration );
       });
    });
 }
@@ -271,21 +258,23 @@ export function collapseElement( element: HTMLElement, duration: number = 300, b
    element.style.transition = `height ${transitionDuration}ms ease-in-out`;
    element.style.overflow = 'hidden';
 
+   function transitionEndEventCallback() {
+      element.style.transition = '';
+      element.style.height = '';
+      element.style.overflow = '';
+      element.style.display = 'none';
+
+      if( typeof afterTransition === 'function' ) afterTransition();
+      element.removeEventListener( 'transitionend', transitionEndEventCallback, false );
+   }
+
    // because of repaint of height, we have to do this for smooth transition
    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
          if( typeof beforeTransition === 'function' ) beforeTransition();
 
+         element.addEventListener( 'transitionend', transitionEndEventCallback );
          element.style.height = '0';
-
-         setTimeout(() => {
-            element.style.transition = '';
-            element.style.height = '';
-            element.style.overflow = '';
-            element.style.display = 'none';
-
-            if( typeof afterTransition === 'function' ) afterTransition();
-         }, transitionDuration );
       });
    });
 }
