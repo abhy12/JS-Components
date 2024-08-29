@@ -28,4 +28,4 @@ jobs:
         cache: 'npm'
     - run: npm install
     - run: npm test
-    - run: npx eslint ./src/components/accordion
+    - run: npm run lint

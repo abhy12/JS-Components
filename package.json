@@ -9,7 +9,8 @@
     "build": "webpack --mode=production && tsc",
     "dev": "concurrently --kill-others \"webpack --mode=development --watch\" \"npx tailwindcss -i ./examples/tailwind.css -o ./examples/main.css --watch\"",
     "test": "jest",
-    "test-watch": "jest --watch"
+    "test-watch": "jest --watch",
+    "lint": "npx eslint ./src/components/accordion"
   },
   "repository": {
     "type": "git",
