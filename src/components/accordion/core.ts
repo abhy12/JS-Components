@@ -1,4 +1,4 @@
-import { assignNewUniqueIdToElement, isHTMLElement } from "./utilities";
+import { assignNewUniqueIdToElement, isHTMLElement, smoothTransitionAfterRepaint } from "./utilities";
 import { updateTriggers } from "./trigger";
 
 ///// CORE /////
@@ -221,27 +221,21 @@ export function expandElement( element: HTMLElement, duration: number = 300, bef
    const fullHeight = element.getBoundingClientRect().height;
    const transitionDuration: number = ( duration && Number.isInteger( duration ) && duration > 0 ) ? duration : TRANSITION_TIME;
    element.style.height = '0';
-   element.style.transition = `height ${transitionDuration}ms ease-in-out`;
+   element.style.setProperty( DURATION_CSS_VAR, transitionDuration + 'ms' );
+   element.style.transition = `height var(${DURATION_CSS_VAR}) ease-in-out`;
 
-   function transitionEndEventCallback() {
-      element.style.transition = '';
-      element.style.height = '';
-      element.style.overflow = '';
-
-      if( typeof afterTransition === 'function' ) afterTransition();
-
-      element.removeEventListener( 'transitionend', transitionEndEventCallback, false );
-   }
-
-   // because of repaint of height, we have to do this for smooth transition
-   requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-         if( typeof beforeTransition === 'function' ) beforeTransition();
-         element.addEventListener( 'transitionend', transitionEndEventCallback );
-
+   smoothTransitionAfterRepaint( element,
+      () => {
          element.style.height = fullHeight + 'px';
-      });
-   });
+         if( typeof beforeTransition === 'function' ) beforeTransition();
+      },
+      () => {
+         element.style.transition = '';
+         element.style.height = '';
+         element.style.overflow = '';
+         if( typeof afterTransition === 'function' ) afterTransition();
+      }
+   );
 }
 
 /**
@@ -254,27 +248,22 @@ export function expandElement( element: HTMLElement, duration: number = 300, bef
 export function collapseElement( element: HTMLElement, duration: number = 300, beforeTransition?: CallableFunction | null, afterTransition?: CallableFunction | null ): void {
    const fullHeight = element.getBoundingClientRect().height;
    const transitionDuration: number = ( duration && Number.isInteger( duration ) && duration > 0 ) ? duration : TRANSITION_TIME;
-   element.style.height = fullHeight + 'px';
-   element.style.transition = `height ${transitionDuration}ms ease-in-out`;
    element.style.overflow = 'hidden';
+   element.style.height = fullHeight + 'px';
+   element.style.setProperty( DURATION_CSS_VAR, transitionDuration + 'ms' );
+   element.style.transition = `height var(${DURATION_CSS_VAR}) ease-in-out`;
 
-   function transitionEndEventCallback() {
-      element.style.transition = '';
-      element.style.height = '';
-      element.style.overflow = '';
-      element.style.display = 'none';
-
-      if( typeof afterTransition === 'function' ) afterTransition();
-      element.removeEventListener( 'transitionend', transitionEndEventCallback, false );
-   }
-
-   // because of repaint of height, we have to do this for smooth transition
-   requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-         if( typeof beforeTransition === 'function' ) beforeTransition();
-
-         element.addEventListener( 'transitionend', transitionEndEventCallback );
+   smoothTransitionAfterRepaint( element,
+      () => {
          element.style.height = '0';
-      });
-   });
+         if( typeof beforeTransition === 'function' ) beforeTransition();
+      },
+      () => {
+         element.style.transition = '';
+         element.style.height = '';
+         element.style.overflow = '';
+         element.style.display = 'none';
+         if( typeof afterTransition === 'function' ) afterTransition();
+      }
+   )
 }

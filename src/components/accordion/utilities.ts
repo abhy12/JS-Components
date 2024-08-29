@@ -28,3 +28,18 @@ export function assignNewUniqueIdToElement( element: HTMLElement )  {
 export function isHTMLElement( element: unknown ): element is HTMLElement {
    return element instanceof HTMLElement
 }
+
+export function smoothTransitionAfterRepaint( element: HTMLElement, beforeTransition?: CallableFunction, afterTransition?: CallableFunction ) {
+   // because of repaint, we have to do this for smooth transition
+   requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+         if( typeof beforeTransition === 'function' ) beforeTransition();
+         element.addEventListener( 'transitionend', transitionEndEventCallback );
+      });
+   });
+
+   function transitionEndEventCallback() {
+      if( typeof afterTransition === 'function' ) afterTransition();
+      element.removeEventListener( 'transitionend', transitionEndEventCallback, false );
+   }
+}
