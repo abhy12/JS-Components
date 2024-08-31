@@ -1,4 +1,4 @@
-import { CONTAINER_ATTR, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, findAccordionWithPosition, TRIGGER_SELECTOR, expandElement, collapseElement, findAccordionInsideWrapper, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, toggleActiveCSSClass } from "./core";
+import { CONTAINER_ATTR, TOGGLE_TYPE_ATTR, TRANSITION_TIME, getTransitionDuration, DURATION_ATTR, ACCORDION_SELECTOR, INIT_CLASSNAME, ACCORDION_ITEM_WRAPPER_SELECTOR, DURATION_CSS_VAR, findAccordionWithPosition, TRIGGER_SELECTOR, expandElement, collapseElement, findAccordionInsideWrapper, ACCORDION_ITEM_WRAPPER_ATTR, initAccordion, toggleActiveCSSClass, FIRST_ITEM_EXPAND_ATTR } from "./core";
 import { toggleAccordion, expandAccordion, collapseAccordion, accordionToggleEventHandler, findAccordionTriggers, initTrigger } from "./trigger";
 import { mutationObserve } from "./browser";
 
@@ -90,7 +90,7 @@ export default class JscAccordion implements AccordionInterface {
          this.triggerSelector = args.button;
       }
 
-      if( args.firstElExpand === false || args.firstElExpend === false ) this.firstElExpand = false;
+      if( args.firstElExpand === false || this.container.getAttribute( FIRST_ITEM_EXPAND_ATTR ) === 'false' || args.firstElExpend === false ) this.firstElExpand = false;
 
       if( args.toggleType === "toggle" || args.type === "toggle" ) this.container.setAttribute( TOGGLE_TYPE_ATTR, "toggle" );
 

@@ -22,6 +22,7 @@ export const TRIGGER_SELECTOR: string = `[${TRIGGER_ATTR}]`;
 export const COLLAPSE_ATTR: string = "data-collapse";
 export const TOGGLE_TYPE_ATTR = `data-${PREFIX}-accordion-type`;
 export const DURATION_ATTR = `data-${PREFIX}-duration`;
+export const FIRST_ITEM_EXPAND_ATTR = `data-${PREFIX}-first-item-expand`;
 
 export function isContainer( element: Element ) {
    return element.getAttribute( CONTAINER_ATTR ) !== null

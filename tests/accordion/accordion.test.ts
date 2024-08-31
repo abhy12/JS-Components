@@ -407,3 +407,45 @@ describe( "JscAccordion", () => {
       });
    });
 });
+
+describe( "first item expanded or collapsed, html", () => {
+   beforeEach(() =>  {
+      document.body.innerHTML = '';
+      document.body.insertAdjacentHTML( "afterbegin", accordionStructure );
+   });
+
+   test( "first item expanded by default", () => {
+      const container = document.getElementById( accordionContainerId );
+      expect( container ).not.toBeFalsy();
+      if( !container ) return
+      convertHTMLToAccordion();
+      const accordion = container.querySelector( `${ACCORDION_ITEM_WRAPPER_SELECTOR} ${ACCORDION_SELECTOR}` );
+      expect( accordion ).not.toBeFalsy();
+      if( !accordion ) return
+      expect( accordion.getAttribute( COLLAPSE_ATTR ) ).toEqual( "false" );
+   });
+
+   test( "first item expanded", () => {
+      const container = document.getElementById( accordionContainerId );
+      expect( container ).not.toBeFalsy();
+      if( !container ) return
+      container.setAttribute( 'data-jsc-first-item-expand', 'true' );
+      convertHTMLToAccordion();
+      const accordion = container.querySelector( `${ACCORDION_ITEM_WRAPPER_SELECTOR} ${ACCORDION_SELECTOR}` );
+      expect( accordion ).not.toBeFalsy();
+      if( !accordion ) return
+      expect( accordion.getAttribute( COLLAPSE_ATTR ) ).toEqual( "false" );
+   });
+
+   test( "first item collapsed", () => {
+      const container = document.getElementById( accordionContainerId );
+      expect( container ).not.toBeFalsy();
+      if( !container ) return
+      container.setAttribute( 'data-jsc-first-item-expand', 'false' );
+      convertHTMLToAccordion();
+      const accordion = container.querySelector( `${ACCORDION_ITEM_WRAPPER_SELECTOR} ${ACCORDION_SELECTOR}` );
+      expect( accordion ).not.toBeFalsy();
+      if( !accordion ) return
+      expect( accordion.getAttribute( COLLAPSE_ATTR ) ).toEqual( "true" );
+   });
+});
