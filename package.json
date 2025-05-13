@@ -28,7 +28,7 @@
     "@types/jest": "^29.5.0",
     "concurrently": "^8.2.2",
     "css-loader": "^6.7.3",
-    "esbuild-loader": "^3.0.1",
+    "esbuild-loader": "^4.3.0",
     "eslint": "^8.57.0",
     "jest-environment-jsdom": "^29.5.0",
     "jest-transform-stub": "^2.0.0",
